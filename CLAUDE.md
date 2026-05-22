@@ -1,59 +1,30 @@
 # CLAUDE.md — oscar.stomberg.us Portfolio
 
-## Project Overview
+Personal engineering portfolio for Oscar Stomberg, Robotics Engineering student at WPI. See [README.md](README.md) for stack, structure, and commands.
 
-Personal engineering portfolio for Oscar Stomberg, a Robotics Engineering student at WPI. Built with Astro, deployed to Cloudflare Pages at `oscar.stomberg.us`. The site showcases software, hardware, and infrastructure projects with narrative depth that a resume and GitHub profile can't provide.
+## Workflow
 
-The portfolio itself is a public project — the repo is on GitHub and the site has its own project entry.
-
-## Tech Stack
-
-- **Framework**: Astro 6 with content collections
-- **Interactive components**: React (for tag filter bar, tile grid) via Astro islands (`client:load`)
-- **Styling**: Tailwind CSS
-- **Language**: TypeScript throughout
-- **Deployment**: Cloudflare Pages via Wrangler, custom domain `oscar.stomberg.us`
-- **Content**: Markdown/MDX files with typed frontmatter schemas
-
-### Dependencies to add (not yet installed)
-
-- `@astrojs/react` — React integration for interactive islands
-- `@astrojs/tailwind` or `@tailwindcss/vite` — Tailwind integration
-- `@astrojs/mdx` — MDX support (optional, for embedding components in project pages)
-
-### Static vs SSR note
-
-The Cloudflare adapter (`@astrojs/cloudflare`) is currently installed, which enables SSR. This site is purely static content — consider whether SSR is needed or whether `output: 'static'` with no adapter would be simpler. If staying on Cloudflare Pages with wrangler, the current setup works fine, but nothing here requires server-side rendering.
-
-## Project Structure
-
+### After editing code
+Run the TypeScript checker before considering a chunk of work done:
+```sh
+npx astro check        # Astro-aware type check (covers .astro + .tsx files)
 ```
-src/
-├── content/
-│   ├── config.ts              # Content collection schema definition
-│   └── projects/              # One .md or .mdx file per project
-│       ├── selfhosting.md
-│       ├── hanover-cms.md
-│       ├── solar-system-simulator.md
-│       └── ...
-├── components/
-│   ├── ProjectGrid.tsx        # Filterable tile grid (React island)
-│   ├── ProjectTile.tsx        # Individual tile, renders at variable sizes
-│   ├── TagFilter.tsx          # Tag filter bar
-│   └── ...                    # Astro components for layout pieces
-├── layouts/
-│   ├── BaseLayout.astro       # Shared HTML head, nav, footer
-│   └── ProjectLayout.astro    # Project page template (wraps markdown content)
-├── pages/
-│   ├── index.astro            # Landing page with grid
-│   └── projects/
-│       └── [...slug].astro    # Dynamic route for individual project pages
-└── styles/
-    └── global.css
-public/
-├── resume.pdf
-└── thumbnails/                # Project thumbnail images
+No separate `tsc` script is configured — `astro check` is the right tool here since it understands Astro's component types.
+
+### Using documentation
+Always fetch current docs via context7 before working with any library API — Astro, React, Tailwind, and Cloudflare Workers all move fast and training data may be stale. Especially important for:
+- Astro content collections schema API
+- Astro island directives (`client:load`, `client:visible`, etc.)
+- Cloudflare Pages / Wrangler config
+
+### Verifying UI changes
+After frontend changes, start the dev server and check the actual browser output — type checking does not catch layout or rendering issues:
+```sh
+npm run dev            # localhost:4321
 ```
+
+### Adding a new project
+Drop a `.md` file in `src/content/projects/` with the frontmatter schema from the Content Data Model section below. No other files need to change.
 
 ## Content Data Model
 
@@ -79,10 +50,10 @@ The markdown body is the full project page content, rendered by `ProjectLayout.a
 
 ## Project Inventory
 
-### Large tiles (headliners)
+### Large tiles
 - **Selfhosting Infrastructure** — `infrastructure`, `devops`, `linux`, `docker`
-- **Hanover Insurance CMS** — `web`, `fullstack`, `react`, `typescript` (NDA: may need to swap branding/sample data before showing screenshots)
-- **Solar System Simulator** — `java`, `graphics`, `physics`, `simulation` (has excellent existing docs + screenshots)
+- **Hanover Insurance CMS** — `web`, `fullstack`, `react`, `typescript` (NDA: swap branding/screenshots before publishing)
+- **Solar System Simulator** — `java`, `graphics`, `physics`, `simulation`
 
 ### Medium tiles
 - **Synthetic Word Generator** — `python`, `data`, `nlp`
@@ -103,45 +74,31 @@ The markdown body is the full project page content, rendered by `ProjectLayout.a
 
 ## Homepage Layout
 
-- **Header**: Name, one-liner tagline, links (GitHub, LinkedIn, resume PDF, email)
-- **Tag filter bar**: Filters the grid in-place by tag
-- **Project grid**: Variable-size tiles (large/medium/small), sorted by priority, WIP projects have a subtle visual badge — not hidden, not obnoxious
-- No separate "projects page" — all tiles live on the homepage grid with the most important ones on top
+- **Header**: Name, tagline, links (GitHub, LinkedIn, resume PDF, email)
+- **Tag filter bar**: Filters the grid in-place
+- **Project grid**: Variable-size tiles sorted by `priority`; WIP tiles get a subtle badge + dashed border, not a warning banner
+- No separate projects page — all tiles on the homepage
 
 ## Design Principles
 
 - Clean, professional, not template-generic
-- WIP tiles: subtle differentiation (muted treatment, small badge, dashed border — not a warning banner)
-- Responsive — must work on mobile (recruiters check on phones)
-- Dark mode: nice-to-have, not required for v1
-- Performance: static HTML + minimal JS = near-perfect Lighthouse scores
-- The site itself should demonstrate frontend competence without being over-designed
+- Responsive — mobile is required (recruiters)
+- Performance: static HTML + minimal JS
+- Dark mode: nice-to-have, not v1
 
 ## Project Page Structure
 
-Each project page follows an inverted pyramid:
-1. Hero: title, status badge (if WIP), thumbnail/screenshot/diagram, one-sentence summary
-2. What & why: what the project is, what problem it solves
-3. Role & contribution: especially for team projects
-4. Technical details: stack, architecture, decisions, diagrams, code snippets
-5. Outcomes & reflection: what worked, what broke, what was learned
+1. Hero: title, status badge (WIP only), thumbnail, one-sentence summary
+2. What & why
+3. Role & contribution (especially for team projects)
+4. Technical details: stack, architecture, decisions, code snippets
+5. Outcomes & reflection
 6. Links: GitHub, live demo, related projects
-7. Where it's going (WIP only): current state, next steps
+7. Where it's going (WIP only)
 
-## Commands
+## Key Decisions
 
-```sh
-npm install          # Install dependencies
-npm run dev          # Dev server at localhost:4321
-npm run build        # Build to ./dist/
-npm run preview      # Build + preview via wrangler dev
-npm run deploy       # Build + deploy via wrangler
-```
-
-## Key Decisions & Context
-
-- Oscar has React/TypeScript/Tailwind experience from the Hanover CMS project (full-stack soft eng course). Astro is new but the skills carry over.
-- The Cloudflare adapter + Wrangler setup is already working for deployment.
-- Content is the hard part, not the framework. The architecture should make adding a new project as simple as dropping a markdown file with frontmatter.
-- Tag taxonomy is flat (no hierarchy). Tags span domain, tech, and skill categories.
-- The portfolio spec document (portfolio-spec.md) has the full planning rationale.
+- Content is the hard part. Architecture should make adding a project as simple as dropping a markdown file.
+- Tag taxonomy is flat — tags span domain, tech, and skill categories freely.
+- The Cloudflare adapter enables SSR but this site is purely static; `output: 'static'` without the adapter is worth considering.
+- Full planning rationale in `portfolio-spec.md`.

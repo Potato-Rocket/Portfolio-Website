@@ -12,7 +12,7 @@ tags:
 thumbnail: /thumbnails/selfhosting.png
 related:
   - daily-greeting-generator
-date: "2025-01-01"
+date: 2025-01-01
 ---
 
 ## Overview
