@@ -16,8 +16,12 @@ const { project } = Astro.props as Props;
 const { Content } = await render(project);
 ---
 
-<Layout>
-  <h1>{project.data.title}</h1>
-  <p>{project.data.summary}</p>
-  <Content />
+<Layout title={project.data.title}>
+  <main class="max-w-prose mx-auto px-4 py-12">
+    <article class="prose">
+      <h1>{project.data.title}</h1>
+      <p class="lead">{project.data.summary}</p>
+      <Content />
+    </article>
+  </main>
 </Layout>
