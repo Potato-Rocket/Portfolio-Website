@@ -11,9 +11,8 @@ tags:
   - typescript
 thumbnail: /thumbnails/hanover-cms.png
 links:
-  github: ""
-  live: ""
-related: []
+  github: https://github.com/CS3733-TeamB-2026/teamB-protoype
+  live: https://hanoveribank.com/
 date: 2025-01-01
 ---
 

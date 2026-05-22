@@ -12,7 +12,6 @@ tags:
 thumbnail: /thumbnails/solar-system-simulator.png
 links:
   github: https://github.com/Potato-Rocket/Solar-System-Simulator
-  live: ""
 related:
   - star-map
 date: 2025-01-01

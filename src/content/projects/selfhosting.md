@@ -10,12 +10,9 @@ tags:
   - linux
   - docker
 thumbnail: /thumbnails/selfhosting.png
-links:
-  github: ""
-  live: ""
 related:
   - daily-greeting-generator
-date: 2025-01-01
+date: "2025-01-01"
 ---
 
 ## Overview
