@@ -1,0 +1,45 @@
+@import "tailwindcss";
+@import "@fontsource-variable/cormorant";
+@import "@fontsource-variable/inter";
+
+/* ── Static design tokens ───────────────────────────────── */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+}
+
+/* ── Semantic color tokens — light mode ─────────────────── */
+:root {
+  --bg:         #f5f0e8;
+  --bg-surface: #faf7f2;
+  --text:       #1e1410;
+  --text-muted: #7a6555;
+  --border:     #d4c5b0;
+  --accent:     #7c4f2a;
+  --accent-fg:  #faf7f2;
+}
+
+/* ── Semantic color tokens — dark mode ──────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg:         #100d0a;
+    --bg-surface: #1e1912;
+    --text:       #f0ebe0;
+    --text-muted: #9a8870;
+    --border:     #352a1e;
+    --accent:     #c4956a;
+    --accent-fg:  #100d0a;
+  }
+}
+
+/* ── Base styles ────────────────────────────────────────── */
+html {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-serif), serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-sans), sans-serif;
+}
