@@ -1,1 +1,28 @@
 @import "tailwindcss";
+@import "@fontsource-variable/source-serif-4";
+@import "@fontsource-variable/figtree";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-paper: #f6f2ea;
+  --color-paper-deep: #efeadf;
+  --color-ink: #1c1a17;
+  --color-ink-muted: #736c62;
+  --color-rule: #d5cfc2;
+  --color-rule-strong: #1c1a17;
+
+  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
+}
+
+@layer base {
+  html {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
