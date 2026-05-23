@@ -1,7 +1,7 @@
 ---
 title: Hanover Insurance CMS
 summary: Full-stack content management system built for a real client in a software engineering course.
-status: complete
+status: wip
 featured: true
 tags:
   - web

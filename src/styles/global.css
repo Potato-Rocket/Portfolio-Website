@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/source-serif-4";
-@import "@fontsource-variable/figtree";
+/*@import "@fontsource-variable/figtree";*/
 @plugin "@tailwindcss/typography";
 
 @theme {

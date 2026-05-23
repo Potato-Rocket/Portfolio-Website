@@ -1,29 +1,30 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
+import Tag from "./Tag.astro";
+import StatusBadge from "./StatusBadge.astro";
+
 interface Props {
   project: CollectionEntry<"projects">;
 }
 
 const { project } = Astro.props;
-const { title, summary, tags, thumbnail } = project.data;
-const isWip = project.data.status === "wip";
+const { title, summary, tags, status, thumbnail } = project.data;
 ---
 
-<a
-    href={`/projects/${project.id}`}
-    class="fillw-24"
->
-  <h2>{title}{isWip ? "WIP" : ""}</h2>
-  <div>
-    <img
-        src={thumbnail}
-        alt={title}
-        class="w-fit"
-    />
-    <p>{summary}</p>
-    {tags.map((tag) => (
-      <span>{tag}</span>
-    ))}
+<h2 class="text-xl pl-1 pb-2">{title} <StatusBadge status={status}/></h2>
+<a href={`/projects/${project.id}`}>
+    <div class="border border-rule bg-paper-deep p-2">
+    <div>
+      <img
+          src={thumbnail}
+          alt={title}
+          class="aspect-video border border-rule-strong"
+      />
+      <p class="my-2">{summary}</p>
+      {tags.map((tag) => (
+        <Tag tagName={tag}/>
+      ))}
+    </div>
   </div>
 </a>

@@ -1,0 +1,12 @@
+---
+interface Props {
+    status: string
+}
+
+const { status } = Astro.props;
+---
+
+{status === "wip" ?
+<p class="font-thin text-xs bg-rule border border-rule-strong py-0.5 px-1 w-fit inline-flex mr-1">
+    WIP
+</p> : null}
