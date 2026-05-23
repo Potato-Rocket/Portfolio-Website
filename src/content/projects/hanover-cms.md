@@ -2,8 +2,7 @@
 title: Hanover Insurance CMS
 summary: Full-stack content management system built for a real client in a software engineering course.
 status: complete
-tileSize: large
-priority: 2
+featured: true
 tags:
   - web
   - fullstack
@@ -13,7 +12,8 @@ thumbnail: /thumbnails/hanover-cms.png
 links:
   github: https://github.com/CS3733-TeamB-2026/teamB-protoype
   live: https://hanoveribank.com/
-date: 2025-01-01
+startDate: 2025-03-01
+endDate: 2025-05-05
 ---
 
 ## Overview

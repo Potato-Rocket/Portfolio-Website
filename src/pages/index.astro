@@ -2,45 +2,20 @@
 import { getCollection } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import Layout from "../layouts/Layout.astro";
-import ProjectTile from "../components/ProjectTile.astro";
+import FeaturedCard from "../components/FeaturedCard.astro";
 
 const projects: CollectionEntry<"projects">[] = await getCollection("projects");
-projects.sort((a, b) => a.data.priority - b.data.priority);
-
-const featured = projects.filter((p) => p.data.tileSize === "large");
-const rest = projects.filter((p) => p.data.tileSize !== "large");
-
-const featuredOdd = featured.length % 2 !== 0;
+const featured = projects.filter((p) => p.data.featured);
 ---
 
 <Layout>
-  <main class="max-w-7xl mx-auto px-4 py-12 flex flex-col gap-4">
-
-    <header class="mb-8">
-      <h1 class="text-4xl font-bold mb-2">Oscar Stomberg</h1>
-      <p class="text-lg text-muted">
-        Robotics Engineering student at WPI — building things with software, hardware, and whatever else it takes.
-      </p>
-    </header>
-
-    <!-- Featured projects (large tiles) -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      {featured.map((project, i) => (
-        <div class:list={[
-          "md:col-span-2",
-          featuredOdd && i === featured.length - 1 && "md:col-start-2",
-        ]}>
-          <ProjectTile project={project} size="large" />
-        </div>
-      ))}
-    </div>
-
-    <!-- All other projects -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      {rest.map((project) => (
-        <ProjectTile project={project} size={project.data.tileSize} />
-      ))}
-    </div>
-
-  </main>
+  <h1>Oscar Stomberg</h1>
+  <p>
+    Robotics engineering student at Worcester Polytechnic Institute. W
+  </p>
+  <div>
+    {featured.map((project) => (
+        <FeaturedCard project={project} />
+    ))}
+  </div>
 </Layout>

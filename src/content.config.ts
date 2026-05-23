@@ -8,8 +8,7 @@ const projects = defineCollection({
     title: z.string(),
     summary: z.string(),
     status: z.enum(["complete", "wip"]),
-    tileSize: z.enum(["large", "medium", "small"]),
-    priority: z.number(),
+    featured: z.boolean().default(false),
     tags: z.array(z.string()),
     thumbnail: z.string().optional(),
     links: z
@@ -19,7 +18,8 @@ const projects = defineCollection({
       })
       .optional(),
     related: z.array(z.string()).optional(),
-    date: z.coerce.date(),
+    startDate: z.coerce.date(),
+    endDate: z.coerce.date().optional(),
   }),
 });
 

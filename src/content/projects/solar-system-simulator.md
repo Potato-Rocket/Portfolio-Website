@@ -2,8 +2,7 @@
 title: Solar System Simulator
 summary: Physics-based solar system simulation with real-time 3D rendering, written in Java.
 status: complete
-tileSize: small
-priority: 3
+featured: true
 tags:
   - java
   - graphics
@@ -14,7 +13,7 @@ links:
   github: https://github.com/Potato-Rocket/Solar-System-Simulator
 related:
   - star-map
-date: 2025-01-01
+startDate: 2025-01-01
 ---
 
 ## Overview
