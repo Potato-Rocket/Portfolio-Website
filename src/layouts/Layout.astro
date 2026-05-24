@@ -1,5 +1,6 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import { Icon } from "astro-icon/components";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
 
@@ -24,6 +25,10 @@ const { title = "Oscar Stomberg" } = Astro.props;
     <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col">
+    <aside class="absolute top-4 left-4 flex items-center gap-2 border border-rule text-ink-muted text-xs px-2 py-1">
+      <Icon name="lucide:construction" class="w-4 h-4 **:stroke-[1.5]" />
+      <span>Site under construction</span>
+    </aside>
     <div class="flex-1">
       <slot />
     </div>

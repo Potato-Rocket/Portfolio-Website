@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from "astro:content";
 
-import Tag from "./Tag.astro";
 import { formatDateRange } from "../lib/dates";
 import { thumbnailPath } from "../lib/thumbnails";
 
@@ -11,7 +10,7 @@ interface Props {
 }
 
 const { project, class: className = "" } = Astro.props;
-const { title, summary, tags, status, startDate, endDate } = project.data;
+const { title, summary, status, startDate, endDate } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
@@ -31,12 +30,7 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
           class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
       />
     </div>
-    <p class="my-3">{summary}</p>
-    <p class="text-ink-muted text-sm my-3">{dateLabel}</p>
-    <div class="flex flex-wrap gap-1">
-      {tags.map((tag) => (
-        <Tag tagName={tag}/>
-      ))}
-    </div>
+    <p class="mt-3 text-lg italic text-ink-muted">{summary}</p>
+    <p class="text-ink-muted text-sm mt-3">{dateLabel}</p>
   </div>
 </a>

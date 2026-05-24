@@ -4,9 +4,10 @@ import Icon from "../assets/Icon.svg";
 interface Props {
   tab: "projects";
   projectTitle?: string;
+  isWip?: boolean;
 }
 
-const { tab, projectTitle } = Astro.props;
+const { tab, projectTitle, isWip = false } = Astro.props;
 const isProjectDetail = tab === "projects" && !!projectTitle;
 
 const linkClass = "text-3xl font-serif hover:underline underline-offset-4 decoration-1";
@@ -37,7 +38,10 @@ const activeClass = "text-3xl font-serif font-bold";
         <span class={activeClass} aria-current="page" transition:name="nav-projects">Projects</span>
       )}
       {isProjectDetail && (
-        <span class={activeClass} aria-current="page">{projectTitle}</span>
+        <span class={activeClass} aria-current="page">
+          {projectTitle}
+          {isWip && <span class="font-light font-sans"> · WIP</span>}
+        </span>
       )}
     </div>
 
