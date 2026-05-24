@@ -15,23 +15,31 @@ const isWip = status === "wip";
 const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
-<a href={`/projects/${project.id}`} class="group flex flex-wrap gap-4">
-  <div class:list={["aspect-video h-32 shrink-0 border border-rule-strong overflow-hidden", { "border-dashed": isWip }]}>
+<a href={`/projects/${project.id}`} class="group flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+  {/* self-start: in mobile flex-col, default align-self is stretch, which would fill the
+      container width and override aspect-video (browsers ignore aspect-ratio when both width
+      and height are set). self-start keeps the thumbnail at its intrinsic aspect-video size. */}
+  <div class:list={["aspect-video h-32 shrink-0 self-start border border-rule-strong overflow-hidden", { "border-dashed": isWip }]}>
     <img
         src={thumbnailPath(project.id)}
         alt={title}
         class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
     />
   </div>
-  <div class="flex-1 min-w-[18rem] max-w-104">
+  {/* max-w-104 applies at every tier so the text block doesn't bulge wider at xs (where the
+      entry col can exceed 416px) than it will at sm+. flex-1 and min-w only kick in at sm where
+      the entry can sit side-by-side with the thumbnail. */}
+  <div class="max-w-104 sm:flex-1 sm:min-w-[18rem]">
     <h2 class="text-xl group-hover:underline underline-offset-2">
       {title}
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
     </h2>
     <p class="text-ink-muted text-sm">{dateLabel}</p>
+    <div class="py-1">
+      {tags.map((tag) => (
+          <Tag tagName={tag}/>
+      ))}
+    </div>
     <p>{summary}</p>
-    {tags.map((tag) => (
-        <Tag tagName={tag}/>
-    ))}
   </div>
 </a>

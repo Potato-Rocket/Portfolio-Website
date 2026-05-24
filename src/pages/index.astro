@@ -11,6 +11,10 @@ const featured = projects.filter((p) => p.data.featured);
 ---
 
 <Layout>
+  <aside class="absolute top-4 left-4 flex items-center gap-2 border border-rule text-ink-muted text-xs px-2 py-1">
+    <Icon name="lucide:construction" class="w-4 h-4 **:stroke-[1.5]" />
+    <span>Site under construction</span>
+  </aside>
   <div class="max-w-7xl mx-auto px-12 pt-16">
     <div class="max-w-2xl mx-auto text-center">
       <h1 class="text-5xl">Oscar Stomberg</h1>
@@ -25,13 +29,15 @@ const featured = projects.filter((p) => p.data.featured);
         <FeaturedCard project={project} class="w-88 max-w-full" />
       ))}
     </div>
-    <a
-        href="/projects"
-        class="group flex items-center gap-2 w-fit mx-auto underline underline-offset-2 text-2xl font-serif my-20"
-    >
-      See more Projects
-      <Icon name="lucide:arrow-right" class="w-6 h-6 transition-transform duration-300 ease-out group-hover:translate-x-1" />
-    </a>
+    <div class="text-center my-20">
+      <a
+          href="/projects"
+          class="group inline-flex items-center gap-2 underline underline-offset-2 text-2xl font-serif whitespace-nowrap"
+      >
+        See more Projects
+        <Icon name="lucide:arrow-right" class="w-6 h-6 transition-transform duration-300 ease-out group-hover:translate-x-1" />
+      </a>
+    </div>
     <hr class="border-rule" />
     <PersonalLinks size="lg" class="justify-center mt-12" />
   </div>

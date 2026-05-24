@@ -15,8 +15,24 @@ const activeClass = "text-3xl font-serif font-bold";
 ---
 
 <header class="border-b border-rule py-4">
-  <nav class="grid grid-cols-[1fr_auto_1fr] items-center max-w-6xl mx-auto px-12 gap-6">
-    <div class="flex items-center justify-end gap-6">
+  {/*
+    Non-detail pages keep the 3-col grid (1fr auto 1fr) at every width — the centered "Projects"
+    label is short enough to fit even at 300px. Detail pages stack at <sm: long titles overflow
+    the auto column when forced to share space with the breadcrumb on a single row, so we drop the
+    grid below sm and stack breadcrumb-above-title instead. Horizontal padding follows the rest of
+    the site (px-4 mobile, px-12 sm+).
+  */}
+  <nav class:list={[
+    "max-w-6xl mx-auto px-4 sm:px-12",
+    isProjectDetail
+      ? "flex flex-col gap-2 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-6"
+      : "grid grid-cols-[1fr_auto_1fr] items-center gap-6",
+  ]}>
+    <div class:list={[
+      "flex items-center gap-6",
+      // Stacked detail navbar anchors the breadcrumb row left; grid layouts justify it right against the centered title.
+      isProjectDetail ? "justify-start sm:justify-end" : "justify-end",
+    ]}>
       <a
         href="/"
         aria-label="Home"
@@ -33,7 +49,13 @@ const activeClass = "text-3xl font-serif font-bold";
       )}
     </div>
 
-    <div class="flex items-center justify-center">
+    <div class:list={[
+      "flex items-center",
+      // <xs: center (title likely wraps; centered reads better when wrapped).
+      // xs+ stacked: left-align under the breadcrumb (title fits on one line at this width).
+      // sm+ grid: surrounding 1fr cells center the auto column, so inner align is moot.
+      isProjectDetail ? "justify-center text-center xs:justify-start xs:text-left" : "justify-center",
+    ]}>
       {!isProjectDetail && (
         <span class={activeClass} aria-current="page" transition:name="nav-projects">Projects</span>
       )}
@@ -45,7 +67,8 @@ const activeClass = "text-3xl font-serif font-bold";
       )}
     </div>
 
-    <div></div>
+    {/* Right spacer balances the 3-col grid. Hidden in stacked mode where it would just be an empty row. */}
+    <div class={isProjectDetail ? "hidden sm:block" : ""}></div>
   </nav>
 </header>
 
