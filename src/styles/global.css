@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "@fontsource-variable/source-serif-4";
-/*@import "@fontsource-variable/figtree";*/
+@import "@fontsource-variable/source-sans-3";
 @plugin "@tailwindcss/typography";
 
 @theme {
@@ -11,7 +11,7 @@
   --color-rule: #d5cfc2;
   --color-rule-strong: #1c1a17;
 
-  --font-sans: "Figtree Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Source Sans 3 Variable", ui-sans-serif, system-ui, sans-serif;
   --font-serif: "Source Serif 4 Variable", ui-serif, Georgia, serif;
 }
 

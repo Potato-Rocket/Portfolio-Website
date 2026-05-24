@@ -12,8 +12,8 @@ thumbnail: /thumbnails/hanover-cms.png
 links:
   github: https://github.com/CS3733-TeamB-2026/teamB-protoype
   live: https://hanoveribank.com/
-startDate: 2025-03-01
-endDate: 2025-05-05
+startDate: 2026-03-01
+endDate: 2026-05-05
 ---
 
 ## Overview

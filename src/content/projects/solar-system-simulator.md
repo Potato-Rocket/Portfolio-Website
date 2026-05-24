@@ -13,7 +13,7 @@ links:
   github: https://github.com/Potato-Rocket/Solar-System-Simulator
 related:
   - star-map
-startDate: 2025-01-01
+startDate: 2023-01-01
 ---
 
 ## Overview

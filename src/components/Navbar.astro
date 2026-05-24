@@ -1,11 +1,18 @@
 ---
 interface Props {
-    tab: "projects";
+    tab: "home" | "projects";
 }
+
+const { tab } = Astro.props;
+
+const linkBase = "px-2 py-1 border border-transparent";
+const linkActive = "px-2 py-1 border border-rule-strong";
 ---
 
-<div class="border-b border-rule py-4 px-16">
-    <h1 class="text-5xl inline-flex">Oscar Stomberg</h1>
-    <a class="inline-flex border border-rule-strong max-h-full">Home</a>
-    <a class="inline-flex">Projects</a>
+<div class="border-b border-rule py-4 px-16 flex items-baseline justify-between">
+    <a href="/" class="text-5xl font-serif">Oscar Stomberg</a>
+    <nav class="flex gap-4 items-baseline">
+        <a href="/" class={tab === "home" ? linkActive : linkBase}>Home</a>
+        <a href="/projects" class={tab === "projects" ? linkActive : linkBase}>Projects</a>
+    </nav>
 </div>

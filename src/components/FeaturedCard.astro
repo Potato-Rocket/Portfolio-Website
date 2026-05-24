@@ -2,7 +2,6 @@
 import type { CollectionEntry } from "astro:content";
 
 import Tag from "./Tag.astro";
-import StatusBadge from "./StatusBadge.astro";
 
 interface Props {
   project: CollectionEntry<"projects">;
@@ -10,21 +9,25 @@ interface Props {
 
 const { project } = Astro.props;
 const { title, summary, tags, status, thumbnail } = project.data;
+const isWip = status === "wip";
 ---
 
-<h2 class="text-xl pl-1 pb-2">{title} <StatusBadge status={status}/></h2>
-<a href={`/projects/${project.id}`}>
-    <div class="border border-rule bg-paper-deep p-2">
-    <div>
+<a href={`/projects/${project.id}`} class="block group">
+  <h2 class="text-xl pl-1 pb-2">
+    {title}
+    {isWip ? <span class="font-light font-sans">· WIP</span> : null}
+  </h2>
+  <div class="border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-2">
+    <div class="aspect-video border border-rule-strong overflow-hidden">
       <img
           src={thumbnail}
           alt={title}
-          class="aspect-video border border-rule-strong"
+          class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
       />
-      <p class="my-2">{summary}</p>
-      {tags.map((tag) => (
-        <Tag tagName={tag}/>
-      ))}
     </div>
+    <p class="my-2">{summary}</p>
+    {tags.map((tag) => (
+      <Tag tagName={tag}/>
+    ))}
   </div>
 </a>
