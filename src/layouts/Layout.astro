@@ -1,5 +1,8 @@
 ---
 import { ClientRouter } from "astro:transitions";
+import { Icon } from "astro-icon/components";
+import Footer from "../components/Footer.astro";
+import DarkModeToggle from "../components/DarkModeToggle.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -12,6 +15,18 @@ const { title = "Oscar Stomberg" } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
+    <script is:inline>
+      (function () {
+        const applyTheme = () => {
+          const stored = localStorage.getItem("theme");
+          const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          const isDark = stored === "dark" || (!stored && prefersDark);
+          document.documentElement.classList.toggle("dark", isDark);
+        };
+        applyTheme();
+        document.addEventListener("astro:after-swap", applyTheme);
+      })();
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -22,7 +37,15 @@ const { title = "Oscar Stomberg" } = Astro.props;
     <title>{title}</title>
     <ClientRouter />
   </head>
-  <body>
-    <slot />
+  <body class="min-h-screen flex flex-col">
+    <aside class="absolute top-4 left-4 flex items-center gap-2 border border-rule text-ink-muted text-xs px-2 py-1">
+      <Icon name="lucide:construction" class="w-4 h-4 **:stroke-[1.5]" />
+      <span>Site under construction</span>
+    </aside>
+    <div class="flex-1">
+      <slot />
+    </div>
+    <Footer />
+    <DarkModeToggle />
   </body>
 </html>

@@ -8,7 +8,6 @@ tags:
   - graphics
   - physics
   - simulation
-thumbnail: /thumbnails/solar-system-simulator.png
 links:
   github: https://github.com/Potato-Rocket/Solar-System-Simulator
 related:

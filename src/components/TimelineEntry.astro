@@ -3,27 +3,28 @@ import type { CollectionEntry } from "astro:content";
 
 import Tag from "./Tag.astro";
 import { formatDateRange } from "../lib/dates";
+import { thumbnailPath } from "../lib/thumbnails";
 
 interface Props {
   project: CollectionEntry<"projects">;
 }
 
 const { project } = Astro.props;
-const { title, summary, tags, status, thumbnail, startDate, endDate } = project.data;
+const { title, summary, tags, status, startDate, endDate } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
-<a href={`/projects/${project.id}`} class="group flex gap-4">
+<a href={`/projects/${project.id}`} class="group flex flex-wrap gap-4">
   <div class:list={["aspect-video h-32 shrink-0 border border-rule-strong overflow-hidden", { "border-dashed": isWip }]}>
     <img
-        src={thumbnail}
+        src={thumbnailPath(project.id)}
         alt={title}
         class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
     />
   </div>
-  <div>
-    <h2 class="text-xl">
+  <div class="flex-1 min-w-[18rem] max-w-104">
+    <h2 class="text-xl group-hover:underline underline-offset-2">
       {title}
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
     </h2>

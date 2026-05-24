@@ -1,0 +1,108 @@
+\documentclass[10pt, roman]{moderncv} 
+\usepackage[margin=0.75in, letterpaper]{geometry}
+
+\usepackage{multicol}
+\usepackage[normalem]{ulem}
+
+\moderncvcolor{burgundy}
+\moderncvstyle{classic}
+
+\firstname{Oscar}
+\familyname{Stomberg}
+\title{Robotics Engineering Student at WPI}
+\email{owstomberg@wpi.edu}
+\social[github][github.com/Potato-Rocket]{Potato-Rocket}
+\social[linkedin]{oscar-w-stomberg}
+\homepage{oscar.stomberg.us}
+
+\begin{document}
+\makecvtitle
+\let\oldhref\href
+\renewcommand{\href}[2]{\oldhref{#1}{\uline{#2}}}
+
+\vspace{-3em}
+\section{Education}
+\cventry{May 2027}{Worcester Polytechnic Institute (WPI)}{Worcester, MA}{}{}
+{\textbf{B.S.} in Robotics Engineering (anticipated)\\
+	\textbf{Minor}: Manufacturing Engineering\\
+	\textbf{Relevant Coursework}: Embedded Systems for Robotics, Unified Robotics I--III, Control Engineering, Statics, Dynamics, Materials Science, Object-Oriented Design, Systems Programming, Computer Networks, Full-Stack Software Engineering, Ordinary Differential Equations, Linear Algebra, Probability Theory}
+
+\section{Skills}
+
+\subsection{Fabrication}
+\cvlistitem{\textbf{3D printing}, \textbf{Laser cutting}, \textbf{CAM} (strong experience with functional part design)}
+\cvlistitem{\textbf{Woodworking} (general shop skills)}
+
+\subsection{Hardware \& Electronics}
+\cvlistitem{\textbf{Electronics prototyping}, \textbf{Soldering}, \textbf{KiCad} (schematic design)}
+\cvlistitem{\textbf{Microcontrollers}: Arduino, RP2040, ESP32}
+\cvlistitem{\textbf{Sensors}: IMU, encoders, IR rangefinders}
+\cvlistitem{\textbf{Protocols}: I2C, SPI, UART}
+
+\subsection{Robotics}
+\cvlistitem{\textbf{Forward \& inverse kinematics}, \textbf{Sensor fusion}, \textbf{Trajectory planning}}
+\cvlistitem{\textbf{Navigation}, \textbf{Proprioception}, \textbf{Computer vision} (OpenCV)}
+
+\subsection{Programming Languages}
+\cvlistitem{\textbf{Python}: NumPy, Pandas, Matplotlib, Flask, Requests, OpenCV, etc.}
+\cvlistitem{\textbf{C/C++}, particularly for embedded and other low-level applications}
+\cvlistitem{\textbf{TypeScript}, \textbf{Node.js}, \textbf{Express}, \textbf{React}}
+\cvlistitem{\textbf{PostgreSQL}, \textbf{Prisma}, \textbf{Tailwind CSS} + \textbf{shadcn/ui}}
+\cvlistitem{\textbf{MATLAB}, \textbf{Java}, \textbf{JavaScript}, \textbf{Bash}}
+
+\subsection{Infrastructure \& DevOps}
+\cvlistitem{\textbf{Linux}, \textbf{Docker}, \textbf{Docker Compose}, \textbf{Ansible}, \textbf{Git}, \textbf{GitHub}, \textbf{Jira}}
+\cvlistitem{\textbf{Networking}: DNS (Technitium), reverse proxy (Caddy), TLS, SSH, Tailscale}
+\cvlistitem{\textbf{Monitoring \& backups}: Uptime Kuma, Beszel, Healthchecks, Restic, Rclone, Ntfy}
+
+\subsection{Software}
+\cvlistitem{\textbf{CAD}: Proficient in SOLIDWORKS, experienced in Inventor, Fusion360, and FreeCAD}
+\cvlistitem{\textbf{Microsoft 365}, \textbf{\LaTeX}, \textbf{Zotero}, \textbf{Simulink}}
+\cvlistitem{\textbf{JetBrains IDEs}, \textbf{VS Code}, \textbf{Vim/Neovim}}
+
+\subsection{Languages}
+\cvlistitem{\textbf{Spanish}: Proficient in reading, writing, listening, and speaking (CEFR B1)}
+
+\section{Work Experience}
+\cventry{Fall 2025}{Undergraduate Instructional Assistant}{WPI Department of Mechanical Engineering}{}{}{Assisted in grading and correcting homework assignments and exams for ES 3011: Control Engineering I. Subjects included transfer functions, stability analysis, root-locus plots, classical and modern control engineering.}
+
+\section{Projects}
+\subsection{Curricular}
+\cventry{Spring 2026}{\href{https://hanoveribank.com/}{Software Engineering}}{collaboration with Hanover Insurance}{WPI}{}
+	{Worked as Assistant Lead Developer in a ten person team to apply Agile development methodologies in the creation of a web-based internal content management system for Hanover Insurance. The final application included AI powered full-text search, advanced filtering, tagging, and content organization, a built in content review workflow, user and role management, data analytics, and a customizable dashboard. The application was deployed using AWS, Supabase, and Cloudflare.}
+\cventry{2025--2026}{Interactive Qualifying Project}{Waste Management \& Recycling}{}{Akyem Dwenase, Ghana} 
+	{Developed and introduced a sustainable recycling program for a rural Ghanaian village. Co-designed with stakeholders to create solutions suited to the local culture and context; Conducted field observations and interviews with community members. Increased productivity and decreased occupational hazards for local recycling collectors.}
+
+\cventry{Spring 2025}{Stem-inism}{Final Project}{}{}
+	{Researched the potential utility and pitfalls of AI chatbots in addressing the national mental health care shortage, presented a set of policy recommendations for ethical development and use.}
+	
+\cventry{Fall 2024}{Introduction to Robotics}{Team Lab Project}{WPI}{}
+	{Designed, assembled, and programmed a robot with a team to navigate an "orchard", grab, and sort "fruits" into color-coded baskets. Implemented line-following, pathfinding, and computer vision for navigation and sorting.}
+
+\cventry{Fall 2023}{Great Problems Seminar}{Climate Change}{WPI}{}
+	{Worked with a team to research adaptation methods for the increasing frequency and intensity of storms in coastal India. Produced a website and presented a poster with our findings.}
+
+\cventry{Spring 2023}{Engineering Design \& Development}{Capstone Project}{JRHS}{}
+	{Collaborated with peers to develop a smart trash can, aiming to help reduce household waste production. Leveraged our skills in 3D printing, electronics, and programming.}
+
+\subsection{Personal}
+\cventry{2025--Present}{Selfhosting}{}{}{}
+	{Built and maintained a multi-node home server cluster managed with Ansible. Deployed 15+ containerized applications using Docker Compose; Implemented reverse proxy and private DNS; Automated backups with Restic; Integrated robust monitoring stack and home automation systems.}
+
+\cventry{2025--2026}{\href{https://github.com/Potato-Rocket/Daily-Greeting-Generator}{Daily Greeting Generator}}{}{}{}
+	{A Python script combining web APIs and other random inputs to generate whimsical daily wake-up announcements using locally hosted LLMs. Served on a Flask web server, containerized with Docker and deployed on local infrastructure; Integrated with Home Assistant automations and Piper TTS.}
+	
+\cventry{Fall 2025}{\href{https://github.com/Potato-Rocket/WPI-Class-Schedule-Importer}{WPI Class Schedule Importer}}{}{}{}
+	{TUI application written in Python to facilitate importing class schedules from WPI's Workday to a calendar format. Parses an input spreadsheet, allows the user to select subsets of terms/classes/sections, produces an iCal file. Provides convenient file dialogs.}
+	
+\cventry{Spring 2025}{\href{https://github.com/Potato-Rocket/Plant-Datalogger}{Plant Datalogger}}{}{}{}
+	{Plant monitoring system developed on the Raspberry Pi Pico W board (RP2040). Written with the C SDK, implements custom logging, NTP, calibration, and error management modules. Plans to integrate MQTT $\rightarrow$ InfluxDB $\rightarrow$ Grafana for data storage and visualization, deploy on custom PCB.}
+	
+\cventry{2021, 2025}{\href{https://github.com/Potato-Rocket/Solar-System-Simulator}{Solar System Simulator}}{}{}{}
+	{A standalone Java application to simulate 3D gravitational physics. Implements multiple integration methods and optimized for multi-threaded performance; 3D graphics engine built on top of standard \texttt{Graphics2D} library.}
+
+\section{Activities/Leadership}
+\cventry{2023--Present}{Captain, Former Secretary, Run Leader}{WPI Running Club}{}{}
+	{Organized weekly run leader schedules, planned routes and other club activities, led runs and workouts. Helped arrange club participation in NIRCA races.}
+
+\end{document}

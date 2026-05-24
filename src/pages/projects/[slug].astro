@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar.astro";
 import Tag from "../../components/Tag.astro";
 import ProjectLinks from "../../components/ProjectLinks.astro";
 import { formatDateRange } from "../../lib/dates";
+import { thumbnailPath } from "../../lib/thumbnails";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -17,7 +18,7 @@ export async function getStaticPaths() {
 
 type Props = { project: CollectionEntry<"projects"> };
 const { project } = Astro.props as Props;
-const { title, summary, status, tags, thumbnail, links, startDate, endDate } = project.data;
+const { title, summary, status, tags, links, startDate, endDate } = project.data;
 const { Content } = await render(project);
 
 const isWip = status === "wip";
@@ -25,31 +26,25 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
 <Layout title={title}>
-  <Navbar tab="projects" projectTitle={title} />
+  <Navbar tab="projects" projectTitle={title} isWip={isWip} />
   <main class="max-w-3xl mx-auto px-6 sm:px-12 py-12">
     <article class="prose prose-paper max-w-none">
       <header class="not-prose mb-10 pb-8 border-b border-rule">
-        <h1 class="sr-only">{title}</h1>
-        {thumbnail && (
-          <div class:list={[
-            "aspect-video border border-rule-strong overflow-hidden mb-4",
-            { "border-dashed": isWip },
-          ]}>
-            <img src={thumbnail} alt={title} class="w-full h-full object-cover" />
-          </div>
-        )}
-        <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 text-sm text-ink-muted">
-          <div class="flex flex-wrap items-baseline gap-x-3 gap-y-2">
-            <span>
-              {dateLabel}{isWip && <span class="font-light"> · WIP</span>}
-            </span>
-            {tags.length > 0 && (
-              <div class="flex flex-wrap gap-1">
-                {tags.map((tag) => <Tag tagName={tag} />)}
-              </div>
-            )}
-          </div>
-          <ProjectLinks links={links} />
+        <h1 class="sr-only">{title}{isWip ? " (work in progress)" : ""}</h1>
+        <div class:list={[
+          "aspect-video border border-rule-strong overflow-hidden mb-4",
+          { "border-dashed": isWip },
+        ]}>
+          <img src={thumbnailPath(project.id)} alt={title} class="w-full h-full object-cover" />
+        </div>
+        <p class="text-sm text-ink-muted mb-3">{dateLabel}</p>
+        <div class="flex flex-wrap items-baseline gap-x-6 gap-y-3 text-sm text-ink-muted">
+          {tags.length > 0 && (
+            <div class="flex flex-wrap gap-1">
+              {tags.map((tag) => <Tag tagName={tag} />)}
+            </div>
+          )}
+          <ProjectLinks links={links} class="ml-auto" />
         </div>
         <p class="mt-6 text-lg italic text-ink-muted">{summary}</p>
       </header>
