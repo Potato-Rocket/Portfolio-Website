@@ -56,7 +56,7 @@ Rules:
 - `status: wip` means actively in progress; `ongoing` means indefinitely maintained; `complete` means done.
 - `featured: true` only for the three large-tile projects.
 - If you don't know the GitHub URL, omit the `links` block entirely rather than leaving a placeholder.
-- For `periods`: if you don't know the real history, use a single entry with a rough date and no label. Prefer the `/project-timeline` skill when user wants an accurate history.
+- For `periods`: run `/project-timeline` on the repo before writing the stub. If no repo exists, ask the user for an approximate year or date range — don't invent a placeholder.
 - The slug is the filename (without `.md`). Match the inventory slugs above exactly.
 
 ## Stub Template
@@ -107,8 +107,9 @@ TODO
 
 2. **Gather metadata.** For each project:
    - Cross-reference the inventory above for tags, status, and featured flag.
-   - Ask the user only for things you can't derive: GitHub URL, approximate date, any known `related` slugs beyond what's listed. Keep questions tight — one question per unknown, not a form.
+   - Ask the user only for things you can't derive: GitHub URL, any known `related` slugs beyond what's listed. Keep questions tight — one question per unknown, not a form.
    - If creating multiple stubs at once, batch your questions rather than asking per-project.
+   - **For `periods`:** Always run `/project-timeline` on the repo before writing the stub (when a repo exists). If no repo, ask the user for an approximate year or date range rather than using a placeholder.
 
 3. **Write the files.** Create `src/content/projects/<slug>.md` for each project. Use the template above. Don't write content in the `TODO` sections — that's for later.
 
