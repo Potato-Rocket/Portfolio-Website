@@ -1,0 +1,11 @@
+---
+interface Props {
+    tagName: string
+}
+
+const { tagName } = Astro.props;
+---
+
+<p class="font-thin text-xs bg-rule border border-rule-strong py-0.5 px-1 w-fit inline-flex mr-1">
+    {tagName.toUpperCase()}
+</p>
