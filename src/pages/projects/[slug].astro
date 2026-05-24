@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
+import Navbar from "../../components/Navbar.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -17,6 +18,7 @@ const { Content } = await render(project);
 ---
 
 <Layout title={project.data.title}>
+  <Navbar tab="projects" projectTitle={project.data.title} />
   <main>
     <article>
       <h1>{project.data.title}</h1>

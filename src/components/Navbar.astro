@@ -1,18 +1,73 @@
 ---
+import Icon from "../assets/Icon.svg";
+
 interface Props {
-    tab: "home" | "projects";
+  tab: "projects";
+  projectTitle?: string;
 }
 
-const { tab } = Astro.props;
+const { tab, projectTitle } = Astro.props;
+const isProjectDetail = tab === "projects" && !!projectTitle;
 
-const linkBase = "px-2 py-1 border border-transparent";
-const linkActive = "px-2 py-1 border border-rule-strong";
+const linkClass = "text-3xl font-serif hover:underline underline-offset-4 decoration-1";
+const activeClass = "text-3xl font-serif font-bold";
 ---
 
-<div class="border-b border-rule py-4 px-16 flex items-baseline justify-between">
-    <a href="/" class="text-5xl font-serif">Oscar Stomberg</a>
-    <nav class="flex gap-4 items-baseline">
-        <a href="/" class={tab === "home" ? linkActive : linkBase}>Home</a>
-        <a href="/projects" class={tab === "projects" ? linkActive : linkBase}>Projects</a>
-    </nav>
-</div>
+<header class="border-b border-rule py-4">
+  <nav class="grid grid-cols-[1fr_auto_1fr] items-center max-w-6xl mx-auto px-12 gap-6">
+    <div class="flex items-center justify-end gap-6">
+      <a
+        href="/"
+        aria-label="Home"
+        class="inline-block transition-transform duration-300 ease-out hover:scale-110"
+        transition:name="nav-brand"
+      >
+        <Icon class="w-8 h-8" />
+      </a>
+      {isProjectDetail && (
+        <>
+          <a href="/projects" class={linkClass} transition:name="nav-projects">Projects</a>
+          <span class="text-3xl font-serif text-ink-muted" aria-hidden="true">/</span>
+        </>
+      )}
+    </div>
+
+    <div class="flex items-center justify-center">
+      {!isProjectDetail && (
+        <span class={activeClass} aria-current="page" transition:name="nav-projects">Projects</span>
+      )}
+      {isProjectDetail && (
+        <span class={activeClass} aria-current="page">{projectTitle}</span>
+      )}
+    </div>
+
+    <div></div>
+  </nav>
+</header>
+
+<style is:global>
+  ::view-transition-group(nav-brand),
+  ::view-transition-group(nav-projects) {
+    animation-duration: 400ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  ::view-transition-old(nav-brand),
+  ::view-transition-new(nav-brand),
+  ::view-transition-old(nav-projects),
+  ::view-transition-new(nav-projects) {
+    animation-duration: 150ms;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(nav-brand),
+    ::view-transition-group(nav-projects),
+    ::view-transition-old(nav-brand),
+    ::view-transition-new(nav-brand),
+    ::view-transition-old(nav-projects),
+    ::view-transition-new(nav-projects) {
+      animation: none;
+    }
+  }
+</style>
