@@ -7,15 +7,16 @@ import { thumbnailPath } from "../lib/thumbnails";
 
 interface Props {
   project: CollectionEntry<"projects">;
+  class?: string;
 }
 
-const { project } = Astro.props;
+const { project, class: className = "" } = Astro.props;
 const { title, summary, tags, status, startDate, endDate } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
-<a href={`/projects/${project.id}`} class="block group">
+<a href={`/projects/${project.id}`} class:list={["block group", className]}>
   <div class="flex items-baseline justify-between pl-1 pb-2">
     <h2 class="text-xl">
       {title}

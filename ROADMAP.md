@@ -2,10 +2,7 @@
 
 ## Minor improvements
 
-1. We need the arrangement of feature cards to be revamped. Cards should be a fixed size, the max cards per row should
-   be determined by the screen size. If there is an incomplete row, they should be centered. Open questrions remain
-   around horizontal spacing.
-2. Dark mode toggle in the bottom right corner.
+1. Dark mode toggle in the bottom right corner.
 
 ## Major changes
 
