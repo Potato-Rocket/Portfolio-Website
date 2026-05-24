@@ -12,7 +12,8 @@
     "astro": "astro",
     "generate-types": "wrangler types",
     "build-resume": "cd resume && pdflatex -interaction=nonstopmode resume.tex >/dev/null && cp resume.pdf ../public/files/Oscar-Stomberg-Resume.pdf",
-    "deploy": "npm run build && wrangler deploy"
+    "deploy": "npm run build && wrangler deploy",
+    "preprocess": "tsx scripts/sync-tags.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.9",
@@ -28,6 +29,9 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "js-yaml": "^4.1.1",
+    "tsx": "^4.22.3",
     "wrangler": "^4.93.0"
   }
 }

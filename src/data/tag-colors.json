@@ -1,0 +1,22 @@
+{
+  "_orphaned": [],
+  "c": 25,
+  "devops": 145,
+  "docker": 145,
+  "embedded": 25,
+  "fullstack": 215,
+  "graphics": 250,
+  "hardware": 25,
+  "image-processing": 250,
+  "infrastructure": 145,
+  "java": 45,
+  "linux": 145,
+  "physics": 250,
+  "python": 280,
+  "react": 215,
+  "rp2040": 25,
+  "scripting": 280,
+  "simulation": 250,
+  "typescript": 215,
+  "web": 215
+}

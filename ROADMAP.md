@@ -2,7 +2,7 @@
 
 ## Minor improvements
 
-1. Replace tag colors based on json updated at build time.
+1. ~~Replace tag colors based on json updated at build time.~~ Done — `src/data/tag-colors.json` maps tags to hue values; `npm run sync-tags` keeps it in sync. Tune hues manually then commit.
 
 ## Planned features
 

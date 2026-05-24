@@ -22,7 +22,7 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
     </h2>
   </div>
-  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-4", { "border-dashed": isWip }]}>
+  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors p-4", { "border-dashed": isWip }]}>
     <div class="aspect-video border border-rule-strong overflow-hidden">
       <img
           src={thumbnailPath(project.id)}
