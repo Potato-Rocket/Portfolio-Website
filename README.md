@@ -4,43 +4,39 @@ Personal engineering portfolio built with Astro, deployed to Cloudflare Pages.
 
 ## Tech Stack
 
-- **Framework**: Astro 6 with content collections
-- **Interactive components**: React (tag filter bar, tile grid) via Astro islands (`client:load`)
-- **Styling**: Tailwind CSS
+- **Framework**: Astro 6, fully static output
+- **Styling**: Tailwind CSS v4 (via `@tailwindcss/vite`) + `@tailwindcss/typography`
+- **Fonts**: `@fontsource-variable/source-serif-4`, `@fontsource-variable/source-sans-3`
+- **Icons**: `astro-icon` with the Lucide icon set
 - **Language**: TypeScript throughout
-- **Deployment**: Cloudflare Pages via Wrangler, custom domain `oscar.stomberg.us`
-- **Content**: Markdown/MDX files with typed frontmatter schemas
-
-### Dependencies not yet installed
-
-- `@astrojs/react` — React integration for interactive islands
-- `@astrojs/tailwind` or `@tailwindcss/vite` — Tailwind integration
-- `@astrojs/mdx` — MDX support (optional, for embedding components in project pages)
+- **Content**: Markdown files in a typed Astro content collection
+- **Deployment**: Cloudflare Pages, custom domain `oscar.stomberg.us`
 
 ## Project Structure
 
 ```
 src/
+├── content.config.ts           # Content collection schema (Zod)
 ├── content/
-│   ├── config.ts              # Content collection schema
-│   └── projects/              # One .md or .mdx file per project
+│   └── projects/               # One .md file per project
 ├── components/
-│   ├── ProjectGrid.tsx        # Filterable tile grid (React island)
-│   ├── ProjectTile.tsx        # Individual tile, variable sizes
-│   ├── TagFilter.tsx          # Tag filter bar
-│   └── ...                    # Astro components for layout pieces
+│   ├── Navbar.astro            # Top nav with view-transition names
+│   ├── FeaturedCard.astro      # Homepage featured-project tile
+│   ├── TimelineEntry.astro     # Timeline row on /projects
+│   ├── Tag.astro               # Filled tag pill
+│   └── ProjectLinks.astro      # Shared GitHub/Live link row
 ├── layouts/
-│   ├── BaseLayout.astro       # Shared HTML head, nav, footer
-│   └── ProjectLayout.astro    # Project page template
+│   └── Layout.astro            # Shared HTML head + ClientRouter
 ├── pages/
-│   ├── index.astro            # Landing page with grid
-│   └── projects/
-│       └── [...slug].astro    # Dynamic route for project pages
+│   ├── index.astro             # Home: name, tagline, featured tiles
+│   ├── projects.astro          # Reverse-chronological timeline
+│   └── projects/[slug].astro   # Dynamic project detail page
+├── lib/
+│   └── dates.ts                # formatDateRange helper
 └── styles/
-    └── global.css
+    └── global.css              # Tailwind import, theme tokens, prose-paper utility
 public/
-├── resume.pdf
-└── thumbnails/                # Project thumbnail images
+└── thumbnails/                 # Project thumbnail images
 ```
 
 ## Commands
@@ -49,6 +45,6 @@ public/
 npm install          # Install dependencies
 npm run dev          # Dev server at localhost:4321
 npm run build        # Build to ./dist/
-npm run preview      # Build + preview via wrangler dev
-npm run deploy       # Build + deploy via wrangler
+npm run preview      # Preview built output
+npx astro check      # Type-check .astro + .tsx files
 ```
