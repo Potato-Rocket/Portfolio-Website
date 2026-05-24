@@ -8,7 +8,6 @@ tags:
   - devops
   - linux
   - docker
-thumbnail: /thumbnails/selfhosting.png
 related:
   - daily-greeting-generator
 startDate: 2025-01-01

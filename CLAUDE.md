@@ -12,17 +12,18 @@ npx astro check        # Astro-aware type check (covers .astro + .tsx files)
 No separate `tsc` script is configured — `astro check` is the right tool here since it understands Astro's component types.
 
 ### Verifying UI changes
-After frontend changes, make sure that the site if visually checked thoroughly in a browser.
+After frontend changes, make sure that the site if visually checked thoroughly in a browser. Note: **view transitions only fire on real client-side navigation** between pages, not on hot reload — to verify the navbar morph/crossfade you have to click between `/`, `/projects`, and a project detail page in the running dev server.
 
 ### Using documentation
 Always fetch current docs via context7 before working with any library API — Astro, Tailwind v4, and the Typography plugin all move fast and training data may be stale. Especially important for:
 - Astro content collections schema API
 - Astro view-transition / `ClientRouter` directives
 - Tailwind v4 `@utility` / `@theme` syntax
+- `astro-icon` component API and icon-set imports
 - Cloudflare Workers / `@astrojs/cloudflare` adapter / Wrangler config
 
 ### Adding a new project
-Drop a `.md` file in `src/content/projects/` with the frontmatter schema below. No other files need to change; the homepage picks up `featured: true` entries and `/projects` picks up everything.
+Drop a `.md` file in `src/content/projects/` with the frontmatter schema below. Add a matching `public/thumbnails/<slug>.png` (resolved by `thumbnailPath()` in `src/lib/thumbnails.ts` — no frontmatter field). No other files need to change; the homepage picks up `featured: true` entries and `/projects` picks up everything.
 
 ## Deployment & Config
 
@@ -63,7 +64,6 @@ summary: "Multi-node home server cluster managed with Ansible."
 status: "complete"           # "complete" | "wip" | "ongoing"
 featured: false              # true → appears on home page
 tags: ["infrastructure", "devops", "linux", "docker"]
-thumbnail: "/thumbnails/selfhosting.png"   # path under public/
 links:
   github: "https://github.com/..."
   live: "https://..."
@@ -92,12 +92,21 @@ Theme tokens live in `src/styles/global.css` under `@theme`:
 
 ## Components
 
-- `Layout.astro` — wraps the page in `<html>`, includes `<ClientRouter />` for view transitions.
-- `Navbar.astro` — top bar; on project detail pages renders `Projects / <title>` with a view-transition name so the "Projects" label morphs between routes.
+- `Layout.astro` — wraps the page in `<html>`, includes `<ClientRouter />` for view transitions. Body is `min-h-screen flex flex-col` with a `flex-1` slot wrapper so `Footer` sticks to the bottom on short pages.
+- `Navbar.astro` — top bar. **Not rendered on `/`** (the hero carries the brand there). Uses a 3-column grid (`1fr auto 1fr`) that pins the active item (`Projects` on the index, the project title on detail pages) to the page's horizontal center; preceding items justify-end against it. The `Icon.svg` monogram in the left cell is the only "home" link — `Home` text was intentionally dropped to avoid two adjacent home affordances. On detail pages, "Projects" sits as a breadcrumb prefix in the left cell. View transitions: `nav-brand` (icon) and `nav-projects` (label) morph between routes. Custom timing splits slide from fade — `::view-transition-group` runs 400ms with `cubic-bezier(0.4, 0, 0.2, 1)` for position morph; `::view-transition-old/new` runs 150ms for the crossfade, so content resolves faster than it slides. Honors `prefers-reduced-motion`.
 - `FeaturedCard.astro` — homepage tile. Whole card is one `<a>`; do not nest anchors inside it.
 - `TimelineEntry.astro` — `/projects` row. Borderless by design; the thumbnail does the visual binding, not a wrapper.
 - `Tag.astro` — filled tag pill (the one fill in the system).
 - `ProjectLinks.astro` — shared GitHub/Live link row with icons. Pass `links={project.data.links}`. Renders nothing if both are absent. Accepts a `class` prop for layout overrides.
+- `PersonalLinks.astro` — GitHub / LinkedIn / Email / Resume row. URLs are hard-coded inside the component (single source of truth). Props: `size?: 'sm' | 'lg'` (lg = hero, sm = footer), `class?: string`. External links + the resume PDF open in a new tab; `mailto:` opens in the OS handler.
+- `Footer.astro` — site-wide footer, rendered by `Layout.astro` for every page. Top hairline border, centered `PersonalLinks` + copyright line. **Self-suppresses `PersonalLinks` on `/`** since the home hero already carries them at `size="lg"` — only the copyright remains there.
+
+## Helpers & Assets
+
+- `src/lib/dates.ts` — `formatDateRange(start, end?, ongoing?)` formats project dates as `"Jan 2023"`, `"Jan 2023–May 2024"` (en-dash, no spaces), or `"Since Jan 2023"` for `ongoing` projects. Uses `getUTC*` to avoid local-timezone date drift.
+- `src/lib/thumbnails.ts` — `thumbnailPath(slug)` returns the public path for a project thumbnail. Convention is `/thumbnails/<slug>.png`; this is the single place to change if the format/location ever shifts.
+- `src/assets/Icon.svg` — "OS" serif monogram, used as the navbar's brand mark via Astro's SVG-component import (`import Icon from "../assets/Icon.svg"; <Icon class="w-8 h-8" />`).
+- `resume/resume.tex` → `public/Oscar-Stomberg-Resume.pdf` — source of truth is the LaTeX file; run `npm run build-resume` locally to regenerate the PDF and copy it into `public/`. The PDF is committed because Cloudflare's build env has no `pdflatex` (no `prebuild` hook). All build artifacts in `resume/` (`.aux`, `.log`, `.out`, `.pdf`, `.synctex.gz`) are gitignored except `resume.tex`.
 
 ## Article Typography
 

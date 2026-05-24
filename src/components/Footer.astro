@@ -1,0 +1,15 @@
+---
+import PersonalLinks from "./PersonalLinks.astro";
+
+// Home hero already shows the same links at size="lg" — repeating them here
+// reads as redundant, so we collapse to just the copyright on `/`.
+const isHome = Astro.url.pathname === "/";
+const year = new Date().getUTCFullYear();
+---
+
+<footer class="border-t border-rule mt-16">
+  <div class="max-w-6xl mx-auto px-12 py-8 flex flex-col items-center gap-3 text-ink-muted">
+    {!isHome && <PersonalLinks />}
+    <p class="text-xs">© {year} Oscar Stomberg</p>
+  </div>
+</footer>

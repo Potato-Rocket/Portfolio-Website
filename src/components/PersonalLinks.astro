@@ -1,0 +1,44 @@
+---
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  size?: "sm" | "lg";
+  class?: string;
+}
+
+const { size = "sm", class: className = "" } = Astro.props;
+
+// Single source of truth so hero and footer copies stay aligned.
+const links = [
+  { href: "https://github.com/Potato-Rocket", icon: "lucide:github", label: "GitHub" },
+  { href: "https://www.linkedin.com/in/oscar-w-stomberg/", icon: "lucide:linkedin", label: "LinkedIn" },
+  { href: "mailto:owstomberg@wpi.edu", icon: "lucide:mail", label: "Email" },
+  { href: "/Oscar-Stomberg-Resume.pdf", icon: "lucide:file-text", label: "Resume" },
+];
+
+const isLarge = size === "lg";
+const linkClass = "inline-flex items-center gap-1.5 hover:underline underline-offset-2";
+const iconClass = isLarge ? "w-5 h-5 **:stroke-[1.5]" : "w-4 h-4 **:stroke-[1.5]";
+const textClass = isLarge ? "text-base" : "text-sm";
+const rowClass = isLarge ? "gap-6" : "gap-4";
+
+// PDF and mailto open inline / in their own handler. External profile links open
+// in a new tab so the site stays put for reviewers comparing across links.
+function isExternal(href: string) {
+  return href.startsWith("http");
+}
+---
+
+<nav aria-label="Personal links" class:list={["flex flex-wrap items-center", rowClass, textClass, className]}>
+  {links.map((link) => (
+    <a
+      href={link.href}
+      class={linkClass}
+      target={isExternal(link.href) || link.href.endsWith(".pdf") ? "_blank" : undefined}
+      rel={isExternal(link.href) || link.href.endsWith(".pdf") ? "noopener noreferrer" : undefined}
+    >
+      <Icon name={link.icon} class={iconClass} />
+      {link.label}
+    </a>
+  ))}
+</nav>

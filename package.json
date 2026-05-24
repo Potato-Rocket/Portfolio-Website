@@ -11,6 +11,7 @@
     "preview": "npm run build && wrangler dev",
     "astro": "astro",
     "generate-types": "wrangler types",
+    "build-resume": "cd resume && pdflatex -interaction=nonstopmode resume.tex >/dev/null && cp resume.pdf ../public/Oscar-Stomberg-Resume.pdf",
     "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {

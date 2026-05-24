@@ -3,13 +3,14 @@ import type { CollectionEntry } from "astro:content";
 
 import Tag from "./Tag.astro";
 import { formatDateRange } from "../lib/dates";
+import { thumbnailPath } from "../lib/thumbnails";
 
 interface Props {
   project: CollectionEntry<"projects">;
 }
 
 const { project } = Astro.props;
-const { title, summary, tags, status, thumbnail, startDate, endDate } = project.data;
+const { title, summary, tags, status, startDate, endDate } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
@@ -24,7 +25,7 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
   <div class:list={["border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-2", { "border-dashed": isWip }]}>
     <div class="aspect-video border border-rule-strong overflow-hidden">
       <img
-          src={thumbnail}
+          src={thumbnailPath(project.id)}
           alt={title}
           class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
       />

@@ -33,3 +33,7 @@ pnpm-debug.log*
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# LaTeX build artifacts (resume.tex is the source of truth)
+resume/*
+!resume/resume.tex

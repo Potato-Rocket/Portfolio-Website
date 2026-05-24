@@ -4,6 +4,7 @@ import type { CollectionEntry } from "astro:content";
 import { Icon } from "astro-icon/components";
 import Layout from "../layouts/Layout.astro";
 import FeaturedCard from "../components/FeaturedCard.astro";
+import PersonalLinks from "../components/PersonalLinks.astro";
 
 const projects: CollectionEntry<"projects">[] = await getCollection("projects");
 const featured = projects.filter((p) => p.data.featured);
@@ -14,23 +15,23 @@ const featured = projects.filter((p) => p.data.featured);
     <Icon name="lucide:construction" class="w-4 h-4 **:stroke-[1.5]" />
     <span>Site under construction</span>
   </aside>
-  <div class="max-w-6xl mx-auto px-12 py-8">
-    <div class="text-center">
-      <!--I want to make it stretched but that's not working-->
+  <div class="max-w-6xl mx-auto px-12 pt-16">
+    <div class="max-w-2xl mx-auto">
       <h1 class="text-5xl">Oscar Stomberg</h1>
-      <p class="text-ink-muted max-w-2xl text-lg italic p-8 mx-auto">
+      <PersonalLinks size="lg" class="mb-8 mt-4" />
+      <p class="text-ink-muted text-lg italic mb-16">
         Robotics engineering student at Worcester Polytechnic Institute. From mechanical design and embedded systems to
         network management and full-stack software development, I've always loved making things.
       </p>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12">
       {featured.map((project) => (
         <FeaturedCard project={project} />
       ))}
     </div>
     <a
         href="/projects"
-        class="group flex items-center gap-2 w-fit mx-auto underline underline-offset-2 text-2xl font-serif my-16"
+        class="group flex items-center gap-2 w-fit mx-auto underline underline-offset-2 text-2xl font-serif my-20"
     >
       See more Projects
       <Icon name="lucide:arrow-right" class="w-6 h-6 **:stroke-[1.5] transition-transform duration-300 ease-out group-hover:translate-x-1" />

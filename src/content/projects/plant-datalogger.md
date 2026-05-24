@@ -4,7 +4,6 @@ summary: Raspberry Pi Pico W datalogger for temperature, humidity, and soil mois
 status: wip
 links:
   github: https://github.com/Potato-Rocket/Plant-Datalogger
-thumbnail: /thumbnails/plant-datalogger.png
 tags:
   - embedded
   - c

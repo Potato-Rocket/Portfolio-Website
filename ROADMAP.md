@@ -2,14 +2,10 @@
 
 ## Minor improvements
 
-1. Improve spacing on home page - things should have more room in general, as well as vertically.
-2. We need the arrangement of feature cards to be revamped. Cards should be a fixed size, the max cards per row should
+1. We need the arrangement of feature cards to be revamped. Cards should be a fixed size, the max cards per row should
    be determined by the screen size. If there is an incomplete row, they should be centered. Open questrions remain
    around horizontal spacing.
-3. Add external links and a resume download (private info stripped).
-4. Remove thumbnail attribute - assume throughout that each project has a thumbnail called thumbnails/[slug].png. We
-   could accomodate jpgs just by making a simple helper function.
-5. Dark mode toggle in the bottom right corner.
+2. Dark mode toggle in the bottom right corner.
 
 ## Major changes
 

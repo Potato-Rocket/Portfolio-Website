@@ -8,7 +8,6 @@ tags:
   - fullstack
   - react
   - typescript
-thumbnail: /thumbnails/hanover-cms.png
 links:
   github: https://github.com/CS3733-TeamB-2026/teamB-protoype
   live: https://hanoveribank.com/
