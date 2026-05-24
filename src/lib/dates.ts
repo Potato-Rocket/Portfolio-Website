@@ -3,18 +3,23 @@ const MONTHS = [
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
 ];
 
-function monthYear(d: Date): string {
+export function monthYear(d: Date): string {
   return `${MONTHS[d.getUTCMonth()]} ${d.getUTCFullYear()}`;
 }
 
-// "Since Jan 2023" if ongoing (endDate ignored — ongoing projects don't have one).
-// "Jan 2023" if only start, or start == end month.
-// "Jan 2023–May 2024" otherwise (en-dash, no spaces).
-export function formatDateRange(start: Date, end?: Date, ongoing = false): string {
-  const startLabel = monthYear(start);
-  if (ongoing) return `Since ${startLabel}`;
-  if (!end) return startLabel;
-  const endLabel = monthYear(end);
-  if (startLabel === endLabel) return startLabel;
-  return `${startLabel}–${endLabel}`;
+type Period = { date: Date; label?: string };
+
+// Returns the date used for sorting/positioning on the timeline.
+export function effectiveDate(periods: Period[]): Date {
+  return periods[periods.length - 1].date;
+}
+
+// Returns the compact date range shown on cards and timeline rows.
+// "Since Jan 2023" if ongoing. "Jan 2023" if single period. "Jan 2023–May 2024" otherwise.
+export function formatDateRange(periods: Period[], ongoing = false): string {
+  const start = monthYear(periods[0].date);
+  if (ongoing) return `Since ${start}`;
+  if (periods.length === 1) return start;
+  const end = monthYear(periods[periods.length - 1].date);
+  return start === end ? start : `${start}–${end}`;
 }

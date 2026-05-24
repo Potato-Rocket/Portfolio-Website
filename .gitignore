@@ -25,7 +25,6 @@ pnpm-debug.log*
 .idea/
 
 # personal claude code overrides
-.claude/
 .junie/
 
 # wrangler files

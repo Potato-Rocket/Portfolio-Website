@@ -17,8 +17,12 @@ const projects = defineCollection({
       })
       .optional(),
     related: z.array(z.string()).optional(),
-    startDate: z.coerce.date(),
-    endDate: z.coerce.date().optional(),
+    periods: z.array(
+      z.object({
+        date: z.coerce.date(),
+        label: z.string().optional(),
+      })
+    ).min(1),
   }),
 });
 

@@ -10,7 +10,9 @@ tags:
   - docker
 related:
   - daily-greeting-generator
-startDate: 2025-01-01
+periods:
+  - date: 2025-01-01
+    label: Started
 ---
 
 ## Overview

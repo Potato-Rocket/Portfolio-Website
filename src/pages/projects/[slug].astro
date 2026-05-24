@@ -5,7 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Tag from "../../components/Tag.astro";
 import ProjectLinks from "../../components/ProjectLinks.astro";
-import { formatDateRange } from "../../lib/dates";
+import { formatDateRange, monthYear } from "../../lib/dates";
 import { thumbnailPath } from "../../lib/thumbnails";
 
 export async function getStaticPaths() {
@@ -18,11 +18,12 @@ export async function getStaticPaths() {
 
 type Props = { project: CollectionEntry<"projects"> };
 const { project } = Astro.props as Props;
-const { title, summary, status, tags, links, startDate, endDate } = project.data;
+const { title, summary, status, tags, links, periods } = project.data;
 const { Content } = await render(project);
 
 const isWip = status === "wip";
-const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
+const dateLabel = formatDateRange(periods, status === "ongoing");
+const showHistory = periods.length > 1;
 ---
 
 <Layout title={title}>
@@ -37,7 +38,18 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
         ]}>
           <img src={thumbnailPath(project.id)} alt={title} class="w-full h-full object-cover" />
         </div>
-        <p class="text-sm text-ink-muted mb-3">{dateLabel}</p>
+        {showHistory ? (
+          <ul class="text-sm text-ink-muted mb-3 space-y-0.5">
+            {periods.map((p) => (
+              <li>
+                <span>{monthYear(p.date)}</span>
+                {p.label && <span class="text-ink"> · {p.label}</span>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-sm text-ink-muted mb-3">{dateLabel}</p>
+        )}
         <div class="flex flex-wrap items-baseline gap-x-6 gap-y-3 text-sm text-ink-muted">
           {tags.length > 0 && (
             <div class="flex flex-wrap gap-1">

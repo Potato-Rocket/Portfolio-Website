@@ -10,9 +10,9 @@ interface Props {
 }
 
 const { project, class: className = "" } = Astro.props;
-const { title, summary, status, startDate, endDate } = project.data;
+const { title, summary, status, periods } = project.data;
 const isWip = status === "wip";
-const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
+const dateLabel = formatDateRange(periods, status === "ongoing");
 ---
 
 <a href={`/projects/${project.id}`} class:list={["block group", className]}>

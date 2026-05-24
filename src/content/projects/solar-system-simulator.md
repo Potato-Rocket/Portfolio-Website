@@ -12,7 +12,11 @@ links:
   github: https://github.com/Potato-Rocket/Solar-System-Simulator
 related:
   - star-map
-startDate: 2023-01-01
+periods:
+  - date: 2021-02-01
+    label: Built initial version
+  - date: 2025-04-01
+    label: Revived, major refactor
 ---
 
 ## Overview
