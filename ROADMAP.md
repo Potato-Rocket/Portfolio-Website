@@ -29,3 +29,4 @@
 8. Consider direct contact form.
 9. Add a gallery page, pulling from all projects' assets, presenting in a randomly ordered mosaic, with captions linking
    to the relevant project.
+10. Improve SEO, robots.txt, etc.

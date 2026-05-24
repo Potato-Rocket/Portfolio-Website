@@ -19,10 +19,39 @@ Always fetch current docs via context7 before working with any library API — A
 - Astro content collections schema API
 - Astro view-transition / `ClientRouter` directives
 - Tailwind v4 `@utility` / `@theme` syntax
-- Cloudflare Pages / Wrangler config
+- Cloudflare Workers / `@astrojs/cloudflare` adapter / Wrangler config
 
 ### Adding a new project
 Drop a `.md` file in `src/content/projects/` with the frontmatter schema below. No other files need to change; the homepage picks up `featured: true` entries and `/projects` picks up everything.
+
+## Deployment & Config
+
+Deploys via Cloudflare's GitHub integration: pushing to the main branch triggers a build that runs the `@astrojs/cloudflare` adapter (Workers + Static Assets, *not* Pages — the adapter dropped Pages support). Local `wrangler deploy` is rarely needed.
+
+### Dev vs. prod split in `astro.config.mjs`
+The Cloudflare adapter is loaded **only when not running `astro dev`**:
+
+```js
+const isDev = process.argv[2] === 'dev';
+adapter: isDev ? undefined : cloudflare({ imageService: 'compile' }),
+```
+
+Reason: in `astro dev`, the adapter routes SSR through Vite 7's workerd-simulating worker runner, which currently crashes with `module is not defined` on CJS deps in the iconify subtree (upstream `@astrojs/cloudflare` SSR pre-compilation issue). Skipping the adapter in dev gives a plain Node dev server with HMR. `npm run preview` still builds + serves through real `wrangler dev` before pushing, so divergence is caught.
+
+If you ever add per-request logic (KV, D1, env bindings, dynamic routes), revisit this — `astro dev` won't simulate Cloudflare bindings, so you'll need `preview` for binding-aware testing.
+
+### `wrangler.jsonc` at project root
+Keep it minimal. The adapter generates a complete `dist/server/wrangler.json` at build time and merges your root config into it. Only put values the adapter can't know:
+- `name`, `compatibility_date`, `compatibility_flags` (we keep `nodejs_compat` for transitive deps that reach for `node:*` built-ins)
+- `observability` (logs + traces enabled, full sampling — fine at portfolio traffic)
+
+Do **not** set `main` or an `assets` binding here. Both were carried over from older Pages-era configs and conflict with the adapter's generated values.
+
+### Image service
+`imageService: 'compile'` runs Sharp at build time for prerendered routes — generates WebP/AVIF + srcset for anything imported through Astro's `<Image>` component. No paid Cloudflare Images binding needed. Stay on `'compile'` unless we add SSR routes that need runtime image transforms.
+
+### Generated worker types
+`worker-configuration.d.ts` is gitignored. Regenerate via `npm run generate-types` if `wrangler.jsonc` changes in a way that affects bindings.
 
 ## Content Data Model
 
