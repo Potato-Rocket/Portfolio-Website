@@ -6,6 +6,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
+  --breakpoint-xs: 480px;
+
   --color-paper: #f6f2ea;
   --color-paper-deep: #efeadf;
   --color-ink: #1c1a17;
