@@ -2,22 +2,26 @@
 import type { CollectionEntry } from "astro:content";
 
 import Tag from "./Tag.astro";
+import { formatDateRange } from "../lib/dates";
 
 interface Props {
   project: CollectionEntry<"projects">;
 }
 
 const { project } = Astro.props;
-const { title, summary, tags, status, thumbnail } = project.data;
+const { title, summary, tags, status, thumbnail, startDate, endDate } = project.data;
 const isWip = status === "wip";
+const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
 <a href={`/projects/${project.id}`} class="block group">
-  <h2 class="text-xl pl-1 pb-2">
-    {title}
-    {isWip ? <span class="font-light font-sans">· WIP</span> : null}
-  </h2>
-  <div class="border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-2">
+  <div class="flex items-baseline justify-between pl-1 pb-2">
+    <h2 class="text-xl">
+      {title}
+      {isWip ? <span class="font-light font-sans">· WIP</span> : null}
+    </h2>
+  </div>
+  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-2", { "border-dashed": isWip }]}>
     <div class="aspect-video border border-rule-strong overflow-hidden">
       <img
           src={thumbnail}
@@ -26,6 +30,7 @@ const isWip = status === "wip";
       />
     </div>
     <p class="my-2">{summary}</p>
+    <p class="text-ink-muted text-sm my-2">{dateLabel}</p>
     {tags.map((tag) => (
       <Tag tagName={tag}/>
     ))}

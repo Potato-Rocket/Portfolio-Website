@@ -1,8 +1,51 @@
 ---
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
+import TimelineEntry from "../components/TimelineEntry.astro";
+
+type Project = CollectionEntry<"projects">;
+
+// Project sits on the timeline at endDate if it has one (finished),
+// otherwise startDate (ongoing or single-point projects).
+function effectiveDate(p: Project): Date {
+  return p.data.endDate ?? p.data.startDate;
+}
+
+const projects = await getCollection("projects");
+const sorted = [...projects].sort(
+  (a, b) => effectiveDate(b).getTime() - effectiveDate(a).getTime(),
+);
+
+const rows = sorted.map((p, i) => {
+  const year = effectiveDate(p).getUTCFullYear();
+  const prevYear =
+    i > 0 ? effectiveDate(sorted[i - 1]).getUTCFullYear() : null;
+  return { project: p, year, isFirstOfYear: year !== prevYear };
+});
 ---
 
 <Layout>
-    <Navbar tab="projects"/>
+  <Navbar tab="projects" />
+  <div class="relative max-w-4xl mx-auto px-12 py-8">
+    <div class="absolute left-42 top-8 bottom-8 border-l border-rule"></div>
+    <div class="grid grid-cols-[6rem_1fr] gap-x-12 gap-y-6 items-start">
+      {rows.map(({ project, year, isFirstOfYear }, i) => (
+        <>
+          <div class={`text-right text-2xl font-serif ${isFirstOfYear && i > 0 ? "pt-4" : ""}`}>
+            {isFirstOfYear ? (
+              <span class="relative inline-block">
+                {year}
+                <span class="absolute left-full top-1/2 w-12 border-t border-rule"></span>
+              </span>
+            ) : null}
+          </div>
+          <div class={isFirstOfYear && i > 0 ? "pt-4" : ""}>
+            <TimelineEntry project={project}/>
+          </div>
+        </>
+      ))}
+    </div>
+  </div>
 </Layout>
