@@ -17,13 +17,13 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
 ---
 
 <a href={`/projects/${project.id}`} class:list={["block group", className]}>
-  <div class="flex items-baseline justify-between pl-1 pb-2">
+  <div class="flex items-baseline justify-between pl-1 pb-3">
     <h2 class="text-xl">
       {title}
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
     </h2>
   </div>
-  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-2", { "border-dashed": isWip }]}>
+  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors bg-paper-deep p-4", { "border-dashed": isWip }]}>
     <div class="aspect-video border border-rule-strong overflow-hidden">
       <img
           src={thumbnailPath(project.id)}
@@ -31,10 +31,12 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
           class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
       />
     </div>
-    <p class="my-2">{summary}</p>
-    <p class="text-ink-muted text-sm my-2">{dateLabel}</p>
-    {tags.map((tag) => (
-      <Tag tagName={tag}/>
-    ))}
+    <p class="my-3">{summary}</p>
+    <p class="text-ink-muted text-sm my-3">{dateLabel}</p>
+    <div class="flex flex-wrap gap-1">
+      {tags.map((tag) => (
+        <Tag tagName={tag}/>
+      ))}
+    </div>
   </div>
 </a>
