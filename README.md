@@ -24,7 +24,10 @@ src/
 │   ├── FeaturedCard.astro      # Homepage featured-project tile
 │   ├── TimelineEntry.astro     # Timeline row on /projects
 │   ├── Tag.astro               # Filled tag pill
-│   └── ProjectLinks.astro      # Shared GitHub/Live link row
+│   ├── ProjectLinks.astro      # Shared GitHub/Live link row
+│   ├── PersonalLinks.astro     # GitHub/LinkedIn/Email/Resume row
+│   ├── Footer.astro            # Site-wide footer
+│   └── DarkModeToggle.astro    # Fixed dark/light mode toggle button
 ├── layouts/
 │   └── Layout.astro            # Shared HTML head + ClientRouter
 ├── pages/
@@ -32,7 +35,8 @@ src/
 │   ├── projects.astro          # Reverse-chronological timeline
 │   └── projects/[slug].astro   # Dynamic project detail page
 ├── lib/
-│   └── dates.ts                # formatDateRange helper
+│   ├── dates.ts                # formatDateRange helper
+│   └── thumbnails.ts           # thumbnailPath(slug) helper
 └── styles/
     └── global.css              # Tailwind import, theme tokens, prose-paper utility
 public/
