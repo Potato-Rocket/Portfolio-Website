@@ -5,20 +5,13 @@ status: complete
 featured: false
 tags:
   - cad
+  - inventor
   - fabrication
   - hardware
 periods:
   - date: 2020-01-01
 ---
 
-## What & Why
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
+## Overview
 
 TODO

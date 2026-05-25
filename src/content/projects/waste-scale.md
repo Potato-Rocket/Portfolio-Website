@@ -18,21 +18,3 @@ periods:
 ## Overview
 
 TODO
-
-## What & Why
-
-TODO
-
-## Role & Contribution
-
-Team project (Jackson-Reed EDD Capstone, 2022–2023). Oscar Stomberg — team lead. Max Molinoff and Jonathan Benavides — members.
-
-TODO: expand role description
-
-## Technical Details
-
-TODO: microcontroller choice, load cell / sensor setup, data logging format, phone/computer integration
-
-## Outcomes
-
-TODO: expo results, what worked, what didn't

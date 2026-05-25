@@ -1,0 +1,24 @@
+---
+import tagColors from "../data/tag-colors.json";
+
+interface Props {
+  tag: string;
+  href: string;
+  class?: string;
+}
+
+const { tag, href, class: extraClass = "" } = Astro.props;
+const h = (tagColors as unknown as Record<string, number | null>)[tag] ?? null;
+---
+
+<a
+  href={href}
+  class:list={[
+    "font-thin text-xs border py-0.5 px-1 inline-flex no-underline transition-transform hover:-translate-y-0.5",
+    h !== null ? "tag-color" : "tag-grey",
+    extraClass,
+  ]}
+  style={h !== null ? `--hue: ${h}` : undefined}
+>
+  {tag.toUpperCase()}
+</a>

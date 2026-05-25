@@ -18,19 +18,3 @@ periods:
 ## Overview
 
 TODO
-
-## What & Why
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
-
-TODO
-
-## Where It's Going
-
-TODO

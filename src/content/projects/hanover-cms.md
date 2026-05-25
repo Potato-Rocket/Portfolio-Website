@@ -13,7 +13,7 @@ links:
   live: https://hanoveribank.com/
 periods:
   - date: 2026-03-31
-    label: Initial build
+    label: Initial prototype
   - date: 2026-04-06
     label: Sprint 1
   - date: 2026-04-12
@@ -23,25 +23,9 @@ periods:
   - date: 2026-04-27
     label: Sprint 4
   - date: 2026-05-04
-    label: Final Sprint
+    label: Final sprint
 ---
 
 ## Overview
-
-TODO
-
-## What & Why
-
-TODO
-
-## Role & Contribution
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
 
 TODO

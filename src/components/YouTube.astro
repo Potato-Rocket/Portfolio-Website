@@ -1,0 +1,26 @@
+---
+type Props = {
+  id: string;
+  title?: string;
+  start?: number;
+};
+
+const { id, title = "YouTube video", start } = Astro.props;
+const src = `https://www.youtube-nocookie.com/embed/${id}${start ? `?start=${start}` : ""}`;
+---
+
+<figure class="not-prose my-8">
+  <div class="aspect-video border border-rule-strong">
+    <iframe
+      class="w-full h-full"
+      src={src}
+      title={title}
+      loading="lazy"
+      allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+    ></iframe>
+  </div>
+  {title && title !== "YouTube video" && (
+    <figcaption class="mt-2 text-sm text-ink-muted text-center italic">{title}</figcaption>
+  )}
+</figure>
