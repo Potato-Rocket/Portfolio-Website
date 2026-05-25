@@ -6,6 +6,8 @@ import icon from 'astro-icon';
 
 import svelte from '@astrojs/svelte';
 
+import mdx from '@astrojs/mdx';
+
 // The Cloudflare adapter is only needed to build and deploy the worker bundle.
 // Loading it for `astro dev` puts SSR through Vite's workerd-simulating runner,
 // which currently crashes on CJS deps in the iconify subtree. Skipping it in
@@ -15,6 +17,6 @@ const isDev = process.argv[2] === 'dev';
 
 export default defineConfig({
   adapter: isDev ? undefined : cloudflare({ imageService: 'compile' }),
-  integrations: [icon(), svelte()],
+  integrations: [icon(), svelte(), mdx()],
   vite: { plugins: [tailwindcss()] },
 });
