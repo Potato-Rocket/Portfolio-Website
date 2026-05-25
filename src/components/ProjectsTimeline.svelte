@@ -1,5 +1,7 @@
 <script lang="ts">
+  import Icon from "@iconify/svelte";
   import TagPill from "./TagPill.svelte";
+  import ProjectThumbnailLink from "./ProjectThumbnailLink.svelte";
 
   type ProjectRow = {
     id: string;
@@ -21,7 +23,8 @@
   let selectedTags = $state(new Set<string>());
   let mode = $state<"or" | "and">("or");
 
-  // Seed from URL query params (?tags=a,b&mode=and).
+  // Seed from URL synchronously at component init so the writeback effect below
+  // doesn't see empty state on its first run and overwrite the URL with blanks.
   if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
     const tagsParam = params.get("tags");
@@ -48,7 +51,9 @@
     history.replaceState(history.state, "", newUrl);
   });
 
-  // Re-sync state on browser back/forward (popstate fires when the URL changes without a nav).
+  // Re-sync on navigation. `popstate` covers back/forward; `astro:page-load`
+  // covers ClientRouter view-transition swaps where the island may not be
+  // re-instanced, so the top-of-script seed above wouldn't re-run.
   $effect(() => {
     function syncFromUrl() {
       const params = new URLSearchParams(window.location.search);
@@ -58,7 +63,11 @@
       mode = params.get("mode") === "and" && newTags.size >= 2 ? "and" : "or";
     }
     window.addEventListener("popstate", syncFromUrl);
-    return () => window.removeEventListener("popstate", syncFromUrl);
+    document.addEventListener("astro:page-load", syncFromUrl);
+    return () => {
+      window.removeEventListener("popstate", syncFromUrl);
+      document.removeEventListener("astro:page-load", syncFromUrl);
+    };
   });
 
   function toggleTag(tag: string) {
@@ -90,43 +99,7 @@
       return { ...p, isFirstOfYear, filteredIndex: i };
     });
   });
-
-
 </script>
-
-<!-- Thumbnail: img if available, hatch SVG otherwise -->
-{#snippet thumbnail(row: ProjectRow)}
-  <div class="h-32 shrink-0 self-start aspect-video border border-rule-strong overflow-hidden">
-    {#if row.thumbPath}
-      <img
-        src={row.thumbPath}
-        alt=""
-        class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-      />
-    {:else}
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="100%"
-        height="100%"
-        class="transition-transform duration-500 ease-out group-hover:scale-105"
-        aria-hidden="true"
-      >
-        <defs>
-          <pattern
-            id={`hatch-${row.id}`}
-            patternUnits="userSpaceOnUse"
-            width="12"
-            height="12"
-            patternTransform="rotate(45)"
-          >
-            <line x1="0" y1="0" x2="0" y2="12" stroke="var(--color-rule-strong)" stroke-width="0.5" />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill={`url(#hatch-${row.id})`} />
-      </svg>
-    {/if}
-  </div>
-{/snippet}
 
 <div class="max-w-4xl mx-auto px-4 sm:px-12 py-8">
   <!-- Tag filter bar: mirrors the timeline grid so the content column aligns with thumbnails -->
@@ -136,9 +109,11 @@
     {#if selectedTags.size === 0}
       <p class="text-ink-muted text-xs italic">Click a tag to filter projects.</p>
     {:else}
-      {#each [...selectedTags] as tag}
-        <TagPill {tag} onclick={() => toggleTag(tag)} />
-      {/each}
+      <span class="translate-y-0.5 flex flex-wrap items-center gap-1 min-h-6">
+        {#each [...selectedTags] as tag}
+          <TagPill {tag} onclick={() => toggleTag(tag)} selected class="hover:translate-y-0"/>
+        {/each}
+      </span>
       {#if selectedTags.size >= 2}
         <button
           onclick={() => (mode = mode === "or" ? "and" : "or")}
@@ -150,6 +125,17 @@
           {mode === "or" ? "ANY" : "ALL"}
         </button>
       {/if}
+      <button
+        onclick={() => {
+          selectedTags = new Set();
+          mode = "or";
+        }}
+        title="Clear all tags"
+        aria-label="Clear all tags"
+        class="ml-1 inline-flex items-center justify-center border border-rule text-ink-muted hover:text-ink hover:border-rule-strong transition-colors cursor-pointer"
+      >
+        <Icon icon="lucide:x" width={12} style="stroke-width: 1" aria-hidden="true" />
+      </button>
     {/if}
     </div>
   </div>
@@ -185,16 +171,10 @@
 
           <!-- Entry cell -->
           <div class={row.isFirstOfYear && row.filteredIndex > 0 ? "xs:pt-4" : ""}>
-            <article class="group relative z-0 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-              <!-- Stretched background link: makes the thumbnail area navigate to the project.
-                   Tag buttons in the text content sit above it via z-10. -->
-              <a href={`/projects/${row.id}`} tabindex="-1" aria-hidden="true" class="absolute inset-0 z-0"
-              ></a>
+            <article class="group flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+              <ProjectThumbnailLink id={row.id} href={`/projects/${row.id}`} thumbPath={row.thumbPath} />
 
-              {@render thumbnail(row)}
-
-              <!-- Text content: z-10 so it sits above the stretched link -->
-              <div class="relative z-10 max-w-104 sm:flex-1 sm:min-w-[18rem]">
+              <div class="max-w-104 sm:flex-1 sm:min-w-[18rem]">
                 <h2 class="text-xl">
                   <a href={`/projects/${row.id}`} class="group-hover:underline underline-offset-2">
                     {row.title}{#if row.status === "wip"}<span class="font-light font-sans">&nbsp;· WIP</span>{/if}
@@ -203,7 +183,12 @@
                 <p class="text-ink-muted text-sm">{row.dateLabel}</p>
                 <div class="py-1">
                   {#each row.tags as tag}
-                    <TagPill {tag} onclick={() => toggleTag(tag)} class="mr-1 mb-1" />
+                    <TagPill
+                      {tag}
+                      onclick={() => toggleTag(tag)}
+                      selected={selectedTags.has(tag)}
+                      class="mr-1 mb-1"
+                    />
                   {/each}
                 </div>
                 <p>{row.summary}</p>
