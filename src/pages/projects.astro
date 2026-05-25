@@ -2,78 +2,28 @@
 import { getCollection } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
-import TimelineEntry from "../components/TimelineEntry.astro";
-import { effectiveDate } from "../lib/dates";
+import ProjectsTimeline from "../components/ProjectsTimeline.svelte";
+import { effectiveDate, formatDateRange } from "../lib/dates";
+import { findThumbnailPath } from "../lib/thumbnails";
 
 const projects = await getCollection("projects", ({ data }) => !data.hidden);
-const sorted = [...projects].sort(
-  (a, b) => effectiveDate(a.data.periods).getTime() - effectiveDate(b.data.periods).getTime(),
-).reverse();
+const sorted = [...projects]
+  .sort((a, b) => effectiveDate(a.data.periods).getTime() - effectiveDate(b.data.periods).getTime())
+  .reverse();
 
-const rows = sorted.map((p, i) => {
-  const year = effectiveDate(p.data.periods).getUTCFullYear();
-  const prevYear =
-    i > 0 ? effectiveDate(sorted[i - 1].data.periods).getUTCFullYear() : null;
-  return { project: p, year, isFirstOfYear: year !== prevYear };
-});
+const projectData = sorted.map((p) => ({
+  id: p.id,
+  title: p.data.title,
+  summary: p.data.summary,
+  tags: p.data.tags,
+  status: p.data.status,
+  dateLabel: formatDateRange(p.data.periods, p.data.status === "ongoing"),
+  year: effectiveDate(p.data.periods).getUTCFullYear(),
+  thumbPath: findThumbnailPath(p.id),
+}));
 ---
 
 <Layout>
   <Navbar tab="projects" />
-  {/*
-    Three tiers share one template:
-
-    Desktop (sm+, ≥640): 2-column CSS grid with the timeline rail. Year col 6rem (right-aligned),
-    gap-x 3rem, entry col 1fr. Container padding px-12. Rail sits at left-42 (10.5rem = midpoint
-    of the 3rem gap, measured from the container's padding box edge: px-12=3rem padding + 6rem
-    col + 1.5rem half-gap = 10.5rem). Tick is w-12 (spans the full gap, crossing the rail).
-
-    Compact timeline (xs–sm, 480–639): same 2-column grid + rail, but trimmed. Container padding
-    stays px-4 (inherited from mobile), year col shrinks to 4rem, gap-x shrinks to 2rem. Rail
-    moves to left-24 (6rem = px-4 1rem + 4rem col + 1rem half-gap). Tick stays w-8 (spans the
-    2rem gap).
-
-    Mobile (<xs, <480): no rail, no left column. The grid collapses to a single-column flex
-    stack. Year labels only appear inline above first-of-year entries as section headers — non-
-    first-of-year year divs are `hidden` so the flex stack doesn't leave empty gap-6 slots.
-
-    Reason for the xs tier: the timeline metaphor (year + rail) reads well even at 480px once we
-    drop chrome; collapsing to a list earlier than that loses the visual identity for no reason.
-  */}
-  <div class="relative max-w-4xl mx-auto px-4 sm:px-12 py-8">
-    {/* Vertical timeline rail — xs+ only. left- value shifts with the tier's padding/gap geometry. */}
-    <div class:list={[
-      "hidden xs:block absolute top-8 bottom-8 border-l border-rule",
-      "xs:left-24 sm:left-42",
-    ]}></div>
-    <div class:list={[
-      "flex flex-col gap-6",
-      "xs:grid xs:grid-cols-[4rem_1fr] xs:gap-x-8 xs:gap-y-6 xs:items-start",
-      "sm:grid-cols-[6rem_1fr] sm:gap-x-12",
-    ]}>
-      {rows.map(({ project, year, isFirstOfYear }, i) => (
-        <>
-          {/* Year cell. Hidden on mobile when empty (non-first-of-year) so the flex stack
-              doesn't create blank rows; always rendered at xs+ to hold the grid cell. */}
-          <div class:list={[
-            "text-2xl font-serif text-left xs:text-right",
-            isFirstOfYear ? "" : "hidden xs:block",
-            // pt-4 only at xs+: mobile section headers already provide their own break.
-            isFirstOfYear && i > 0 ? "xs:pt-4" : "",
-          ]}>
-            {isFirstOfYear ? (
-              <span class="relative inline-block">
-                {year}
-                {/* Tick that meets the rail — xs+ only. Width tracks the gap-x at each tier. */}
-                <span class="hidden xs:block absolute left-full top-1/2 xs:w-8 sm:w-12 border-t border-rule"></span>
-              </span>
-            ) : null}
-          </div>
-          <div class={isFirstOfYear && i > 0 ? "xs:pt-4" : ""}>
-            <TimelineEntry project={project}/>
-          </div>
-        </>
-      ))}
-    </div>
-  </div>
+  <ProjectsTimeline client:load projects={projectData} />
 </Layout>
