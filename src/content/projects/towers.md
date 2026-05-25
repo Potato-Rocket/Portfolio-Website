@@ -11,14 +11,6 @@ periods:
     label: Built
 ---
 
-## What & Why
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
+## Overview
 
 TODO

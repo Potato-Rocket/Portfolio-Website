@@ -11,14 +11,6 @@ periods:
   - date: 2020-01-01
 ---
 
-## What & Why
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
+## Overview
 
 TODO

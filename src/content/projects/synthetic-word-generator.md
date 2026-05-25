@@ -21,15 +21,3 @@ periods:
 ## Overview
 
 TODO
-
-## What & Why
-
-TODO
-
-## Technical Details
-
-TODO
-
-## Outcomes
-
-TODO
