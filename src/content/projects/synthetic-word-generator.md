@@ -132,4 +132,6 @@ Throughout this project I greatly improved my skill at writing clean, concise Py
 
 ---
 
+[Download written report (PDF)](/files/Synthetic-Word-Generator-Report.pdf)
+
 [Download maker portfolio (PDF)](/files/Synthetic-Word-Generator-Maker-Portfolio.pdf)

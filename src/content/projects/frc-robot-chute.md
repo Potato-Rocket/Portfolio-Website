@@ -4,6 +4,7 @@ summary: Laser-cut Masonite ball-transfer chute for a 2022 FIRST Robotics Compet
 status: complete
 tags:
   - cad
+  - fusion360
   - fabrication
   - laser-cutting
 periods:
