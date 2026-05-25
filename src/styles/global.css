@@ -40,6 +40,30 @@
   }
 }
 
+/* Tag pill colors — used by TagPill.svelte. Kept global so they survive view-transition
+   head swaps without depending on Svelte's scoped style injection. */
+.tag-color {
+  --hue: 35;
+  background: oklch(88% 0.07 var(--hue));
+  border-color: oklch(62% 0.14 var(--hue));
+  color: oklch(22% 0.02 var(--hue));
+}
+.dark .tag-color {
+  background: oklch(28% 0.07 var(--hue));
+  border-color: oklch(55% 0.14 var(--hue));
+  color: oklch(90% 0.02 var(--hue));
+}
+.tag-grey {
+  background: oklch(88% 0 0);
+  border-color: oklch(62% 0 0);
+  color: oklch(22% 0 0);
+}
+.dark .tag-grey {
+  background: oklch(28% 0 0);
+  border-color: oklch(55% 0 0);
+  color: oklch(90% 0 0);
+}
+
 @utility prose-paper {
   --tw-prose-body: var(--color-ink);
   --tw-prose-headings: var(--color-ink);

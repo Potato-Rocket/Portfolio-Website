@@ -1,5 +1,5 @@
 <script lang="ts">
-  import tagColors from "../data/tag-colors.json";
+  import TagPill from "./TagPill.svelte";
 
   type ProjectRow = {
     id: string;
@@ -51,24 +51,8 @@
     });
   });
 
-  function hue(tag: string): number | null {
-    return (tagColors as unknown as Record<string, number | null>)[tag] ?? null;
-  }
-</script>
 
-<!-- Reusable tag pill: clicking always calls toggleTag -->
-{#snippet tagPill(tag: string, extraClass: string = "")}
-  {@const h = hue(tag)}
-  <button
-    onclick={() => toggleTag(tag)}
-    class="font-thin text-xs border py-0.5 px-1 inline-flex cursor-pointer {extraClass}"
-    class:tag-color={h !== null}
-    class:tag-grey={h === null}
-    style={h !== null ? `--hue: ${h}` : undefined}
-  >
-    {tag.toUpperCase()}
-  </button>
-{/snippet}
+</script>
 
 <!-- Thumbnail: img if available, hatch SVG otherwise -->
 {#snippet thumbnail(row: ProjectRow)}
@@ -113,7 +97,7 @@
       <p class="text-ink-muted text-xs italic">Click a tag to filter projects.</p>
     {:else}
       {#each [...selectedTags] as tag}
-        {@render tagPill(tag)}
+        <TagPill {tag} onclick={() => toggleTag(tag)} />
       {/each}
       {#if selectedTags.size >= 2}
         <button
@@ -161,7 +145,7 @@
 
           <!-- Entry cell -->
           <div class={row.isFirstOfYear && row.filteredIndex > 0 ? "xs:pt-4" : ""}>
-            <article class="group relative flex flex-col gap-4 sm:flex-row sm:flex-wrap">
+            <article class="group relative z-0 flex flex-col gap-4 sm:flex-row sm:flex-wrap">
               <!-- Stretched background link: makes the thumbnail area navigate to the project.
                    Tag buttons in the text content sit above it via z-10. -->
               <a href={`/projects/${row.id}`} tabindex="-1" aria-hidden="true" class="absolute inset-0 z-0"
@@ -179,7 +163,7 @@
                 <p class="text-ink-muted text-sm">{row.dateLabel}</p>
                 <div class="py-1">
                   {#each row.tags as tag}
-                    {@render tagPill(tag, "mr-1 mb-1")}
+                    <TagPill {tag} onclick={() => toggleTag(tag)} class="mr-1 mb-1" />
                   {/each}
                 </div>
                 <p>{row.summary}</p>
@@ -191,27 +175,3 @@
     {/if}
   </div>
 </div>
-
-<style>
-  .tag-color {
-    --hue: 35;
-    background: oklch(88% 0.07 var(--hue));
-    border-color: oklch(62% 0.14 var(--hue));
-    color: oklch(22% 0.02 var(--hue));
-  }
-  :global(.dark) .tag-color {
-    background: oklch(28% 0.07 var(--hue));
-    border-color: oklch(55% 0.14 var(--hue));
-    color: oklch(90% 0.02 var(--hue));
-  }
-  .tag-grey {
-    background: oklch(88% 0 0);
-    border-color: oklch(62% 0 0);
-    color: oklch(22% 0 0);
-  }
-  :global(.dark) .tag-grey {
-    background: oklch(28% 0 0);
-    border-color: oklch(55% 0 0);
-    color: oklch(90% 0 0);
-  }
-</style>
