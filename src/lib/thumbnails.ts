@@ -1,10 +1,9 @@
-import { existsSync } from "node:fs";
-import { join } from "node:path";
+// Keyed by "/thumbnails/<slug>.<ext>" — built at Vite compile time, safe in Workers runtime.
+const thumbnails = import.meta.glob("/public/thumbnails/*.{png,jpg}", { query: "?url", eager: true });
 
-// Returns the public path for the first thumbnail found (PNG before JPG), or null if neither exists.
 export function findThumbnailPath(slug: string): string | null {
   for (const ext of ["png", "jpg"]) {
-    if (existsSync(join(process.cwd(), "public", "thumbnails", `${slug}.${ext}`))) {
+    if (`/public/thumbnails/${slug}.${ext}` in thumbnails) {
       return `/thumbnails/${slug}.${ext}`;
     }
   }
