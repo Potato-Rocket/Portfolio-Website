@@ -5,6 +5,7 @@ status: complete
 featured: false
 tags:
   - cad
+  - inventor
   - fabrication
   - hardware
 periods:
