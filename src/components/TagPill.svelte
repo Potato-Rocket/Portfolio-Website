@@ -9,7 +9,7 @@
 
   const { tag, onclick, class: extraClass = "" }: Props = $props();
 
-  const h = (tagColors as unknown as Record<string, number | null>)[tag] ?? null;
+  let h = $derived((tagColors as unknown as Record<string, number | null>)[tag] ?? null);
 </script>
 
 {#if onclick}
