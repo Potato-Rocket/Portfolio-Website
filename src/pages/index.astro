@@ -6,7 +6,7 @@ import Layout from "../layouts/Layout.astro";
 import FeaturedCard from "../components/FeaturedCard.astro";
 import PersonalLinks from "../components/PersonalLinks.astro";
 
-const projects: CollectionEntry<"projects">[] = await getCollection("projects");
+const projects: CollectionEntry<"projects">[] = await getCollection("projects", ({ data }) => !data.hidden);
 const featured = projects.filter((p) => p.data.featured);
 ---
 

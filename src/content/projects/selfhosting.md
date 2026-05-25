@@ -11,7 +11,7 @@ tags:
 related:
   - daily-greeting-generator
 periods:
-  - date: 2025-01-01
+  - date: 2025-06-08
     label: Started
 ---
 
