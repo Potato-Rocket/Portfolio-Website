@@ -3,7 +3,7 @@ import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
-import TagPill from "../../components/TagPill.svelte";
+import TagPill from "../../components/TagPill.astro";
 import ProjectLinks from "../../components/ProjectLinks.astro";
 import RelatedCard from "../../components/RelatedCard.astro";
 import { formatDateRange, monthYear } from "../../lib/dates";
@@ -54,7 +54,7 @@ const showHistory = periods.length > 1;
         <div class="flex flex-wrap items-baseline gap-x-6 gap-y-3 text-sm text-ink-muted">
           {tags.length > 0 && (
             <div class="flex flex-wrap gap-1">
-              {tags.map((tag) => <TagPill tag={tag} />)}
+              {tags.map((tag) => <TagPill tag={tag} href={`/projects?tags=${encodeURIComponent(tag)}`} />)}
             </div>
           )}
           <ProjectLinks links={links} class="ml-auto" />

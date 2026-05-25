@@ -21,6 +21,46 @@
   let selectedTags = $state(new Set<string>());
   let mode = $state<"or" | "and">("or");
 
+  // Seed from URL query params (?tags=a,b&mode=and).
+  if (typeof window !== "undefined") {
+    const params = new URLSearchParams(window.location.search);
+    const tagsParam = params.get("tags");
+    const initialTags = tagsParam
+      ? new Set(tagsParam.split(",").filter(Boolean))
+      : new Set<string>();
+    selectedTags = initialTags;
+    if (params.get("mode") === "and" && initialTags.size >= 2) {
+      mode = "and";
+    }
+  }
+
+  // Reflect filter state in the URL — replaceState so toggling tags doesn't pollute history.
+  $effect(() => {
+    const params = new URLSearchParams();
+    if (selectedTags.size > 0) {
+      params.set("tags", [...selectedTags].join(","));
+    }
+    if (mode === "and" && selectedTags.size >= 2) {
+      params.set("mode", "and");
+    }
+    const query = params.toString();
+    const newUrl = window.location.pathname + (query ? "?" + query : "");
+    history.replaceState(history.state, "", newUrl);
+  });
+
+  // Re-sync state on browser back/forward (popstate fires when the URL changes without a nav).
+  $effect(() => {
+    function syncFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const tagsParam = params.get("tags");
+      const newTags = tagsParam ? new Set(tagsParam.split(",").filter(Boolean)) : new Set<string>();
+      selectedTags = newTags;
+      mode = params.get("mode") === "and" && newTags.size >= 2 ? "and" : "or";
+    }
+    window.addEventListener("popstate", syncFromUrl);
+    return () => window.removeEventListener("popstate", syncFromUrl);
+  });
+
   function toggleTag(tag: string) {
     const next = new Set(selectedTags);
     if (next.has(tag)) {
