@@ -1,0 +1,36 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<button
+  id="go-to-top"
+  type="button"
+  title="Go to top"
+  aria-label="Go to top"
+  transition:persist
+  class="fixed bottom-14 right-4 z-50 flex items-center justify-center w-8 h-8 border border-rule text-ink-muted hover:text-ink hover:border-rule-strong transition-opacity opacity-0 pointer-events-none"
+>
+  <Icon name="lucide:arrow-up" class="w-4 h-4 **:stroke-[1.5]" />
+</button>
+
+<script>
+  function bindGoToTop() {
+    const btn = document.getElementById("go-to-top");
+    if (!btn || btn.dataset.bound === "true") return;
+    btn.dataset.bound = "true";
+
+    const update = () => {
+      const visible = window.scrollY > 300;
+      btn.classList.toggle("opacity-0", !visible);
+      btn.classList.toggle("pointer-events-none", !visible);
+    };
+
+    window.addEventListener("scroll", update, { passive: true });
+    update();
+
+    btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  }
+
+  bindGoToTop();
+  document.addEventListener("astro:page-load", bindGoToTop);
+</script>
