@@ -1,5 +1,12 @@
-// Single point of change if the thumbnail format/location convention shifts
-// (e.g. mixed PNG/JPG, hashed filenames, CDN prefix).
-export function thumbnailPath(slug: string): string {
-  return `/thumbnails/${slug}.png`;
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+
+// Returns the public path for the first thumbnail found (PNG before JPG), or null if neither exists.
+export function findThumbnailPath(slug: string): string | null {
+  for (const ext of ["png", "jpg"]) {
+    if (existsSync(join(process.cwd(), "public", "thumbnails", `${slug}.${ext}`))) {
+      return `/thumbnails/${slug}.${ext}`;
+    }
+  }
+  return null;
 }

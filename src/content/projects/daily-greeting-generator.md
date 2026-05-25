@@ -4,9 +4,9 @@ summary: LLM-generated morning greeting delivered via TTS, personalized with liv
 status: complete
 tags:
   - python
+  - llm
   - docker
   - homeassistant
-  - llm
 links:
   github: https://github.com/Potato-Rocket/Daily-Greeting-Generator
 related:

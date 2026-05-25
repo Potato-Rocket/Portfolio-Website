@@ -1,7 +1,5 @@
 ---
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import { thumbnailPath } from "../lib/thumbnails";
+import { findThumbnailPath } from "../lib/thumbnails";
 
 interface Props {
   slug: string;
@@ -11,14 +9,14 @@ interface Props {
 
 const { slug, title, class: className = "" } = Astro.props;
 
-const hasThumb = existsSync(join(process.cwd(), "public", "thumbnails", `${slug}.png`));
+const thumbPath = findThumbnailPath(slug);
 const hatchId = `hatch-${slug}`;
 ---
 
 <div class:list={["aspect-video border border-rule-strong overflow-hidden", className]}>
-  {hasThumb ? (
+  {thumbPath ? (
     <img
-      src={thumbnailPath(slug)}
+      src={thumbPath}
       alt={title}
       class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
     />

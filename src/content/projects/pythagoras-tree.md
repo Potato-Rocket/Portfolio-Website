@@ -2,7 +2,6 @@
 title: Pythagoras Tree
 summary: Recursive fractal renderer in Java that draws configurable Pythagorean trees using StdDraw.
 status: complete
-hidden: true
 featured: false
 tags:
   - java
