@@ -24,7 +24,7 @@ The summer after quarantine started, I was on my own with not much to do, so I i
 
 ## Original Synthetic Word Generator
 
-This first program alternated random vowels and consonants to create words of random lengths. I cleaned it up to be more concise and less error-prone, and added output to a text file. Though most results were vaguely pronounceable, they didn't look English — for example, `q` appearing without `u`.
+This first program alternated random vowels and consonants to create words of random lengths. I cleaned it up to be more concise and less error-prone, and added output to a text file. Though most results were vaguely pronounceable, they didn't look English--for example, `q` appearing without `u`.
 
 ```
 Jekuzedecobu
@@ -41,7 +41,7 @@ Deha
 
 ## Using Classic Literature
 
-To improve the generator I needed data on what makes words sound natural. I downloaded classic novels — *Moby-Dick* and *Ulysses* — as plain text files through Project Gutenberg, and wrote a Python script to convert each book into a list of words, excluding formatting and punctuation.
+To improve the generator I needed data on what makes words sound natural. I downloaded classic novels--*Moby-Dick* and *Ulysses*--as plain text files through Project Gutenberg, and wrote a Python script to convert each book into a list of words, excluding formatting and punctuation.
 
 ## Word Frequency Comparison
 

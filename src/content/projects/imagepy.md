@@ -17,7 +17,7 @@ periods:
 
 ## What & Why
 
-I wanted to change my Linux system's color scheme automatically when I changed my desktop wallpaper — terminal emulator, title bar, and other config files all derived from the same palette — without doing anything manually. ImagePy takes a source image, extracts a palette that accurately reflects the colors in it, and writes the results to whatever config files you point it at.
+I wanted to change my Linux system's color scheme automatically when I changed my desktop wallpaper--terminal emulator, title bar, and other config files all derived from the same palette--without doing anything manually. ImagePy takes a source image, extracts a palette that accurately reflects the colors in it, and writes the results to whatever config files you point it at.
 
 ## How It Works
 
