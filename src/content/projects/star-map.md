@@ -11,8 +11,8 @@ links:
 related:
   - solar-system-simulator
 periods:
-  - date: 2025-04-17
-    label: Unknown original date
+  - date: 2022-05-02
+    label: Initial build
 ---
 
 ## Overview

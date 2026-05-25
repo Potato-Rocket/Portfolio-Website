@@ -2,6 +2,7 @@
 import { ClientRouter } from "astro:transitions";
 import Footer from "../components/Footer.astro";
 import DarkModeToggle from "../components/DarkModeToggle.astro";
+import GoToTop from "../components/GoToTop.astro";
 import "../styles/global.css";
 
 interface Props {
@@ -41,6 +42,7 @@ const { title = "Oscar Stomberg" } = Astro.props;
       <slot />
     </div>
     <Footer />
+    <GoToTop />
     <DarkModeToggle />
   </body>
 </html>

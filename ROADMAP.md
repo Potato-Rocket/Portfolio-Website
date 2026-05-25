@@ -4,8 +4,7 @@
 
 1. Add related project links to each project page. Determine where to put them, maybe reuse feature card with small
    mode.
-2. Once I have more projects listed, an arrow to bring the user to the top would be nice
-3. Improve SEO, robots.txt, etc.
+2. Improve SEO, robots.txt, etc.
 
 ## Major changes
 

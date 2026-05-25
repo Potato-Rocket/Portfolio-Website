@@ -11,7 +11,7 @@ type Period = { date: Date; label?: string };
 
 // Returns the date used for sorting/positioning on the timeline.
 export function effectiveDate(periods: Period[]): Date {
-  return periods[periods.length - 1].date;
+  return periods[0].date;
 }
 
 // Returns the compact date range shown on cards and timeline rows.

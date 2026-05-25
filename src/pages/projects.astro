@@ -1,12 +1,9 @@
 ---
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import TimelineEntry from "../components/TimelineEntry.astro";
 import { effectiveDate } from "../lib/dates";
-
-type Project = CollectionEntry<"projects">;
 
 const projects = await getCollection("projects");
 const sorted = [...projects].sort(

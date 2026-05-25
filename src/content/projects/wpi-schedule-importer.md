@@ -13,8 +13,6 @@ periods:
     label: Initial build
   - date: 2026-03-09
     label: Recurrence and timezone fixes
-  - date: 2026-05-22
-    label: CLI args, uv, bug fixes
 ---
 
 ## Overview
