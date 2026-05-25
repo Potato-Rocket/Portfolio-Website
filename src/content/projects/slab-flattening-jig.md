@@ -7,9 +7,9 @@ tags:
   - solidworks
 periods:
   - date: 2024-05-30
-  - label: Proposal
+    label: Proposal
   - date: 2024-06-24
-  - label: Final submission
+    label: Final submission
 ---
 
 ## Overview

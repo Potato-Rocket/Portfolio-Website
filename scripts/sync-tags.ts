@@ -5,15 +5,13 @@ import jsYaml from "js-yaml";
 
 const PROJECTS_DIR = fileURLToPath(new URL("../src/content/projects/", import.meta.url));
 const TAG_COLORS_PATH = fileURLToPath(new URL("../src/data/tag-colors.json", import.meta.url));
-const DEFAULT_HUE = 35;
-
 interface Frontmatter {
   tags?: unknown;
 }
 
 interface TagColors {
   _orphaned: string[];
-  [tag: string]: number | string[];
+  [tag: string]: number | null | string[];
 }
 
 async function extractTags(filePath: string): Promise<string[]> {
@@ -54,7 +52,7 @@ for (const [tag, hue] of Object.entries(colorEntries)) {
 
 for (const tag of prevOrphaned as string[]) {
   if (projectTags.has(tag) && !(tag in updated)) {
-    updated[tag] = DEFAULT_HUE;
+    updated[tag] = null;
     added.push(`${tag} (restored from orphaned)`);
   } else if (!projectTags.has(tag) && !(updated._orphaned as string[]).includes(tag)) {
     (updated._orphaned as string[]).push(tag);
@@ -63,7 +61,7 @@ for (const tag of prevOrphaned as string[]) {
 
 for (const tag of projectTags) {
   if (!(tag in updated)) {
-    updated[tag] = DEFAULT_HUE;
+    updated[tag] = null;
     added.push(tag);
   }
 }

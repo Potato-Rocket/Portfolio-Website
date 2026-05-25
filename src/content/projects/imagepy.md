@@ -7,7 +7,7 @@ links:
 tags:
   - python
   - image-processing
-  - scripting
+  - tui
 periods:
   - date: 2020-07-20
     label: Initial build
