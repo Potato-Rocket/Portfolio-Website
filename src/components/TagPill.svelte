@@ -8,8 +8,11 @@
     class?: string;
   }
 
+  // `class` is reserved in JS — rename on destructure so the prop name stays `class` for callers.
   const { tag, onclick, selected = false, class: extraClass = "" }: Props = $props();
 
+  // $derived (not const): an {#each} block can reuse a component instance with a new `tag`,
+  // and a `const` evaluates once at init — it would go stale on prop change.
   let h = $derived((tagColors as unknown as Record<string, number | null>)[tag] ?? null);
 </script>
 

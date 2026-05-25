@@ -36,7 +36,7 @@ Modeled in Autodesk Fusion 360.
 
 ## Machining
 
-All structural panels are cut from 1/8" Masonite — a cheap, relatively strong, and easily machinable material. Our Epilog Zing 24 laser cutter needed extensive cleaning and setup to become fully operational, and getting consistent cuts required extensive trial and error to find settings that avoided burnt edges or incomplete cuts.
+All structural panels are cut from 1/8" Masonite--a cheap, relatively strong, and easily machinable material. Our Epilog Zing 24 laser cutter needed extensive cleaning and setup to become fully operational, and getting consistent cuts required extensive trial and error to find settings that avoided burnt edges or incomplete cuts.
 
 ![Test cut grid — laser frequency (horizontal) vs. speed (vertical)](../../assets/frc-robot-chute/test-cuts.jpg)
 

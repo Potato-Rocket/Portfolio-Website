@@ -1,7 +1,8 @@
 <script lang="ts">
   import Icon from "@iconify/svelte";
+  import { SvelteSet } from "svelte/reactivity";
   import TagPill from "./TagPill.svelte";
-  import ProjectThumbnailLink from "./ProjectThumbnailLink.svelte";
+  import ProjectThumbnail from "./ProjectThumbnail.svelte";
 
   type ProjectRow = {
     id: string;
@@ -20,19 +21,19 @@
 
   const { projects }: Props = $props();
 
-  let selectedTags = $state(new Set<string>());
+  // SvelteSet is its own reactive primitive — do NOT wrap it in $state. Doing so layers
+  // a second proxy on top that breaks the in-place reactivity on .add/.delete/.clear.
+  // const (not let): we can't reassign, but SvelteSet supports bulk replace via .clear() + add.
+  const selectedTags = new SvelteSet<string>();
   let mode = $state<"or" | "and">("or");
 
   // Seed from URL synchronously at component init so the writeback effect below
   // doesn't see empty state on its first run and overwrite the URL with blanks.
   if (typeof window !== "undefined") {
     const params = new URLSearchParams(window.location.search);
-    const tagsParam = params.get("tags");
-    const initialTags = tagsParam
-      ? new Set(tagsParam.split(",").filter(Boolean))
-      : new Set<string>();
-    selectedTags = initialTags;
-    if (params.get("mode") === "and" && initialTags.size >= 2) {
+    const initialTags = params.get("tags")?.split(",").filter(Boolean) ?? [];
+    for (const t of initialTags) selectedTags.add(t);
+    if (params.get("mode") === "and" && initialTags.length >= 2) {
       mode = "and";
     }
   }
@@ -57,10 +58,10 @@
   $effect(() => {
     function syncFromUrl() {
       const params = new URLSearchParams(window.location.search);
-      const tagsParam = params.get("tags");
-      const newTags = tagsParam ? new Set(tagsParam.split(",").filter(Boolean)) : new Set<string>();
-      selectedTags = newTags;
-      mode = params.get("mode") === "and" && newTags.size >= 2 ? "and" : "or";
+      const newTags = params.get("tags")?.split(",").filter(Boolean) ?? [];
+      selectedTags.clear();
+      for (const t of newTags) selectedTags.add(t);
+      mode = params.get("mode") === "and" && newTags.length >= 2 ? "and" : "or";
     }
     window.addEventListener("popstate", syncFromUrl);
     document.addEventListener("astro:page-load", syncFromUrl);
@@ -71,13 +72,8 @@
   });
 
   function toggleTag(tag: string) {
-    const next = new Set(selectedTags);
-    if (next.has(tag)) {
-      next.delete(tag);
-    } else {
-      next.add(tag);
-    }
-    selectedTags = next;
+    if (selectedTags.has(tag)) selectedTags.delete(tag);
+    else selectedTags.add(tag);
     if (selectedTags.size < 2) mode = "or";
   }
 
@@ -91,6 +87,8 @@
         ),
   );
 
+  // $derived.by (block form) instead of $derived(expr): we need a local accumulator
+  // (prevYear) carried across the map, which the single-expression form can't express.
   let rows = $derived.by(() => {
     let prevYear: number | null = null;
     return filteredProjects.map((p, i) => {
@@ -110,7 +108,7 @@
       <p class="text-ink-muted text-xs italic">Click a tag to filter projects.</p>
     {:else}
       <span class="translate-y-0.5 flex flex-wrap items-center gap-1 min-h-6">
-        {#each [...selectedTags] as tag}
+        {#each [...selectedTags] as tag (tag)}
           <TagPill {tag} onclick={() => toggleTag(tag)} selected class="hover:translate-y-0"/>
         {/each}
       </span>
@@ -127,7 +125,7 @@
       {/if}
       <button
         onclick={() => {
-          selectedTags = new Set();
+          selectedTags.clear();
           mode = "or";
         }}
         title="Clear all tags"
@@ -153,7 +151,7 @@
       <div
         class="flex flex-col gap-6 xs:grid xs:grid-cols-[4rem_1fr] xs:gap-x-8 xs:gap-y-6 xs:items-start sm:grid-cols-[6rem_1fr] sm:gap-x-12"
       >
-        {#each rows as row}
+        {#each rows as row (row.id)}
           <!-- Year cell -->
           <div
             class="text-2xl font-serif text-left xs:text-right
@@ -172,7 +170,7 @@
           <!-- Entry cell -->
           <div class={row.isFirstOfYear && row.filteredIndex > 0 ? "xs:pt-4" : ""}>
             <article class="group flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-              <ProjectThumbnailLink id={row.id} href={`/projects/${row.id}`} thumbPath={row.thumbPath} />
+              <ProjectThumbnail id={row.id} href={`/projects/${row.id}`} thumbPath={row.thumbPath} />
 
               <div class="max-w-104 sm:flex-1 sm:min-w-[18rem]">
                 <h2 class="text-xl">
@@ -182,7 +180,7 @@
                 </h2>
                 <p class="text-ink-muted text-sm">{row.dateLabel}</p>
                 <div class="py-1">
-                  {#each row.tags as tag}
+                  {#each row.tags as tag (tag)}
                     <TagPill
                       {tag}
                       onclick={() => toggleTag(tag)}
