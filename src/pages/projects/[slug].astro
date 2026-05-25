@@ -5,8 +5,9 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Tag from "../../components/Tag.astro";
 import ProjectLinks from "../../components/ProjectLinks.astro";
-import { formatDateRange } from "../../lib/dates";
-import { thumbnailPath } from "../../lib/thumbnails";
+import RelatedCard from "../../components/RelatedCard.astro";
+import { formatDateRange, monthYear } from "../../lib/dates";
+import ProjectThumbnail from "../../components/ProjectThumbnail.astro";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -18,11 +19,17 @@ export async function getStaticPaths() {
 
 type Props = { project: CollectionEntry<"projects"> };
 const { project } = Astro.props as Props;
-const { title, summary, status, tags, links, startDate, endDate } = project.data;
+const { title, summary, status, tags, links, periods } = project.data;
 const { Content } = await render(project);
 
+const allProjects = await getCollection("projects");
+const relatedEntries = (project.data.related ?? [])
+  .map((slug) => allProjects.find((p) => p.id === slug))
+  .filter((p): p is CollectionEntry<"projects"> => p !== undefined);
+
 const isWip = status === "wip";
-const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
+const dateLabel = formatDateRange(periods, status === "ongoing");
+const showHistory = periods.length > 1;
 ---
 
 <Layout title={title}>
@@ -31,13 +38,19 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
     <article class="prose prose-paper max-w-none">
       <header class="not-prose mb-10 pb-8 border-b border-rule">
         <h1 class="sr-only">{title}{isWip ? " (work in progress)" : ""}</h1>
-        <div class:list={[
-          "aspect-video border border-rule-strong overflow-hidden mb-4",
-          { "border-dashed": isWip },
-        ]}>
-          <img src={thumbnailPath(project.id)} alt={title} class="w-full h-full object-cover" />
-        </div>
-        <p class="text-sm text-ink-muted mb-3">{dateLabel}</p>
+        <ProjectThumbnail slug={project.id} title={title} class="mb-4" />
+        {showHistory ? (
+          <ul class="text-sm text-ink-muted mb-3 space-y-0.5">
+            {periods.map((p) => (
+              <li>
+                <span>{monthYear(p.date)}</span>
+                {p.label && <span class="text-ink"> · {p.label}</span>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="text-sm text-ink-muted mb-3">{dateLabel}</p>
+        )}
         <div class="flex flex-wrap items-baseline gap-x-6 gap-y-3 text-sm text-ink-muted">
           {tags.length > 0 && (
             <div class="flex flex-wrap gap-1">
@@ -50,5 +63,15 @@ const dateLabel = formatDateRange(startDate, endDate, status === "ongoing");
       </header>
       <Content />
     </article>
+    {relatedEntries.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-rule not-prose">
+        <h2 class="text-sm text-ink-muted mb-6">Related</h2>
+        <div class="flex flex-wrap gap-6">
+          {relatedEntries.map((r) => (
+            <RelatedCard project={r} class="w-56 max-w-full" />
+          ))}
+        </div>
+      </section>
+    )}
   </main>
 </Layout>

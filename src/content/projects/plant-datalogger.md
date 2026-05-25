@@ -9,7 +9,11 @@ tags:
   - c
   - rp2040
   - hardware
-startDate: 2025-01-01
+periods:
+  - date: 2025-02-02
+    label: Initial build
+  - date: 2025-04-10
+    label: Main development
 ---
 
 ## Overview

@@ -7,8 +7,12 @@ links:
 tags:
   - python
   - image-processing
-  - scripting
-startDate: 2023-01-01
+  - tui
+periods:
+  - date: 2020-07-20
+    label: Initial build
+  - date: 2020-08-26
+    label: Finished and documented
 ---
 
 ## Overview

@@ -1,27 +1,19 @@
 ---
 import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import TimelineEntry from "../components/TimelineEntry.astro";
+import { effectiveDate } from "../lib/dates";
 
-type Project = CollectionEntry<"projects">;
-
-// Project sits on the timeline at endDate if it has one (finished),
-// otherwise startDate (ongoing or single-point projects).
-function effectiveDate(p: Project): Date {
-  return p.data.endDate ?? p.data.startDate;
-}
-
-const projects = await getCollection("projects");
+const projects = await getCollection("projects", ({ data }) => !data.hidden);
 const sorted = [...projects].sort(
-  (a, b) => effectiveDate(b).getTime() - effectiveDate(a).getTime(),
-);
+  (a, b) => effectiveDate(a.data.periods).getTime() - effectiveDate(b.data.periods).getTime(),
+).reverse();
 
 const rows = sorted.map((p, i) => {
-  const year = effectiveDate(p).getUTCFullYear();
+  const year = effectiveDate(p.data.periods).getUTCFullYear();
   const prevYear =
-    i > 0 ? effectiveDate(sorted[i - 1]).getUTCFullYear() : null;
+    i > 0 ? effectiveDate(sorted[i - 1].data.periods).getUTCFullYear() : null;
   return { project: p, year, isFirstOfYear: year !== prevYear };
 });
 ---

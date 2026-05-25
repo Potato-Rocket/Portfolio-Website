@@ -89,6 +89,9 @@ Theme tokens live in `src/styles/global.css` under `@theme`:
 - `--color-ink` / `--color-ink-muted` — text
 - `--color-rule` / `--color-rule-strong` — borders
 - `--font-sans` (Source Sans 3) for body, `--font-serif` (Source Serif 4) for headings
+- `--breakpoint-xs: 480px` — custom intermediate breakpoint; use `xs:` prefix in Tailwind classes
+
+Dark mode is implemented via `@custom-variant dark (&:where(.dark, .dark *))`. All color tokens have dark overrides in `:root.dark {}`. The toggle is `DarkModeToggle.astro`; preference is stored in `localStorage`.
 
 ## Components
 
@@ -100,13 +103,14 @@ Theme tokens live in `src/styles/global.css` under `@theme`:
 - `ProjectLinks.astro` — shared GitHub/Live link row with icons. Pass `links={project.data.links}`. Renders nothing if both are absent. Accepts a `class` prop for layout overrides.
 - `PersonalLinks.astro` — GitHub / LinkedIn / Email / Resume row. URLs are hard-coded inside the component (single source of truth). Props: `size?: 'sm' | 'lg'` (lg = hero, sm = footer), `class?: string`. External links + the resume PDF open in a new tab; `mailto:` opens in the OS handler.
 - `Footer.astro` — site-wide footer, rendered by `Layout.astro` for every page. Top hairline border, centered `PersonalLinks` + copyright line. **Self-suppresses `PersonalLinks` on `/`** since the home hero already carries them at `size="lg"` — only the copyright remains there.
+- `DarkModeToggle.astro` — fixed-position button (`bottom-4 right-4`) that toggles `.dark` on `<html>` and persists preference to `localStorage`. Uses `transition:persist` so it survives view transitions. Shows moon in light mode, sun in dark mode.
 
 ## Helpers & Assets
 
 - `src/lib/dates.ts` — `formatDateRange(start, end?, ongoing?)` formats project dates as `"Jan 2023"`, `"Jan 2023–May 2024"` (en-dash, no spaces), or `"Since Jan 2023"` for `ongoing` projects. Uses `getUTC*` to avoid local-timezone date drift.
 - `src/lib/thumbnails.ts` — `thumbnailPath(slug)` returns the public path for a project thumbnail. Convention is `/thumbnails/<slug>.png`; this is the single place to change if the format/location ever shifts.
 - `src/assets/Icon.svg` — "OS" serif monogram, used as the navbar's brand mark via Astro's SVG-component import (`import Icon from "../assets/Icon.svg"; <Icon class="w-8 h-8" />`).
-- `resume/resume.tex` → `public/Oscar-Stomberg-Resume.pdf` — source of truth is the LaTeX file; run `npm run build-resume` locally to regenerate the PDF and copy it into `public/`. The PDF is committed because Cloudflare's build env has no `pdflatex` (no `prebuild` hook). All build artifacts in `resume/` (`.aux`, `.log`, `.out`, `.pdf`, `.synctex.gz`) are gitignored except `resume.tex`.
+- `resume/resume.tex` → `public/files/Oscar-Stomberg-Resume.pdf` — source of truth is the LaTeX file; run `npm run build-resume` locally to regenerate the PDF and copy it into `public/files/`. The PDF is committed because Cloudflare's build env has no `pdflatex` (no `prebuild` hook). All build artifacts in `resume/` (`.aux`, `.log`, `.out`, `.pdf`, `.synctex.gz`) are gitignored except `resume.tex`.
 
 ## Article Typography
 
@@ -160,5 +164,4 @@ Markdown files currently in `src/content/projects/` are mostly stubs with `TODO`
 
 - **`FeaturedCard` nested anchors.** The whole card is currently a single `<a>`. Adding `ProjectLinks` inside it would produce invalid nested anchors. Resolve before reusing `ProjectLinks` in the card.
 - **Long/short titles.** Some project titles may need a separate display title vs. nav title; deferred.
-- **Dark mode.** Nice-to-have, not v1.
 - **Tag taxonomy.** Flat — tags span domain, tech, and skill categories freely. No filter UI yet.
