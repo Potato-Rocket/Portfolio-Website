@@ -2,9 +2,7 @@
 
 ## Planned features
 
-1. Add related project links to each project page. Determine where to put them, maybe reuse feature card with small
-   mode.
-2. Improve SEO, robots.txt, etc.
+1. Improve SEO, robots.txt, etc.
 
 ## Major changes
 

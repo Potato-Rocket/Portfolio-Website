@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDateRange } from "../lib/dates";
+import ProjectThumbnail from "./ProjectThumbnail.astro";
+
+interface Props {
+  project: CollectionEntry<"projects">;
+  class?: string;
+}
+
+const { project, class: className = "" } = Astro.props;
+const { title, status, periods } = project.data;
+const isWip = status === "wip";
+const dateLabel = formatDateRange(periods, status === "ongoing");
+---
+
+<a href={`/projects/${project.id}`} class:list={["block group", className]}>
+  <div class:list={["border border-rule group-hover:border-rule-strong transition-colors p-3", { "border-dashed": isWip }]}>
+    <ProjectThumbnail slug={project.id} title={title} />
+    <p class="mt-2 text-sm font-semibold leading-snug">
+      {title}{isWip ? <span class="font-light font-sans"> · WIP</span> : null}
+    </p>
+    <p class="text-ink-muted text-xs mt-1">{dateLabel}</p>
+  </div>
+</a>

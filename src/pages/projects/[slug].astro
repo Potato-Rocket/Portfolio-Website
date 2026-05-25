@@ -5,6 +5,7 @@ import Layout from "../../layouts/Layout.astro";
 import Navbar from "../../components/Navbar.astro";
 import Tag from "../../components/Tag.astro";
 import ProjectLinks from "../../components/ProjectLinks.astro";
+import RelatedCard from "../../components/RelatedCard.astro";
 import { formatDateRange, monthYear } from "../../lib/dates";
 import ProjectThumbnail from "../../components/ProjectThumbnail.astro";
 
@@ -20,6 +21,11 @@ type Props = { project: CollectionEntry<"projects"> };
 const { project } = Astro.props as Props;
 const { title, summary, status, tags, links, periods } = project.data;
 const { Content } = await render(project);
+
+const allProjects = await getCollection("projects");
+const relatedEntries = (project.data.related ?? [])
+  .map((slug) => allProjects.find((p) => p.id === slug))
+  .filter((p): p is CollectionEntry<"projects"> => p !== undefined);
 
 const isWip = status === "wip";
 const dateLabel = formatDateRange(periods, status === "ongoing");
@@ -57,5 +63,15 @@ const showHistory = periods.length > 1;
       </header>
       <Content />
     </article>
+    {relatedEntries.length > 0 && (
+      <section class="mt-12 pt-8 border-t border-rule not-prose">
+        <h2 class="text-sm text-ink-muted mb-6">Related</h2>
+        <div class="flex flex-wrap gap-6">
+          {relatedEntries.map((r) => (
+            <RelatedCard project={r} class="w-56 max-w-full" />
+          ))}
+        </div>
+      </section>
+    )}
   </main>
 </Layout>
