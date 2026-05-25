@@ -1,6 +1,6 @@
 ---
 title: Daily Greeting Generator
-summary: LLM-generated morning greeting delivered via TTS, personalized with live weather, current music, and a literature excerpt.
+summary: Local LLM-generated morning greeting delivered via TTS, personalized with live weather, music selection, and a random literature excerpt.
 status: complete
 tags:
   - python

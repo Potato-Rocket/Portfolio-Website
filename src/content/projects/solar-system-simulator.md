@@ -1,6 +1,6 @@
 ---
 title: Solar System Simulator
-summary: Physics-based solar system simulation with real-time 3D rendering, written in Java.
+summary: Physics-based solar system simulation with real-time 3D rendering, written in Java with Graphics2D.
 status: complete
 featured: true
 tags:

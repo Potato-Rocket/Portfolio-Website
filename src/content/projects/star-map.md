@@ -1,6 +1,6 @@
 ---
 title: Star Map
-summary: Interactive 3D star map built in Java, rendering real catalog data with navigation and selection.
+summary: Interactive 3D star map built in Java with Graphics2D, rendering real catalog data with navigation and selection.
 status: wip
 tags:
   - java

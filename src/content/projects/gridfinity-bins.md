@@ -1,6 +1,6 @@
 ---
 title: Gridfinity Bins
-summary: Custom SolidWorks-designed Gridfinity storage bins for workshop organization, parametrically modeled and laser-cut or 3D-printed.
+summary: Custom SOLIDWORKS-designed Gridfinity storage bins for workshop organization, parametrically modeled and laser-cut or 3D-printed.
 status: ongoing
 tags:
   - cad

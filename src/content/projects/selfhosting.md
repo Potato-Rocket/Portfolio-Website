@@ -1,6 +1,6 @@
 ---
 title: Selfhosting Infrastructure
-summary: Multi-node home server cluster managed with Ansible, running 15+ containerized services.
+summary: Multi-node home server cluster managed with Ansible and Docker Compose, running 15+ containerized services.
 status: ongoing
 featured: true
 tags:

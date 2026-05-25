@@ -1,6 +1,6 @@
 ---
 title: Digital Waste Management
-summary: Microcontroller-based scale that logs the weight of a household trash can over time, giving residents data to track and reduce their waste generation habits.
+summary: Microcontroller-based scale that logs the weight of a household trash can over time, built for the Jackson-Reed HS engineering capstone.
 status: complete
 featured: false
 tags:
