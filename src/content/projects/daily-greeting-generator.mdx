@@ -22,6 +22,8 @@ periods:
     label: Final polish
 ---
 
+import GreetingDemo from "../../components/mdx/GreetingDemo.astro";
+
 ## What is it?
 
 Have you ever felt that the typical alarm clock is a bit boring? Fair enough. Perhaps you've tried a musical alarm, or even an automated greeting system. But anything can get repetitive and boring after enough mornings. This project was an experiment with injecting a bit of randomness and whimsy into my mornings, as well as a foray into running local LLMs usefully, integrating web APIs, and prompt structuring.
@@ -43,3 +45,18 @@ The multi-stage prompt pipeline is run asynchronously in the early hours of the 
 Every stage of this pipeline is designed to degrade gracefully in the event of failure such as API unavailability. The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, my music server, and my Ollama instance. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
 
 ## An example
+
+<GreetingDemo
+    date="April 19th, 2026"
+    greetingFile="greeting.txt"
+    coverArtFile="album.png"
+    albumTooltip="Mad Mad World — Tom Cochrane (1991)"
+    audioFile="greeting.wav"
+    pipelineLogFile="pipeline.txt"
+    executionLogFile="log.txt"
+/>
+
+## Trial and error
+
+### Bash deployment
+
