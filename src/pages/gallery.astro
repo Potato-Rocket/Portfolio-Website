@@ -1,0 +1,98 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import { loadGalleryItems, shuffleSeeded, type GalleryItem } from "../lib/gallery";
+import { justifiedRows } from "../lib/galleryLayout";
+
+const items = await loadGalleryItems();
+const shuffled = shuffleSeeded(items);
+
+const inputs = shuffled.map((item) => ({
+  item,
+  aspectRatio: item.image.width / item.image.height,
+}));
+const rows = justifiedRows<GalleryItem>(inputs, {
+  targetRowHeight: 260,
+  containerWidth: 1056,
+  maxItemsPerRow: 5,
+});
+---
+
+<Layout title="Gallery">
+  <Navbar tab="gallery" />
+  <main class="max-w-6xl mx-auto px-4 sm:px-12 py-12">
+    {items.length === 0 ? (
+      <p class="text-ink-muted italic">No images yet.</p>
+    ) : (
+      <div class="gallery flex flex-col gap-2">
+        {rows.map((row) => (
+          <div
+            class="gallery-row flex gap-2"
+            style={`aspect-ratio: ${row.aspectRatio}; ${row.isLastRow ? `width: min(100%, ${row.aspectRatio * 260}px);` : "width: 100%;"}`}
+          >
+            {row.items.map(({ item, aspectRatio }) => (
+              <a
+                href={`/projects/${item.project.id}`}
+                class="gallery-item group relative block overflow-hidden border border-rule-strong"
+                style={`flex: ${aspectRatio} 1 0; --item-ar: ${aspectRatio};`}
+              >
+                <Image
+                  src={item.image}
+                  alt={item.project.data.title}
+                  widths={[400, 800, 1200, 1600]}
+                  sizes="(max-width: 480px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-[1.02]"
+                />
+                <div class="gallery-overlay absolute inset-x-0 bottom-0 px-4 py-3 opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
+                  <h2 class="font-serif font-bold text-lg text-ink leading-tight">
+                    {item.project.data.title}
+                    {item.project.data.status === "wip" && (
+                      <span class="font-light font-sans text-sm text-ink-muted"> · WIP</span>
+                    )}
+                  </h2>
+                  <p class="mt-1 text-sm italic text-ink-muted line-clamp-2">
+                    {item.project.data.summary}
+                  </p>
+                </div>
+              </a>
+            ))}
+          </div>
+        ))}
+      </div>
+    )}
+  </main>
+</Layout>
+
+<style>
+  .gallery-overlay {
+    /* Scrim so text is legible over arbitrary photos — gradient up from paper, not a flat fill. */
+    background: linear-gradient(
+      to top,
+      var(--color-paper) 0%,
+      color-mix(in srgb, var(--color-paper) 90%, transparent) 60%,
+      transparent 100%
+    );
+  }
+
+  /* Below the xs breakpoint, justified rows shrink images below the readability threshold.
+     Drop the row layout and stack each tile full-width at its native aspect ratio instead. */
+  @media (max-width: 479px) {
+    .gallery-row {
+      display: block !important;
+      width: 100% !important;
+      aspect-ratio: auto !important;
+    }
+    .gallery-row + .gallery-row {
+      margin-top: 0.5rem;
+    }
+    .gallery-item {
+      display: block;
+      width: 100%;
+      aspect-ratio: var(--item-ar);
+    }
+    .gallery-item + .gallery-item {
+      margin-top: 0.5rem;
+    }
+  }
+</style>
