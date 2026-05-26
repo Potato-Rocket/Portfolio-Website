@@ -1,7 +1,7 @@
 import { getCollection, type CollectionEntry } from "astro:content";
 
 const imageModules = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/*/*.{jpg,jpeg,png,webp,avif}",
+  "/src/assets/*/*.{jpg,png}",
   { eager: true }
 );
 
