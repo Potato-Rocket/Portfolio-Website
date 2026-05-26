@@ -126,9 +126,36 @@ I wanted to improve the slow runtime of the programs I had written. I learned to
 
 ![Runtime vs. thread count for word generation](../../assets/synthetic-word-generator/wg-graph-1.png)
 
+## V4 Rewrite
+
+Five years later I came back to the project with a cleaner design. The core idea is the same--Markov chains over letter sequences--but V4 generalizes what was hardcoded in V3 and fixes a few things that had been quietly wrong.
+
+**Configurable context length.** V3 always used letter triplets (context length 2). V4 makes this a command-line argument (`-l`), so you can run a bigram model for more chaotic output or a longer context for tighter, more word-like results. The default is still 2.
+
+**Better text preprocessing.** V1--V3 stripped everything down to bare ASCII letters. V4 normalizes Unicode to NFKD first, then preserves apostrophes, hyphens, and diacritics. This means the model learns from contracted forms and compound words in the corpus, and can generate them too: words like `fulphee-way`, `staley's`, and `coatioling-trine` appear in the output.
+
+**Length distribution shaping.** Instead of relying purely on the terminator character's raw frequency, V4 computes the actual word-length distribution from the corpus, takes the square root to flatten it (so short words don't dominate), converts it to a cumulative function, and uses that to scale terminator probability as a word grows. The result is a length distribution that tracks the corpus more faithfully.
+
+**Deduplication.** The word list is deduplicated before training so each unique form contributes equally regardless of how often it appears in the text. Generated words are also checked against the corpus and the current run's output to ensure no real words slip through.
+
+Sample output trained on *Moby-Dick*:
+
+```
+watifie
+fulphee-way
+murposcas
+noggen
+spisbys
+harrocany
+squanton
+staley's
+coatioling-trine
+whampanoott
+```
+
 ## What I Learned
 
-Throughout this project I greatly improved my skill at writing clean, concise Python and learned new libraries including NumPy and Matplotlib. I also learned a lot about using computers to create and handle large amounts of data, how to structure such data, and the basics of probability and statistics. At its core, this project was an exploration — through programming — of what makes English words sound English.
+Throughout this project I greatly improved my skill at writing clean, concise Python and learned (back in 2020) new libraries including NumPy and Matplotlib. I also learned a lot about using computers to create and handle data structures, and was able to apply some of my knowledge about probability and statistics. At its core, this project was an exploration--through programming--of what makes English words sound English.
 
 ---
 
