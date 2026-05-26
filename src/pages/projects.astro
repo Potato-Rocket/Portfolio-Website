@@ -23,7 +23,7 @@ const projectData = sorted.map((p) => ({
 }));
 ---
 
-<Layout>
+<Layout title="Projects" description="All of Oscar's projects — robotics, software, hardware, and more.">
   <Navbar tab="projects" />
   <ProjectsTimeline client:load projects={projectData} />
 </Layout>

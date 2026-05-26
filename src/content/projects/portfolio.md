@@ -1,6 +1,6 @@
 ---
 title: This Portfolio
-summary: Personal engineering portfolio built with Astro, Svelte, Tailwind, and deployed to Cloudflare Workers.
+summary: Personal engineering portfolio built with Astro, Svelte, Tailwind CSS, and deployed to Cloudflare Workers.
 status: ongoing
 tags:
   - web

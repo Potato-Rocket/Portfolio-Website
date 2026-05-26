@@ -1,11 +1,19 @@
-// Keyed by "/thumbnails/<slug>.<ext>" — built at Vite compile time, safe in Workers runtime.
-const thumbnails = import.meta.glob("/public/thumbnails/*.{png,jpg}", { query: "?url", eager: true });
+import type { ImageMetadata } from "astro";
 
-export function findThumbnailPath(slug: string): string | null {
+const thumbnailModules = import.meta.glob<{ default: ImageMetadata }>(
+  "/src/assets/thumbnails/*.{png,jpg}",
+  { eager: true }
+);
+
+export function findThumbnailImage(slug: string): ImageMetadata | null {
   for (const ext of ["png", "jpg"]) {
-    if (`/public/thumbnails/${slug}.${ext}` in thumbnails) {
-      return `/thumbnails/${slug}.${ext}`;
-    }
+    const key = `/src/assets/thumbnails/${slug}.${ext}`;
+    if (key in thumbnailModules) return thumbnailModules[key].default;
   }
   return null;
+}
+
+// URL string for Svelte components and JSON-serialized props
+export function findThumbnailPath(slug: string): string | null {
+  return findThumbnailImage(slug)?.src ?? null;
 }

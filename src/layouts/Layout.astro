@@ -7,9 +7,17 @@ import "../styles/global.css";
 
 interface Props {
   title?: string;
+  description?: string;
+  image?: string; // absolute URL for OG image
 }
 
-const { title = "Oscar Stomberg" } = Astro.props;
+const {
+  title,
+  description = "Robotics Engineering student at WPI, building things in software, hardware, and everything in between.",
+  image,
+} = Astro.props;
+
+const pageTitle = title ? `${title} — Oscar Stomberg` : "Oscar Stomberg";
 ---
 
 <!doctype html>
@@ -34,7 +42,16 @@ const { title = "Oscar Stomberg" } = Astro.props;
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    {image && <meta property="og:image" content={image} />}
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={description} />
+    {image && <meta name="twitter:image" content={image} />}
     <ClientRouter />
   </head>
   <body class="min-h-screen flex flex-col">

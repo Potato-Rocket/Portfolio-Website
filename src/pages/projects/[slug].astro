@@ -8,6 +8,7 @@ import ProjectLinks from "../../components/ProjectLinks.astro";
 import RelatedCard from "../../components/RelatedCard.astro";
 import { formatDateRange, monthYear } from "../../lib/dates";
 import ProjectThumbnail from "../../components/ProjectThumbnail.astro";
+import { findThumbnailImage } from "../../lib/thumbnails";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -30,9 +31,14 @@ const relatedEntries = (project.data.related ?? [])
 const isWip = status === "wip";
 const dateLabel = formatDateRange(periods, status === "ongoing");
 const showHistory = periods.length > 1;
+
+const thumbImage = findThumbnailImage(project.id);
+const ogImage = thumbImage && Astro.site
+  ? new URL(thumbImage.src, Astro.site).href
+  : undefined;
 ---
 
-<Layout title={title}>
+<Layout title={title} description={summary} image={ogImage}>
   <Navbar tab="projects" projectTitle={title} isWip={isWip} />
   <main class="max-w-3xl mx-auto px-6 sm:px-12 py-12">
     <article class="prose prose-paper max-w-none">
