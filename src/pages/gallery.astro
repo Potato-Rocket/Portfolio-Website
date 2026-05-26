@@ -12,11 +12,7 @@ const inputs = shuffled.map((item) => ({
   item,
   aspectRatio: item.image.width / item.image.height,
 }));
-const rows = justifiedRows<GalleryItem>(inputs, {
-  targetRowHeight: 260,
-  containerWidth: 1056,
-  maxItemsPerRow: 5,
-});
+const rows = justifiedRows<GalleryItem>(inputs);
 ---
 
 <Layout title="Gallery">
@@ -29,7 +25,10 @@ const rows = justifiedRows<GalleryItem>(inputs, {
         {rows.map((row) => (
           <div
             class="gallery-row flex gap-2"
-            style={`aspect-ratio: ${row.aspectRatio}; ${row.isLastRow ? `width: min(100%, ${row.aspectRatio * 260}px);` : "width: 100%;"}`}
+            style={[
+              `aspect-ratio: ${row.aspectRatio}`,
+              row.isLastRow ? `width: min(100%, ${row.naturalWidthPx}px)` : "width: 100%",
+            ].join("; ")}
           >
             {row.items.map(({ item, aspectRatio }) => (
               <a
@@ -65,6 +64,13 @@ const rows = justifiedRows<GalleryItem>(inputs, {
 </Layout>
 
 <style>
+  /* Declared statically so the language server sees the property; per-tile values are
+     written via inline style (--item-ar: <ar>) on the <a> element. The default of 1 is
+     a safe fallback (square) if the inline override is ever missing. */
+  .gallery-item {
+    --item-ar: 1;
+  }
+
   .gallery-overlay {
     /* Scrim so text is legible over arbitrary photos — gradient up from paper, not a flat fill. */
     background: linear-gradient(
@@ -75,9 +81,11 @@ const rows = justifiedRows<GalleryItem>(inputs, {
     );
   }
 
-  /* Below the xs breakpoint, justified rows shrink images below the readability threshold.
-     Drop the row layout and stack each tile full-width at its native aspect ratio instead. */
-  @media (max-width: 479px) {
+  /* Below --breakpoint-xs (480px, see global.css) the justified rows shrink images below
+     the readability threshold. Drop the row layout and stack each tile full-width at its
+     native aspect ratio instead. Token referenced via literal because the IDE language
+     server doesn't resolve Tailwind's theme() inside @media at edit time. */
+  @media (width < 480px) {
     .gallery-row {
       display: block !important;
       width: 100% !important;

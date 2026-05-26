@@ -10,6 +10,7 @@ export type LayoutInput<T> = {
 export type LayoutRow<T> = {
   items: LayoutInput<T>[];
   aspectRatio: number; // sum of item ARs — the row's overall AR at its natural height
+  naturalWidthPx: number; // aspectRatio × targetRowHeight. Last rows render at this width capped to 100%; full rows render at 100% and ignore this.
   isLastRow: boolean;
 };
 
@@ -22,17 +23,32 @@ export type LayoutOptions = {
   maxItemsPerRow?: number;
 };
 
+// Defaults assume the gallery sits inside the standard max-w-6xl + px-12 container:
+// 1152px max width − 48px padding × 2 = 1056px inner width. If the page chrome changes, update here.
+export const DEFAULT_TARGET_ROW_HEIGHT = 260;
+export const DEFAULT_CONTAINER_WIDTH = 1056;
+export const DEFAULT_MAX_ITEMS_PER_ROW = 5;
+
 export function justifiedRows<T>(
   inputs: LayoutInput<T>[],
   opts: LayoutOptions = {}
 ): LayoutRow<T>[] {
-  const targetRowHeight = opts.targetRowHeight ?? 260;
-  const containerWidth = opts.containerWidth ?? 1056;
-  const maxItemsPerRow = opts.maxItemsPerRow ?? 5;
+  const targetRowHeight = opts.targetRowHeight ?? DEFAULT_TARGET_ROW_HEIGHT;
+  const containerWidth = opts.containerWidth ?? DEFAULT_CONTAINER_WIDTH;
+  const maxItemsPerRow = opts.maxItemsPerRow ?? DEFAULT_MAX_ITEMS_PER_ROW;
 
   const rows: LayoutRow<T>[] = [];
   let current: LayoutInput<T>[] = [];
   let currentARSum = 0;
+
+  const pushRow = (items: LayoutInput<T>[], arSum: number, isLastRow: boolean) => {
+    rows.push({
+      items,
+      aspectRatio: arSum,
+      naturalWidthPx: arSum * targetRowHeight,
+      isLastRow,
+    });
+  };
 
   for (const input of inputs) {
     const ar = isFinite(input.aspectRatio) && input.aspectRatio > 0 ? input.aspectRatio : 1;
@@ -51,11 +67,11 @@ export function justifiedRows<T>(
       const includeNow = !wouldHitCap && candidateDelta < currentDelta;
 
       if (includeNow) {
-        rows.push({ items: candidate, aspectRatio: candidateARSum, isLastRow: false });
+        pushRow(candidate, candidateARSum, false);
         current = [];
         currentARSum = 0;
       } else {
-        rows.push({ items: current, aspectRatio: currentARSum, isLastRow: false });
+        pushRow(current, currentARSum, false);
         current = [{ ...input, aspectRatio: ar }];
         currentARSum = ar;
       }
@@ -66,7 +82,7 @@ export function justifiedRows<T>(
   }
 
   if (current.length > 0) {
-    rows.push({ items: current, aspectRatio: currentARSum, isLastRow: true });
+    pushRow(current, currentARSum, true);
   }
 
   return rows;
