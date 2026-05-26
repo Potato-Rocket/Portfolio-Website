@@ -1,23 +1,29 @@
 ---
-import { findThumbnailPath } from "../lib/thumbnails";
+import { Image } from "astro:assets";
+import { findThumbnailImage } from "../lib/thumbnails";
 
 interface Props {
   slug: string;
   title: string;
+  loading?: "lazy" | "eager";
   class?: string;
 }
 
-const { slug, title, class: className = "" } = Astro.props;
+const { slug, title, loading = "lazy", class: className = "" } = Astro.props;
 
-const thumbPath = findThumbnailPath(slug);
+const thumbImage = findThumbnailImage(slug);
 const hatchId = `hatch-${slug}`;
 ---
 
 <div class:list={["aspect-video border border-rule-strong overflow-hidden", className]}>
-  {thumbPath ? (
-    <img
-      src={thumbPath}
+  {thumbImage ? (
+    <Image
+      src={thumbImage}
       alt={title}
+      widths={[640, 1280]}
+      sizes="(max-width: 640px) 100vw, 640px"
+      loading={loading}
+      fetchpriority={loading === "eager" ? "high" : "auto"}
       class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
     />
   ) : (

@@ -23,7 +23,7 @@ const dateLabel = formatDateRange(periods, status === "ongoing");
     </h2>
   </div>
   <div class:list={["border border-rule group-hover:border-rule-strong transition-colors p-4", { "border-dashed": isWip }]}>
-    <ProjectThumbnail slug={project.id} title={title} />
+    <ProjectThumbnail slug={project.id} title={title} loading="eager" />
     <p class="mt-3 text-lg italic text-ink-muted">{summary}</p>
     <p class="text-ink-muted text-sm mt-3">{dateLabel}</p>
   </div>
