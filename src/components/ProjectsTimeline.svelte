@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Icon from "@iconify/svelte";
   import { SvelteSet } from "svelte/reactivity";
   import TagPill from "./TagPill.svelte";
   import ProjectThumbnail from "./ProjectThumbnail.svelte";
+  import TagFilter from "./TagFilter.svelte";
 
   type ProjectRow = {
     id: string;
@@ -23,53 +23,11 @@
 
   // SvelteSet is its own reactive primitive — do NOT wrap it in $state. Doing so layers
   // a second proxy on top that breaks the in-place reactivity on .add/.delete/.clear.
-  // const (not let): we can't reassign, but SvelteSet supports bulk replace via .clear() + add.
+  // The Set is passed by reference to TagFilter, which mutates it; URL sync lives there.
   const selectedTags = new SvelteSet<string>();
   let mode = $state<"or" | "and">("or");
 
-  // Seed from URL synchronously at component init so the writeback effect below
-  // doesn't see empty state on its first run and overwrite the URL with blanks.
-  if (typeof window !== "undefined") {
-    const params = new URLSearchParams(window.location.search);
-    const initialTags = params.get("tags")?.split(",").filter(Boolean) ?? [];
-    for (const t of initialTags) selectedTags.add(t);
-    if (params.get("mode") === "and" && initialTags.length >= 2) {
-      mode = "and";
-    }
-  }
-
-  // Reflect filter state in the URL — replaceState so toggling tags doesn't pollute history.
-  $effect(() => {
-    const params = new URLSearchParams();
-    if (selectedTags.size > 0) {
-      params.set("tags", [...selectedTags].join(","));
-    }
-    if (mode === "and" && selectedTags.size >= 2) {
-      params.set("mode", "and");
-    }
-    const query = params.toString();
-    const newUrl = window.location.pathname + (query ? "?" + query : "");
-    history.replaceState(history.state, "", newUrl);
-  });
-
-  // Re-sync on navigation. `popstate` covers back/forward; `astro:page-load`
-  // covers ClientRouter view-transition swaps where the island may not be
-  // re-instanced, so the top-of-script seed above wouldn't re-run.
-  $effect(() => {
-    function syncFromUrl() {
-      const params = new URLSearchParams(window.location.search);
-      const newTags = params.get("tags")?.split(",").filter(Boolean) ?? [];
-      selectedTags.clear();
-      for (const t of newTags) selectedTags.add(t);
-      mode = params.get("mode") === "and" && newTags.length >= 2 ? "and" : "or";
-    }
-    window.addEventListener("popstate", syncFromUrl);
-    document.addEventListener("astro:page-load", syncFromUrl);
-    return () => {
-      window.removeEventListener("popstate", syncFromUrl);
-      document.removeEventListener("astro:page-load", syncFromUrl);
-    };
-  });
+  let allTags = $derived([...new Set(projects.flatMap((p) => p.tags))].sort());
 
   function toggleTag(tag: string) {
     if (selectedTags.has(tag)) selectedTags.delete(tag);
@@ -103,39 +61,7 @@
   <!-- Tag filter bar: mirrors the timeline grid so the content column aligns with thumbnails -->
   <div class="xs:grid xs:grid-cols-[4rem_1fr] xs:gap-x-8 sm:grid-cols-[6rem_1fr] sm:gap-x-12 mb-8">
     <div class="hidden xs:block"></div>
-    <div class="flex flex-wrap items-center gap-1 min-h-6">
-    {#if selectedTags.size === 0}
-      <p class="text-ink-muted text-xs italic">Click a tag to filter projects.</p>
-    {:else}
-      <span class="translate-y-0.5 flex flex-wrap items-center gap-1 min-h-6">
-        {#each [...selectedTags] as tag (tag)}
-          <TagPill {tag} onclick={() => toggleTag(tag)} selected class="hover:translate-y-0"/>
-        {/each}
-      </span>
-      {#if selectedTags.size >= 2}
-        <button
-          onclick={() => (mode = mode === "or" ? "and" : "or")}
-          title={mode === "or"
-            ? "Switch to: all selected tags must match"
-            : "Switch to: any selected tag must match"}
-          class="ml-1 text-xs border border-rule px-2 py-0.5 text-ink-muted hover:text-ink hover:border-rule-strong transition-colors cursor-pointer"
-        >
-          {mode === "or" ? "ANY" : "ALL"}
-        </button>
-      {/if}
-      <button
-        onclick={() => {
-          selectedTags.clear();
-          mode = "or";
-        }}
-        title="Clear all tags"
-        aria-label="Clear all tags"
-        class="ml-1 inline-flex items-center justify-center border border-rule text-ink-muted hover:text-ink hover:border-rule-strong transition-colors cursor-pointer"
-      >
-        <Icon icon="lucide:x" width={12} style="stroke-width: 1" aria-hidden="true" />
-      </button>
-    {/if}
-    </div>
+    <TagFilter {allTags} {selectedTags} bind:mode />
   </div>
 
   <!-- Timeline -->
@@ -184,8 +110,7 @@
                     <TagPill
                       {tag}
                       onclick={() => toggleTag(tag)}
-                      selected={selectedTags.has(tag)}
-                      class="mr-1 mb-1"
+                      class="mr-1 mb-1 hover:-translate-y-0.5"
                     />
                   {/each}
                 </div>

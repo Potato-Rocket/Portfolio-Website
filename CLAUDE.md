@@ -98,7 +98,7 @@ The site's aesthetic is "lightly aged paper" — restrained, flat, content-forwa
 - **No fills by default.** UI elements (cards, navbar, hero blocks) sit on the paper background. Tag pills are the explicit exception — they use a hue-tinted fill (see [Tag colors](#tag-colors)).
 - **Hairline borders, never shadows.** Use `border-rule` for ambient lines and `border-rule-strong` for emphasized edges (thumbnails, tag outlines).
 - **Sharp corners.** No `rounded-*` classes anywhere.
-- **Hover is where visual feedback lives.** Links underline, card borders darken, thumbnails scale slightly. Tags lift on hover (translate-y) but otherwise have no hover treatment; the selected state in the filter is a permanent lift. The WIP marker is static.
+- **Hover is where visual feedback lives.** Links underline, card borders darken, thumbnails scale slightly. Tags lift on hover (translate-y); the exception is the selected-tag chip strip above the filter input, where pills drop on hover to signal "click to remove". Selection is communicated by *presence in that strip*, not by per-row lift state. The WIP marker is static.
 - **WIP treatment.** Dashed border on the thumbnail + a subtle `· WIP` text marker. No warning banner.
 
 Theme tokens live in `src/styles/global.css` under `@theme`:
@@ -130,12 +130,16 @@ Two components exist in both flavors — `TagPill` and `ProjectThumbnail`. The s
 - `DarkModeToggle.astro` — fixed-position button (`bottom-4 right-4`) that toggles `.dark` on `<html>` and persists preference to `localStorage`. Uses `transition:persist` so it survives view transitions. Shows moon in light mode, sun in dark mode.
 
 ### Svelte components (interactive islands)
-- `ProjectsTimeline.svelte` — the `/projects` page body. Loaded with `client:load` so the filter is interactive on first paint. Combines tag filtering, the timeline grid, and the per-row article markup that used to live in a standalone `TimelineEntry.astro`. Key behaviors:
-  - Tag selection lives in a `SvelteSet<string>` (don't wrap it in `$state` — the proxy breaks `.add/.delete` reactivity).
-  - Mode is `"or" | "and"`. The toggle button only appears when `selectedTags.size >= 2`; clearing back to one tag forces `mode = "or"`.
-  - URL is the source of truth: `?tags=a,b&mode=and`. The island seeds state from `window.location.search` synchronously at script init, then re-syncs on both `popstate` and `astro:page-load` (the latter is required — under `ClientRouter`, the island may be re-instanced *without* the mount path re-running, leaving a hole). State changes write back via `history.replaceState` so toggling tags doesn't pollute history.
+- `ProjectsTimeline.svelte` — the `/projects` page body. Loaded with `client:load` so the filter is interactive on first paint. Owns the filter state (selected-tag `SvelteSet`, OR/AND `mode`), derives `allTags` from the projects prop, and computes `filteredProjects` and the row stream; the filter UI itself is delegated to `TagFilter.svelte`. Key behaviors:
+  - Tag selection lives in a `SvelteSet<string>` (don't wrap it in `$state` — the proxy breaks `.add/.delete` reactivity). The Set is passed by reference to `TagFilter`, which mutates it in place; both sides observe the same reactive object.
+  - `mode` is `"or" | "and"` and is bound to `TagFilter` via `$bindable` so the child can toggle ANY/ALL while the parent reads it for filtering.
   - Year labels are computed in `$derived.by` (block form) because the per-row "is this the first row of a new year?" flag needs an accumulator the single-expression form can't carry.
-- `TagPill.svelte` — button-form tag pill used inside the filter UI and per-row tags. Props: `tag`, `onclick`, `selected?`, `class?`. The hue lookup uses `$derived` (not `const`) because Svelte may reuse instances inside `{#each}` and `const` evaluates once at init.
+- `TagFilter.svelte` — the typeahead filter island. Owns the input, dropdown of candidate tags, selected-tag chip strip, ANY/ALL toggle, and clear-X. Key behaviors:
+  - URL is the source of truth: `?tags=a,b&mode=and`. Seeds state at init (wrapped in a `seedFromUrl()` function so Svelte treats the prop access as a closure read, not a top-level reactive capture that would warn with `state_referenced_locally`), then re-syncs on both `popstate` and `astro:page-load` (the latter required — under `ClientRouter`, the island may be re-instanced *without* the mount path re-running, leaving a hole). Writes back via `history.replaceState` so toggling tags doesn't pollute history.
+  - Matching is substring with a prefix-rank tier (`matchTags()`). Fuzzy was explicitly rejected — at this tag count, fuzzy produces noisy results on short tokens.
+  - Already-selected tags are filtered out of the candidate pool; they reappear if deselected. Empty query shows the full unselected pool so the dropdown doubles as a tag browser.
+  - Outside-click + Escape close the dropdown; ArrowUp/Down navigates `highlightedIndex`, Enter selects, the input keeps focus after each selection for chained adds. The mode toggle only renders at `selectedTags.size >= 2`; clearing back below 2 forces `mode = "or"`.
+- `TagPill.svelte` — button-form tag pill used inside the filter UI and per-row tags. Props: `tag`, `onclick`, `class?`. Lift/hover behavior is applied by callers via the `class` prop (the pill keeps `transition-transform` so external transforms animate smoothly) — this lets the timeline rows, selected chip strip, and dropdown each compose their own lift treatment without forking the component. The hue lookup uses `$derived` (not `const`) because Svelte may reuse instances inside `{#each}` and `const` evaluates once at init.
 - `ProjectThumbnail.svelte` — used inside the timeline rows so the thumbnail and its `<a>` wrapper participate in the row's reactive layout. `aria-hidden + tabindex=-1` because the title link below is the canonical, named link for screen readers.
 
 ## Helpers & Assets

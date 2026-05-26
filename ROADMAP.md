@@ -1,13 +1,19 @@
 # Roadmap
 
+## Minor issues
+
+- Fix projects/gallery swapping in the navbar
+- Move thumbnails to assets if that can still work with SEO. Fine or good for them to be galleried.
+- Provide captions to images via sidecar file? Consider options.
+- 
+
 ## Content prep
 
 - **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates — email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
 
 ## Planned features
 
-1. **Project discoverability.** Today there's only the tag filter. Likely additions, in rough priority order:
-   - Tag typeahead in the filter UI (easy win once the pill list gets long).
+1. **Project discoverability.** Tag filter has a typeahead now. Remaining additions, in rough priority order:
    - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
    - Full-text search over article bodies via Pagefind (runs at build time).
 

@@ -42,7 +42,10 @@ The multi-stage prompt pipeline is run asynchronously in the early hours of the 
 6. Have a multimodal LLM provide a description of the album art for the chosen album.
 7. Synthesize the weather, excerpt, and album info into a final daily greeting, with a reasoning phase and randomly determined target length.
 
-Every stage of this pipeline is designed to degrade gracefully in the event of failure such as API unavailability. The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, my music server, and my Ollama instance. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
+Each stage of this pipeline is designed to degrade gracefully in the event of failure such as API unavailability. Following playback of the greeting each morning, the selected album is queued in Music Assistant and begins to play.
+
+The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, my Navidrome music server, and my Ollama instance. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
+
 
 ## An example
 
@@ -60,3 +63,16 @@ Every stage of this pipeline is designed to degrade gracefully in the event of f
 
 ### Bash deployment
 
+While I was already operating my music server and experimenting with Ollama when this project was conceived, I was not running Home Assistant until months after the first iteration was completed. Thus, I had to come up with my own way to serve the greeting and schedule both the greeting generation and playback:
+
+- The greeting generator was originally a simple script, no Docker or Flask server
+- Used bash scripts to copy and configure the project files on the server, scheduling them via cron
+- Wrote a flask script to run on my music player (mini-PC connected to stereo system) and receive the audio file from the script
+- The Astropy library was used to calculate sunrise and schedule playback on the music server relative to dawn
+- A 5 minute recurring cron job read the playback time written by the receiver server and triggered the wake-up when the scheduled time had passed
+
+Predicably, this digital Rube-Goldberg machine was somewhat prone to failure, particularly in the event a greeting was not recieved from the server on a given day. Some of these kinks were ironed out, but the whole system was replaced when Home Assistant came along. The music player was reduced to a Snapcast receiver to interface with Music Assistant.
+
+### Coqui TTS
+
+In the first iteration, I spent a good deal of time trying to get the best quality TTS I could (locally generated, at least).
