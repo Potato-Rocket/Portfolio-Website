@@ -2,14 +2,35 @@
 
 ## Minor issues
 
-- Fix projects/gallery swapping in the navbar
 - Move thumbnails to assets if that can still work with SEO. Fine or good for them to be galleried.
-- Provide captions to images via sidecar file? Consider options.
-- 
 
 ## Content prep
 
 - **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates — email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
+
+### Per-project content status
+
+One entry per project page. Mark as `done`, `partial`, `pull-in` (existing material elsewhere — old write-ups, repo READMEs, photos — that I can have Claude pull in and adapt), or `write` (needs fresh writing).
+
+- [x] **frc-robot-chute** — done
+- [x] **imagepy** — done
+- [x] **portfolio** — done
+- [ ] **synthetic-word-generator** — partial, need to discuss V rewrite
+- [ ] **daily-greeting-generator** — partial
+- [ ] **waste-scale** — write; pull-in
+- [ ] **solar-system-simulator** — write; pull-in from readme
+- [ ] **plant-datalogger** — write; pull-in from readme/kicad schematic
+- [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
+- [ ] **hanover-cms** — write; blocked on demo scrub (see above); pull-in from team progress reports
+- [ ] **pythagoras-tree** — write; need to run and capture screenshots
+- [ ] **gridfinity-bins** — write; need to add more images
+- [ ] **wpi-schedule-importer** — write; take pictures of caledar and example xlsx
+- [ ] **towers** — write; pull in game rules; need to run and take screenshots
+- [ ] **drone-frame** — write; need to get OLD images/dates from dad
+- [ ] **cubeish** — write; attach old .exe; record and post gameplay video
+- [ ] **tower-crunch** — write; attach old .exe; record and post gameplay video
+- [ ] **star-map** — write; need to run, fix or revert to working branch, take screenshots
+- [ ] **selfhosting** — write; need to generate diagrams
 
 ## Planned features
 
