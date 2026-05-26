@@ -26,7 +26,7 @@ Always fetch current docs before working with any library API — Astro, Svelte,
 
 ### Adding a new project
 1. Drop a `.md` or `.mdx` file in `src/content/projects/` with the frontmatter schema below. Use `.mdx` only when the body imports components (e.g. `YouTube`).
-2. Add a matching `public/thumbnails/<slug>.png` or `<slug>.jpg` (resolved by `findThumbnailPath()` in `src/lib/thumbnails.ts` — no frontmatter field). If absent, the thumbnail renders as a diagonal-hatch placeholder.
+2. Add a matching `src/assets/thumbnails/<slug>.png` or `<slug>.jpg` (resolved by `findThumbnailImage()` / `findThumbnailPath()` in `src/lib/thumbnails.ts` — no frontmatter field). If absent, the thumbnail renders as a diagonal-hatch placeholder.
 3. (Optional) Drop gallery images at `src/assets/<slug>/*.{jpg,jpeg,png,webp,avif}`. They're discovered automatically by `loadGalleryItems()` and appear on `/gallery`. They render through Astro's `<Image>`, so Sharp generates responsive srcsets at build time.
 4. Run `npm run preprocess` to add any new tags into `src/data/tag-colors.json` (they appear as `null` hues — see [Tag colors](#tag-colors) below to assign one).
 
@@ -57,6 +57,11 @@ Do **not** set `main` or an `assets` binding here. Both were carried over from o
 
 ### Image service
 `imageService: 'compile'` runs Sharp at build time for prerendered routes — generates WebP/AVIF + srcset for anything imported through Astro's `<Image>` component. No paid Cloudflare Images binding needed. Stay on `'compile'` unless we add SSR routes that need runtime image transforms.
+
+### SEO & performance config
+- `site: "https://oscar.stomberg.us"` is set in `astro.config.mjs` so `Astro.site` resolves — required for building absolute OG image URLs (`new URL(thumbImage.src, Astro.site).href`).
+- `prefetch: { prefetchAll: true, defaultStrategy: "hover" }` — all `<a>` tags get hover-prefetch automatically because `ClientRouter` is active.
+- `Layout.astro` props: `title` (auto-suffixed `— Oscar Stomberg`; omit on home page), `description` (falls back to site-wide tagline), `image` (absolute URL for `og:image` / `twitter:image`; omit on non-project pages). Variable font woff2 files are preloaded in `<head>` via `?url` imports from `@fontsource-variable`.
 
 ### Generated worker types
 `worker-configuration.d.ts` is gitignored. Regenerate via `npm run generate-types` if `wrangler.jsonc` changes in a way that affects bindings.
@@ -120,7 +125,7 @@ Two components exist in both flavors — `TagPill` and `ProjectThumbnail`. The s
 - `Navbar.astro` — top bar. **Not rendered on `/`** (the hero carries the brand there). `tab` prop is `"projects" | "gallery"`. Layout is a stable 3-column grid: icon (left), "Projects"-or-title (center), Gallery (right). Gallery's column does **not** swap when active — only its bold/active styling changes — so it stays put as the user navigates between `/projects` and `/gallery`. The center column trades between the "Projects" link/active label and the project title on detail pages. On detail pages (`tab="projects"` + a `projectTitle`), "Projects" sits as a breadcrumb prefix in the left cell and `isWip` adds a `· WIP` suffix to the title (since the article `<h1>` is `sr-only`). The `Icon.svg` monogram in the left cell is the only "home" link. View transitions: `nav-brand` (icon), `nav-projects`, and `nav-gallery` (labels) morph between routes — `::view-transition-group` runs 400ms with `cubic-bezier(0.4, 0, 0.2, 1)` for the position morph; `::view-transition-old/new` runs 150ms for the crossfade. Honors `prefers-reduced-motion`.
 - `FeaturedCard.astro` — homepage tile. Whole card is one `<a>`; do not nest anchors inside it. Width-agnostic by default; the home page sizes it via `class="w-88 max-w-full"` on each instance inside a `flex flex-wrap justify-center` container, which gives fixed-width cards with an incomplete last row centered (CSS Grid auto-fill can't do the per-row centering). **Trailer-style content**: thumbnail, italic-muted summary lead, date. No tags — tags live on `/projects` and the article hero.
 - `RelatedCard.astro` — bordered card variant used in the "Related" section at the bottom of a project detail page. Thinner than `FeaturedCard`, includes the date label.
-- `ProjectThumbnail.astro` — static thumbnail box (aspect-video, strong border). Resolves the image via `findThumbnailPath(slug)`; falls back to a diagonal-hatch SVG when no thumbnail exists. Used by `FeaturedCard`, `RelatedCard`, and the detail-page hero.
+- `ProjectThumbnail.astro` — static thumbnail box (aspect-video, strong border). Resolves via `findThumbnailImage(slug)` and renders with `<Image widths={[640,1280]}>` for Sharp srcset; falls back to a diagonal-hatch SVG. Accepts `loading?: "lazy" | "eager"` (default `"lazy"`); pass `loading="eager"` for above-the-fold callsites — `fetchpriority="high"` is set automatically. Used by `FeaturedCard`, `RelatedCard`, and the detail-page hero.
 - `TagPill.astro` — anchor-form tag pill. `href` is required (it's always a link, typically to `/projects?tags=<tag>`). Hue comes from `src/data/tag-colors.json`.
 - `ProjectLinks.astro` — shared GitHub/Live link row with icons. Pass `links={project.data.links}`. Renders nothing if both are absent. Accepts a `class` prop for layout overrides.
 - `PersonalLinks.astro` — GitHub / LinkedIn / Email / Resume row. URLs are hard-coded inside the component (single source of truth). Props: `size?: 'sm' | 'lg'` (lg = hero, sm = footer), `class?: string`. External links + the resume PDF open in a new tab; `mailto:` opens in the OS handler.
@@ -145,7 +150,7 @@ Two components exist in both flavors — `TagPill` and `ProjectThumbnail`. The s
 ## Helpers & Assets
 
 - `src/lib/dates.ts` — `monthYear(date)`, `effectiveDate(periods)` (sort key = first period's date), and `formatDateRange(periods, ongoing)` (`"Jan 2023"`, `"Jan 2023–May 2024"` with en-dash, or `"Since Jan 2023"`). All use `getUTC*` to avoid local-timezone date drift.
-- `src/lib/thumbnails.ts` — `findThumbnailPath(slug)` returns `/thumbnails/<slug>.png` or `/thumbnails/<slug>.jpg`, whichever exists, else `null`. Built via `import.meta.glob` so Vite resolves the set at compile time (safe in the Workers runtime, no fs reads at request time).
+- `src/lib/thumbnails.ts` — thumbnails live at `src/assets/thumbnails/<slug>.{png,jpg}`. Exports `findThumbnailImage(slug): ImageMetadata | null` (for `.astro` `<Image>` use) and `findThumbnailPath(slug): string | null` (hashed URL for Svelte props). Uses **two separate globs**: one without `?url` for `ImageMetadata`, one with `{ query: "?url" }` for the URL string. **Gotcha:** `ImageMetadata.src` from a plain glob is a dev-only `/@fs/...` URL — always use the `?url` glob when you need a URL that works in production (e.g. props passed to `client:load` islands, OG image tags).
 - `src/lib/gallery.ts` — `loadGalleryItems()` walks every project that has at least one image at `src/assets/<slug>/*.{jpg,jpeg,png,webp,avif}` and returns `{ key, image, project }` triples. Also exports `shuffleSeeded` (Mulberry32 PRNG) so the gallery order is deterministic per build but reshuffles when the asset set changes.
 - `src/lib/galleryLayout.ts` — `justifiedRows()` packs items by aspect ratio into full-width rows ("flexbin" / justified-rows). The algorithm only chooses *which* items go in which row; per-row dimensions are CSS-driven (`aspect-ratio` on the row + `flex-grow` on items) so resizing the viewport is instant and doesn't re-run the algorithm. Defaults assume the page's `max-w-6xl + px-12` container (1056px inner) — update `DEFAULT_CONTAINER_WIDTH` here if the gallery's chrome ever changes.
 - `src/data/tag-colors.json` — see [Tag colors](#tag-colors).
