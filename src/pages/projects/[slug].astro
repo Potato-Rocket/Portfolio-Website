@@ -54,7 +54,7 @@ const showHistory = periods.length > 1;
         <div class="flex flex-wrap items-baseline gap-x-6 gap-y-3 text-sm text-ink-muted">
           {tags.length > 0 && (
             <div class="flex flex-wrap gap-1">
-              {tags.map((tag) => <TagPill tag={tag} href={`/projects?tags=${encodeURIComponent(tag)}`} />)}
+              {tags.map((tag) => <TagPill tag={tag} href={`/projects?tags=${encodeURIComponent(tag)}`} class="hover:-translate-y-0.5" />)}
             </div>
           )}
           <ProjectLinks links={links} class="ml-auto" />

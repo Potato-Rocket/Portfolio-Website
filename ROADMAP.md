@@ -1,15 +1,53 @@
 # Roadmap
 
+## Minor issues
+
+- Move thumbnails to assets if that can still work with SEO. Fine or good for them to be galleried.
+
+## Content prep
+
+- **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates — email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
+
+### Per-project content status
+
+One entry per project page. Mark as `done`, `partial`, `pull-in` (existing material elsewhere — old write-ups, repo READMEs, photos — that I can have Claude pull in and adapt), or `write` (needs fresh writing).
+
+- [x] **frc-robot-chute** — done
+- [x] **imagepy** — done
+- [x] **portfolio** — done
+- [ ] **synthetic-word-generator** — partial, need to discuss V rewrite
+- [ ] **daily-greeting-generator** — partial
+- [ ] **waste-scale** — write; pull-in
+- [ ] **solar-system-simulator** — write; pull-in from readme
+- [ ] **plant-datalogger** — write; pull-in from readme/kicad schematic
+- [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
+- [ ] **hanover-cms** — write; blocked on demo scrub (see above); pull-in from team progress reports
+- [ ] **pythagoras-tree** — write; need to run and capture screenshots
+- [ ] **gridfinity-bins** — write; need to add more images
+- [ ] **wpi-schedule-importer** — write; take pictures of caledar and example xlsx
+- [ ] **towers** — write; pull in game rules; need to run and take screenshots
+- [ ] **drone-frame** — write; need to get OLD images/dates from dad
+- [ ] **cubeish** — write; attach old .exe; record and post gameplay video
+- [ ] **tower-crunch** — write; attach old .exe; record and post gameplay video
+- [ ] **star-map** — write; need to run, fix or revert to working branch, take screenshots
+- [ ] **selfhosting** — write; need to generate diagrams
+
 ## Planned features
 
-1. Improve SEO, robots.txt, etc.
-2. Metadata search on the project page? Or tag lookup to aid with tag filter selection? Separate search page that does
-   fuzzy or semantic search and reorders instead of filtering? Different layout?
-3. Home page improvements. Feedback tells me that the rest of the site should be more accessible, so maybe big page
-   links in the middle below the blurb, then toggleable featured panel? Also was advised that the featured projects
-   might look better as a carousel, not sure how those two ideas fit together.
-4. Consider more interactive features to place in the project articles. Demo video embeds, image carousel, eventually
-   maybe integrated python script execution or simply a connection to a self-hosted backend to demonstrate the output.
-   Could have a nice connection status indicator or something.
-5. Consider updating the daily greeting generator to implement this site's UI rules, integrate either directly or via
-   API only.
+1. **Project discoverability.** Tag filter has a typeahead now. Remaining additions, in rough priority order:
+   - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
+   - Full-text search over article bodies via Pagefind (runs at build time).
+
+   Semantic search is overkill at portfolio scale — skip unless project count grows a lot.
+
+2. **Home page iteration.** Feedback says the rest of the site should be more discoverable from the landing page. Candidate ideas in play: bigger explicit links to `/projects` and `/gallery` below the blurb, toggleable featured panel, featured grid as a carousel. Plan is to iterate visually until a direction feels right rather than pre-design.
+
+3. **Interactive article features.**
+   - Image carousel for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
+   - **Live demo backend behind a Cloudflare Tunnel from the home lab.** Wrap a small Python script, or surface the most recent generated daily greeting. The point is to demonstrate full-stack/devops skills, so the wiring (tunnel, connection-status indicator, graceful fallback when the backend is down) is part of the showcase, not just decoration. Maintenance burden is accepted as the cost of admission.
+
+4. **Daily greeting generator.** Two separate threads:
+   - Visual refresh of the GG itself to match this site's UI rules (work in the GG repo).
+   - Surface GG output inside the portfolio — likely via the same tunneled backend as item 3, since "latest generated greeting" is the natural first thing to plug into that pipe.
+
+5. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?

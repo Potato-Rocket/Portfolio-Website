@@ -10,28 +10,21 @@ interface Props {
 const { tab, projectTitle, isWip = false } = Astro.props;
 const isProjectDetail = tab === "projects" && !!projectTitle;
 
-// The "inactive" tab fills the otherwise-empty third grid column so the active tab
-// stays centered. Project detail pages count as the projects tab; gallery is the alternate.
-const inactiveTab = tab === "projects" ? "gallery" : "projects";
-const inactiveLabel = inactiveTab === "gallery" ? "Gallery" : "Projects";
-const inactiveHref = `/${inactiveTab}`;
-const inactiveTransitionName = `nav-${inactiveTab}`;
-const activeTransitionName = `nav-${tab}`;
-const activeLabel = tab === "projects" ? "Projects" : "Gallery";
-
 const linkClass = "text-3xl font-serif hover:underline underline-offset-4 decoration-1";
 const activeClass = "text-3xl font-serif font-bold";
 ---
 
 <header class="sticky top-0 z-10 border-b border-rule py-4 bg-paper">
   {/*
-    sm+ both layouts use the 3-col grid (1fr auto 1fr): icon (justify-end), active/title
-    (center), inactive (justify-start). Below sm:
+    sm+ all pages use the 3-col grid (1fr auto 1fr): icon (justify-end), Projects-or-title
+    (center), Gallery (justify-start). Gallery's column is stable across pages so it doesn't
+    swap sides when active vs inactive — only its bold/active styling changes. The center
+    column trades between "Projects" (link or active) and the project title on detail pages.
+    Below sm:
     - Non-detail wraps as a centered flex row — at very narrow widths icon/Projects/Gallery
       can't share a line and Gallery flows underneath, still centered.
-    - Detail stacks three rows: icon+breadcrumb left, title (centered <xs, left xs+), inactive
-      tab centered on its own row. The inactive sits below the title rather than beside the
-      breadcrumb so it doesn't read as part of the "Projects /" cluster.
+    - Detail stacks three rows: icon+breadcrumb left, title (centered <xs, left xs+), Gallery
+      centered on its own row below the title.
   */}
   <nav class:list={[
     "max-w-6xl mx-auto px-4 sm:px-12",
@@ -67,23 +60,28 @@ const activeClass = "text-3xl font-serif font-bold";
       // sm+ grid: surrounding 1fr cells center the auto column, so inner align is moot.
       isProjectDetail ? "justify-center text-center xs:justify-start xs:text-left" : "",
     ]}>
-      {!isProjectDetail && (
-        <span class={activeClass} aria-current="page" transition:name={activeTransitionName}>{activeLabel}</span>
-      )}
-      {isProjectDetail && (
+      {isProjectDetail ? (
         <span class={activeClass} aria-current="page">
           {projectTitle}
           {isWip && <span class="font-light font-sans"> · WIP</span>}
         </span>
+      ) : tab === "projects" ? (
+        <span class={activeClass} aria-current="page" transition:name="nav-projects">Projects</span>
+      ) : (
+        <a href="/projects" class={linkClass} transition:name="nav-projects">Projects</a>
       )}
     </div>
 
     <div class:list={[
       "flex items-center",
-      // Stacked detail centers the inactive tab on its own row; sm+ grid pins it to col 3's left edge.
+      // Stacked detail centers Gallery on its own row; sm+ grid pins it to col 3's left edge.
       isProjectDetail ? "justify-center sm:justify-start" : "sm:justify-start",
     ]}>
-      <a href={inactiveHref} class={linkClass} transition:name={inactiveTransitionName}>{inactiveLabel}</a>
+      {tab === "gallery" ? (
+        <span class={activeClass} aria-current="page" transition:name="nav-gallery">Gallery</span>
+      ) : (
+        <a href="/gallery" class={linkClass} transition:name="nav-gallery">Gallery</a>
+      )}
     </div>
   </nav>
 </header>
