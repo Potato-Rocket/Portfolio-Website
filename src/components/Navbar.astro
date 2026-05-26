@@ -1,6 +1,4 @@
 ---
-import Icon from "../assets/Icon.svg";
-
 interface Props {
   tab: "projects" | "gallery";
   projectTitle?: string;
@@ -37,14 +35,7 @@ const activeClass = "text-3xl font-serif font-bold";
       "flex items-center gap-6",
       isProjectDetail ? "justify-start sm:justify-end" : "sm:justify-end",
     ]}>
-      <a
-        href="/"
-        aria-label="Home"
-        class="inline-block transition-transform duration-300 ease-out hover:scale-110"
-        transition:name="nav-brand"
-      >
-        <Icon class="w-8 h-8" />
-      </a>
+      <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
       {isProjectDetail && (
         <>
           <a href="/projects" class={linkClass} transition:name="nav-projects">Projects</a>

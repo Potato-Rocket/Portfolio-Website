@@ -15,16 +15,16 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 - [x] **frc-robot-chute** — done
 - [x] **imagepy** — done
 - [x] **portfolio** — done
-- [ ] **synthetic-word-generator** — partial, need to discuss V rewrite
+- [x] **waste-scale** — done
+- [x] **plant-datalogger** — done
+- [x] **solar-system-simulator** — done
+- [x] **synthetic-word-generator** — partial, come up with thumbnail
+- [x] **wpi-schedule-importer** — partial, (text only; take pictures of calendar and example xlsx when available)
 - [ ] **daily-greeting-generator** — partial
-- [ ] **waste-scale** — write; pull-in
-- [ ] **solar-system-simulator** — write; pull-in from readme
-- [ ] **plant-datalogger** — write; pull-in from readme/kicad schematic
 - [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
 - [ ] **hanover-cms** — write; blocked on demo scrub (see above); pull-in from team progress reports
 - [ ] **pythagoras-tree** — write; need to run and capture screenshots
 - [ ] **gridfinity-bins** — write; need to add more images
-- [ ] **wpi-schedule-importer** — write; take pictures of caledar and example xlsx
 - [ ] **towers** — write; pull in game rules; need to run and take screenshots
 - [ ] **drone-frame** — write; need to get OLD images/dates from dad
 - [ ] **cubeish** — write; attach old .exe; record and post gameplay video

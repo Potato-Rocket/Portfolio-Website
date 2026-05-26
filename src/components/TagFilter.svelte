@@ -140,13 +140,13 @@
   }
 
   function onKeyDown(e: KeyboardEvent) {
-    if (e.key === "ArrowDown") {
+    if (e.key === "ArrowDown" || e.key === "ArrowRight") {
       e.preventDefault();
       isOpen = true;
       if (candidates.length > 0) {
         highlightedIndex = Math.min(highlightedIndex + 1, candidates.length - 1);
       }
-    } else if (e.key === "ArrowUp") {
+    } else if (e.key === "ArrowUp" || e.key === "ArrowLeft") {
       e.preventDefault();
       if (candidates.length > 0) {
         highlightedIndex = Math.max(highlightedIndex - 1, 0);
