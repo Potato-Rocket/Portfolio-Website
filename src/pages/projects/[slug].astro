@@ -44,7 +44,7 @@ const ogImage = thumbImage && Astro.site
     <article class="prose prose-paper max-w-none">
       <header class="not-prose mb-10 pb-8 border-b border-rule">
         <h1 class="sr-only">{title}{isWip ? " (work in progress)" : ""}</h1>
-        <ProjectThumbnail slug={project.id} title={title} class="mb-4" />
+        <ProjectThumbnail slug={project.id} title={title} loading="eager" class="mb-4" />
         {showHistory ? (
           <ul class="text-sm text-ink-muted mb-3 space-y-0.5">
             {periods.map((p) => (

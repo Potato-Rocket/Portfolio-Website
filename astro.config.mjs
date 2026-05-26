@@ -17,6 +17,7 @@ const isDev = process.argv[2] === 'dev';
 
 export default defineConfig({
   site: "https://oscar.stomberg.us",
+  prefetch: { prefetchAll: true, defaultStrategy: "hover" },
   adapter: isDev ? undefined : cloudflare({ imageService: 'compile' }),
   integrations: [icon(), svelte(), mdx()],
   vite: { plugins: [tailwindcss()] },
