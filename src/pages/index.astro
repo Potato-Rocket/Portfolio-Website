@@ -7,7 +7,9 @@ import FeaturedCard from "../components/FeaturedCard.astro";
 import PersonalLinks from "../components/PersonalLinks.astro";
 
 const projects: CollectionEntry<"projects">[] = await getCollection("projects", ({ data }) => !data.hidden);
-const featured = projects.filter((p) => p.data.featured);
+const featured = projects
+  .filter((p) => p.data.featured)
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
 ---
 
 <Layout>
@@ -18,28 +20,146 @@ const featured = projects.filter((p) => p.data.featured);
   <div class="max-w-7xl mx-auto px-12 pt-16">
     <div class="max-w-2xl mx-auto text-center">
       <h1 class="text-5xl">Oscar Stomberg</h1>
-      <p class="text-ink-muted text-xl italic mt-16">
+      <p class="text-ink-muted text-base sm:text-xl italic mt-12">
         Robotics engineering student at Worcester Polytechnic Institute. From mechanical design and embedded systems to
         network management and full-stack software development, I love making things. Welcome to my portfolio, please
         take some time to look around!
       </p>
+      <div class="inline-flex flex-col items-center gap-4 mt-8">
+        <a
+            href="/projects"
+            class="group inline-flex items-center gap-2 underline underline-offset-2 text-2xl font-serif whitespace-nowrap"
+        >
+          See project timeline
+          <Icon name="lucide:arrow-right" class="w-6 h-6 transition-transform duration-300 ease-out group-hover:translate-x-1" />
+        </a>
+        <a
+            href="/gallery"
+            class="group inline-flex items-center gap-2 underline underline-offset-2 text-2xl font-serif whitespace-nowrap"
+        >
+          See image gallery
+          <Icon name="lucide:arrow-right" class="w-6 h-6 transition-transform duration-300 ease-out group-hover:translate-x-1" />
+        </a>
+      </div>
       <hr class="border-rule mb-8 mt-12" />
     </div>
-    <div class="flex flex-wrap justify-center gap-x-8 gap-y-12">
-      {featured.map((project) => (
-        <FeaturedCard project={project} class="w-88 max-w-full" />
-      ))}
+    <!-- carousel -->
+    <div>
+      <div class="relative">
+        <div id="featured-carousel" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-hide carousel-gutters gap-8 py-4">
+          {featured.map((project) => (
+            <FeaturedCard project={project} class="snap-center flex-none w-88 max-w-[calc(100vw-6rem)]" />
+          ))}
+        </div>
+        <!-- arrows -->
+        {featured.length > 1 && (
+          <>
+            <button id="carousel-prev" aria-label="Previous project"
+              class="absolute -left-10 top-1/2 -translate-y-1/2 z-10 p-2 text-ink-muted hover:text-ink transition-[opacity,color] duration-200 opacity-0 pointer-events-none cursor-pointer">
+              <svg class="w-4 h-7" viewBox="0 0 10 18" fill="currentColor" aria-hidden="true">
+                <polygon points="10,0 0,9 10,18" />
+              </svg>
+            </button>
+            <button id="carousel-next" aria-label="Next project"
+              class="absolute -right-10 top-1/2 -translate-y-1/2 z-10 p-2 text-ink-muted hover:text-ink transition-[opacity,color] duration-200 cursor-pointer">
+              <svg class="w-4 h-7" viewBox="0 0 10 18" fill="currentColor" aria-hidden="true">
+                <polygon points="0,0 10,9 0,18" />
+              </svg>
+            </button>
+          </>
+        )}
+      </div>
+      <!-- dots -->
+      {featured.length > 1 && (
+        <div id="carousel-dots" class="flex justify-center items-end gap-3 mt-4 h-5">
+          {featured.map((_, i) => (
+            <button class="carousel-dot w-2 h-2 rounded-full bg-ink/25 transition-all duration-200 cursor-pointer" data-index={i} aria-label={`Go to slide ${i + 1}`} />
+          ))}
+        </div>
+      )}
     </div>
     <div class="text-center my-20">
-      <a
-          href="/projects"
-          class="group inline-flex items-center gap-2 underline underline-offset-2 text-2xl font-serif whitespace-nowrap"
-      >
-        See more Projects
-        <Icon name="lucide:arrow-right" class="w-6 h-6 transition-transform duration-300 ease-out group-hover:translate-x-1" />
-      </a>
+      <PersonalLinks size="lg" class="justify-center" />
     </div>
-    <hr class="border-rule" />
-    <PersonalLinks size="lg" class="justify-center mt-12" />
   </div>
+
+<script>
+  let teardown: (() => void) | undefined;
+
+  function initCarousel() {
+    teardown?.();
+    teardown = undefined;
+
+    const carousel = document.getElementById('featured-carousel') as HTMLElement | null;
+    const prevBtn = document.getElementById('carousel-prev') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('carousel-next') as HTMLButtonElement | null;
+    const dots = Array.from(document.querySelectorAll<HTMLElement>('.carousel-dot'));
+    if (!carousel) return;
+
+    const cards = Array.from(carousel.children) as HTMLElement[];
+    const total = cards.length;
+    let current = Math.floor(total / 2);
+
+    function goTo(index: number) {
+      current = Math.max(0, Math.min(index, total - 1));
+      const card = cards[current];
+      const target = card.offsetLeft - (carousel!.clientWidth - card.offsetWidth) / 2;
+      carousel!.scrollTo({
+        left: Math.max(0, Math.min(carousel!.scrollWidth - carousel!.clientWidth, target)),
+        behavior: 'smooth',
+      });
+      update();
+    }
+
+    function update() {
+      // dots: active one lifts up
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('-translate-y-1.5', i === current);
+        dot.classList.toggle('bg-ink/80', i === current);
+        dot.classList.toggle('bg-ink/25', i !== current);
+      });
+      // arrows: hide at the ends
+      const atStart = current === 0;
+      const atEnd = current === total - 1;
+      prevBtn?.classList.toggle('opacity-0', atStart);
+      prevBtn?.classList.toggle('pointer-events-none', atStart);
+      nextBtn?.classList.toggle('opacity-0', atEnd);
+      nextBtn?.classList.toggle('pointer-events-none', atEnd);
+    }
+
+    prevBtn?.addEventListener('click', () => goTo(current - 1));
+    nextBtn?.addEventListener('click', () => goTo(current + 1));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    carousel.addEventListener('scroll', () => {
+      const viewCenter = carousel!.scrollLeft + carousel!.clientWidth / 2;
+      const closest = cards.reduce((best, card, i) => {
+        const dc = Math.abs(card.offsetLeft + card.offsetWidth / 2 - viewCenter);
+        const db = Math.abs(cards[best].offsetLeft + cards[best].offsetWidth / 2 - viewCenter);
+        return dc < db ? i : best;
+      }, 0);
+      if (closest !== current) { current = closest; update(); }
+    }, { passive: true });
+
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement)?.isContentEditable) return;
+      if (e.key === 'ArrowLeft') goTo(current - 1);
+      else if (e.key === 'ArrowRight') goTo(current + 1);
+    };
+    document.addEventListener('keydown', onKey);
+    teardown = () => document.removeEventListener('keydown', onKey);
+
+    // jump to initial card without animation
+    const initCard = cards[current];
+    const initTarget = initCard.offsetLeft - (carousel!.clientWidth - initCard.offsetWidth) / 2;
+    carousel!.style.scrollBehavior = 'auto';
+    carousel!.scrollLeft = Math.max(0, Math.min(carousel!.scrollWidth - carousel!.clientWidth, initTarget));
+    carousel!.style.scrollBehavior = '';
+    update();
+  }
+
+  initCarousel();
+  document.addEventListener('astro:page-load', initCarousel);
+</script>
 </Layout>

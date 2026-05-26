@@ -1,7 +1,8 @@
 ---
 title: Plant Datalogger
-summary: Raspberry Pi Pico W datalogger for temperature, humidity, and soil moisture with NTP time sync, exponential-backoff reconnection, and a runtime calibration flow.
+summary: Raspberry Pi Pico W datalogger for temperature, humidity, and soil moisture with NTP time sync, written with the Pico C SDK.
 status: wip
+featured: true
 links:
   github: https://github.com/Potato-Rocket/Plant-Datalogger
 tags:
