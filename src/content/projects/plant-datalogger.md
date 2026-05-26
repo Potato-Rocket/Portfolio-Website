@@ -14,6 +14,8 @@ periods:
     label: Initial build
   - date: 2025-04-10
     label: Main development
+related:
+  - waste-scale
 ---
 
 ## Overview

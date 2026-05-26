@@ -15,9 +15,9 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 - [x] **frc-robot-chute** — done
 - [x] **imagepy** — done
 - [x] **portfolio** — done
+- [x] **waste-scale** — done
 - [ ] **synthetic-word-generator** — partial, need to discuss V rewrite
 - [ ] **daily-greeting-generator** — partial
-- [ ] **waste-scale** — write; pull-in
 - [ ] **solar-system-simulator** — write; pull-in from readme
 - [ ] **plant-datalogger** — write; pull-in from readme/kicad schematic
 - [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
