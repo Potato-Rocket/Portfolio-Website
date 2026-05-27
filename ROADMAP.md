@@ -1,5 +1,9 @@
 # Roadmap
 
+## Issues
+
+- Certain thumbnails have wonky rotation info (e.g. robot chute, digital waste) likely from heic -> jpg and such. This only matters for astro thumbnails, i.e. in the details page (though if we included thumbnails in gallery that would also be a problem). Not urgent but kind of weird--and we don't want to screw up the thumbnails either.
+
 ## Content prep
 
 - **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates — email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
@@ -39,10 +43,23 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 
 2. **Interactive article features.**
    - Image carousel for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
-   - **Live demo backend behind a Cloudflare Tunnel from the home lab.** Wrap a small Python script, or surface the most recent generated daily greeting. The point is to demonstrate full-stack/devops skills, so the wiring (tunnel, connection-status indicator, graceful fallback when the backend is down) is part of the showcase, not just decoration. Maintenance burden is accepted as the cost of admission.
 
 3. **Daily greeting generator.** Two separate threads:
    - Visual refresh of the GG itself to match this site's UI rules (work in the GG repo).
-   - Surface GG output inside the portfolio — likely via the same tunneled backend as item 3, since "latest generated greeting" is the natural first thing to plug into that pipe.
+   - Surface GG output inside the portfolio via the live backend (see item 4).
 
-4. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
+4. **Live Greeting Backend.** Full architecture is documented in the architecture plan. Three new repos/directories, implemented in this order:
+
+   **Repo/directory layout:**
+   - Go server source lives in the greeting generator repo as a subdirectory (`server/` or `greeting-server/`). Multi-stage Docker build (`golang:1.22` → `alpine`), mounted read-only volume.
+   - `cloudflared` is a service inside `compose/daily-greeting/` in the selfhosting repo (not its own stack). Move to its own stack if a second demo is ever added.
+   - `greeting-worker` is a new standalone repo (Cloudflare Worker, TypeScript, `wrangler deploy`).
+   - `LiveGreeting.svelte` lives in this repo at `src/components/mdx/`.
+
+   **Implementation order:**
+   1. ~~**Go server** (greeting generator repo, `server/` subdir) — `net/http`, no framework; `GET /api/greeting/latest` (metadata JSON) + `GET /files/<filename>` (static files) from the greeting output dir.~~ ✓
+   2. ~~**Tunnel** — add `cloudflared` service to `compose/daily-greeting/`; exposes Go server at `demo.oscar.stomberg.us`. Outbound-only, no open ports.~~ ✓
+   3. ~~**`greeting-worker`** (new repo) — hourly cron: pull from tunnel → KV (metadata) + R2 (audio, cover art). Fetch handler: serve `GET /api/greeting`, `/api/greeting/audio`, `/api/greeting/cover` from KV/R2 at `oscar.stomberg.us/api/greeting/*`. `TUNNEL_ORIGIN` stored as Wrangler secret.~~ ✓
+   4. ~~**`LiveGreeting.svelte`** (this repo, `src/components/mdx/`) — `client:load` island; renders greeting text + cover art + audio player + `lastSynced` timestamp. Degrades gracefully if fetch fails.~~ ✓
+
+5. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
