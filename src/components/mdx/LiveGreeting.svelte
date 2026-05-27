@@ -17,7 +17,7 @@
     greeting:
       "Good morning. The forecast calls for scattered clouds and a high near 64°F -- a reasonable backdrop for today's selection. This morning's excerpt comes courtesy of Project Gutenberg, and the album pairs with it better than expected. Enjoy the day ahead.",
     log: "[08:00:01] Weather fetched\n[08:00:02] Gutenberg excerpt accepted on attempt 1\n[08:00:04] Album selected\n[08:00:05] Greeting generated\n[08:00:07] TTS complete",
-    pipeline: "weather → excerpt → album_select → album_art_desc → greeting → tts",
+    pipeline: "weather → excerpt  Live · synced less than an hour ago→ album_select → album_art_desc → greeting → tts",
     album: { name: "Mad Mad World", artist: "Tom Cochrane", year: 1991, genres: ["rock", "pop"] },
     weather: { temperature: 64, humidity: 62, windSpeed: "8 mph", conditions: "Partly cloudy" },
     lastSynced: new Date(Date.now() - 2 * 3_600_000).toISOString(),
@@ -27,13 +27,21 @@
   let data = $state<GreetingData | null>(null);
 
   const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-  function formatDate(ymd: string): string {
+  function formatDate(ymd: string, short: boolean = false): string {
     const d = new Date(ymd + "T00:00:00Z");
-    return `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
+    return short
+      ? `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}`
+      : `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
   }
 
   function albumLabel(a: GreetingData["album"]): string {
     return `${a.name} — ${a.artist} (${a.year})`;
+  }
+
+  function isStale(ymd: string): boolean {
+    const d = new Date();
+    const today = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
+    return ymd !== today;
   }
 
   function syncedAgo(iso: string): string {
@@ -46,10 +54,14 @@
 
   onMount(() => {
     if (import.meta.env.DEV) {
-      const forceOffline = new URLSearchParams(location.search).get("greeting") === "offline";
+      const greetingParam = new URLSearchParams(location.search).get("greeting");
       setTimeout(() => {
-        if (forceOffline) { status = "offline"; return; }
-        data = MOCK;
+        if (greetingParam === "offline") { status = "offline"; return; }
+        if (greetingParam === "stale") {
+          data = { ...MOCK, date: "2026-05-26" };
+        } else {
+          data = MOCK;
+        }
         status = "success";
         document.dispatchEvent(new CustomEvent("greeting:live"));
       }, 400);
@@ -144,8 +156,12 @@
     <figcaption
       class="border-t border-rule px-6 py-2 font-sans text-xs text-ink-muted italic text-center flex items-center justify-center gap-1.5"
     >
-      <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse shrink-0"></span>
-      Live &middot; {syncedAgo(data.lastSynced)}
+      <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 {isStale(data.date) ? 'bg-yellow-500' : 'bg-green-500'}"></span>
+      {#if isStale(data.date)}
+        Live &middot; showing {formatDate(data.date, true)} greeting &middot; today's generation may be delayed
+      {:else}
+        Live &middot; {syncedAgo(data.lastSynced)}
+      {/if}
     </figcaption>
   {/if}
 </figure>

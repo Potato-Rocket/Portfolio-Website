@@ -25,7 +25,13 @@ When the time came to implement features such as dynamic project tag filtering, 
 
 ## Deployment
 
-Thanks to Cloudflare's direct integration with Astro and GitHub, and the fact that I already posessed a private domain, deployment was dead simple. Because this is such a lightweight app, the limits of Cloudflare Workers' free tier has proved more than enough by orders of magnitude.
+Thanks to Cloudflare's direct integration with Astro and GitHub, and the fact that I already posessed a private domain, deployment was dead simple. Because this is such a lightweight app, the limits of Cloudflare Workers' free tier has proved more than enough.
+
+### Live backend integration
+
+The [daily greeting generator](/projects/daily-greeting-generator) page includes a live demo that pulls real output from my home server--the greeting generated this morning--with audio and album art. A lightweight, read (GET) only Go file server runs on the home server alongside the Python generator, exposed to the internet via a Cloudflare Tunnel. A separate Cloudflare Worker runs on an hourly cron, pulls the latest greeting from the tunnel, and caches it in KV and R2. Visitor traffic never touches the home server; it hits the Worker at the edge, which serves from cache. If the home server is offline, the last successful sync keeps serving.
+
+The Worker is deployed as a separate route on this domain (`oscar.stomberg.us/api/greeting/*`), sitting in front of the Astro Worker for that path. The frontend is a Svelte island that fetches from that endpoint and degrades gracefully--a status dot signals whether today's greeting loaded, is stale, or the demo is unreachable. The full infrastructure is documented on the [selfhosting](/projects/selfhosting) page.
 
 ## What I've learned
 
