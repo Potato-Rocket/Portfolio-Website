@@ -23,7 +23,7 @@ periods:
     label: Final polish
 ---
 
-import GreetingDemo from "../../components/mdx/GreetingDemo.astro";
+import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
 
@@ -52,13 +52,15 @@ The script is deployed in a docker container with a simple Flask API wrapper, al
 
 ## Today's greeting
 
+The greeting below is generated fresh each morning on my home server and surfaced here automatically via a caching layer at Cloudflare's edge. A green dot means today's greeting loaded successfully; yellow means today's hasn't arrived yet--the server is scheduled for 2 a.m. and the caching layer refreshes hourly; red means the live demo is currently unreachable.
+
 <LiveGreeting client:load />
 
 <GreetingFallback client:load>
 
 ## A past example
 
-<GreetingDemo
+<StaticGreeting
     date="April 19th, 2026"
     greetingFile="greeting.txt"
     coverArtFile="album.png"
