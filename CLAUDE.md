@@ -1,6 +1,6 @@
 # CLAUDE.md — oscar.stomberg.us Portfolio
 
-Personal engineering portfolio for Oscar Stomberg, Robotics Engineering student at WPI. See [README.md](README.md) for stack, structure, and commands. See [ROADMAP.md](ROADMAP.md) for in-flight follow-ups and known improvements.
+Personal engineering portfolio for Oscar Stomberg, Robotics Engineering student at WPI. See [README.md](README.md) for stack and commands. **Note:** the README's project structure diagram is partially stale — `src/components/mdx/` (YouTube, GreetingDemo, LiveGreeting, GreetingFallback) and `src/assets/thumbnails/` (not `public/thumbnails/`) are not reflected. CLAUDE.md is the authoritative reference for component paths. See [ROADMAP.md](ROADMAP.md) for in-flight follow-ups and known improvements.
 
 ## Workflow
 
@@ -47,6 +47,11 @@ adapter: isDev ? undefined : cloudflare({ imageService: 'compile' }),
 Reason: in `astro dev`, the adapter routes SSR through Vite 7's workerd-simulating worker runner, which currently crashes with `module is not defined` on CJS deps in the iconify subtree (upstream `@astrojs/cloudflare` SSR pre-compilation issue). Skipping the adapter in dev gives a plain Node dev server with HMR. `npm run preview` still builds + serves through real `wrangler dev` before pushing, so divergence is caught.
 
 If you ever add per-request logic (KV, D1, env bindings, dynamic routes), revisit this — `astro dev` won't simulate Cloudflare bindings, so you'll need `preview` for binding-aware testing.
+
+### Greeting Worker route
+A separate `greeting-proxy` Worker (standalone repo at `~/Dropbox/Projects/027 Greeting Demo/`, `wrangler deploy`) runs at `oscar.stomberg.us/api/greeting/*`, sitting in front of the Astro Worker for that path. It runs an hourly cron that pulls from the Cloudflare Tunnel (`demo.oscar.stomberg.us` → Go file server on the home server) and caches metadata in KV and audio/cover art in R2. Visitor requests hit the Worker at the edge; the home server is never exposed directly. `TUNNEL_ORIGIN` is stored as a Wrangler secret. If the cron hasn't run yet today the Worker serves the last cached result (yellow dot in `LiveGreeting.svelte`).
+
+The Go file server source lives at `~/Dropbox/Projects/021 Daily Greeting/demo-server/` (module `greeting-demo`). Both directories are configured as `additionalDirectories` in `.claude/settings.local.json` so Claude can read them directly.
 
 ### `wrangler.jsonc` at project root
 Keep it minimal. The adapter generates a complete `dist/server/wrangler.json` at build time and merges your root config into it. Only put values the adapter can't know:
@@ -129,7 +134,8 @@ Two components exist in both flavors — `TagPill` and `ProjectThumbnail`. The s
 - `TagPill.astro` — anchor-form tag pill. `href` is required (it's always a link, typically to `/projects?tags=<tag>`). Hue comes from `src/data/tag-colors.json`.
 - `ProjectLinks.astro` — shared GitHub/Live link row with icons. Pass `links={project.data.links}`. Renders nothing if both are absent. Accepts a `class` prop for layout overrides.
 - `PersonalLinks.astro` — GitHub / LinkedIn / Email / Resume row. URLs are hard-coded inside the component (single source of truth). Props: `size?: 'sm' | 'lg'` (lg = hero, sm = footer), `class?: string`. External links + the resume PDF open in a new tab; `mailto:` opens in the OS handler.
-- `YouTube.astro` — `not-prose` lazy YouTube embed (`youtube-nocookie.com`). Props: `id` (video ID), optional `title`, optional `start` (seconds). Imported from MDX bodies, e.g. `import YouTube from "../../components/YouTube.astro"` then `<YouTube id="..." title="..." />`.
+- `YouTube.astro` (`src/components/mdx/`) — `not-prose` lazy YouTube embed (`youtube-nocookie.com`). Props: `id` (video ID), optional `title`, optional `start` (seconds). Imported from MDX bodies, e.g. `import YouTube from "../../components/mdx/YouTube.astro"` then `<YouTube id="..." title="..." />`.
+- `StaticGreeting.astro` (`src/components/mdx/`) — static greeting viewer for embedded "past example" sections. Reads assets from `src/assets/daily-greeting-generator/` via eager globs. Props: `date` (display string), `greetingFile` (`.txt`), optional `coverArtFile`, `albumTooltip`, `audioFile`, `pipelineLogFile`, `executionLogFile`. Used inside `<GreetingFallback>` to show a historical example when the live demo is unavailable.
 - `Footer.astro` — site-wide footer, rendered by `Layout.astro` for every page. Top hairline border, centered `PersonalLinks` + copyright line. **Self-suppresses `PersonalLinks` on `/`** since the home hero already carries them at `size="lg"`.
 - `GoToTop.astro` — fixed-position scroll-to-top button (`bottom-14 right-4`, above the dark-mode toggle). Hidden until `window.scrollY > 300`. Uses `transition:persist` so it survives view transitions; the binding script is idempotent (`data-bound` flag) and also re-binds on `astro:page-load`.
 - `DarkModeToggle.astro` — fixed-position button (`bottom-4 right-4`) that toggles `.dark` on `<html>` and persists preference to `localStorage`. Uses `transition:persist` so it survives view transitions. Shows moon in light mode, sun in dark mode.
@@ -146,6 +152,8 @@ Two components exist in both flavors — `TagPill` and `ProjectThumbnail`. The s
   - Outside-click + Escape close the dropdown; ArrowUp/Down navigates `highlightedIndex`, Enter selects, the input keeps focus after each selection for chained adds. The mode toggle only renders at `selectedTags.size >= 2`; clearing back below 2 forces `mode = "or"`.
 - `TagPill.svelte` — button-form tag pill used inside the filter UI and per-row tags. Props: `tag`, `onclick`, `class?`. Lift/hover behavior is applied by callers via the `class` prop (the pill keeps `transition-transform` so external transforms animate smoothly) — this lets the timeline rows, selected chip strip, and dropdown each compose their own lift treatment without forking the component. The hue lookup uses `$derived` (not `const`) because Svelte may reuse instances inside `{#each}` and `const` evaluates once at init.
 - `ProjectThumbnail.svelte` — used inside the timeline rows so the thumbnail and its `<a>` wrapper participate in the row's reactive layout. `aria-hidden + tabindex=-1` because the title link below is the canonical, named link for screen readers.
+- `LiveGreeting.svelte` (`src/components/mdx/`) — `client:load` island on the daily-greeting-generator page. Fetches `/api/greeting` (JSON metadata), `/api/greeting/audio`, and `/api/greeting/cover` from the edge-cached greeting Worker. Three states: loading, success, offline. Status dot: green = today's greeting loaded, yellow = data is stale (date mismatch, `isStale()`), red = fetch failed. Caption shows `syncedAgo(lastSynced)` when fresh, short date when stale. In dev, mocks data immediately; `?greeting=offline` and `?greeting=stale` URL params exercise the other states. Dispatches `CustomEvent('greeting:live')` on `document` on success so `GreetingFallback` can hide itself. `formatDate(ymd, short?)` and `isStale()` use `getUTC*` throughout.
+- `GreetingFallback.svelte` (`src/components/mdx/`) — Svelte 5 snippet wrapper. Renders `{@render children()}` until a `greeting:live` event fires on `document`, then hides. Used to wrap the static "A past example" section so it disappears when live data loads. Uses `Snippet` type and `{ once: true }` listener.
 
 ## Helpers & Assets
 
