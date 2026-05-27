@@ -24,6 +24,8 @@ periods:
 ---
 
 import GreetingDemo from "../../components/mdx/GreetingDemo.astro";
+import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
+import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
 
 ## What is it?
 
@@ -48,7 +50,13 @@ Each stage of this pipeline is designed to degrade gracefully in the event of fa
 The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, my Navidrome music server, and my Ollama instance. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
 
 
-## An example
+## Today's greeting
+
+<LiveGreeting client:load />
+
+<GreetingFallback client:load>
+
+## A past example
 
 <GreetingDemo
     date="April 19th, 2026"
@@ -59,6 +67,8 @@ The script is deployed in a docker container with a simple Flask API wrapper, al
     pipelineLogFile="pipeline.txt"
     executionLogFile="log.txt"
 />
+
+</GreetingFallback>
 
 ## Trial and error
 
