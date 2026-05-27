@@ -48,18 +48,6 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
    - Visual refresh of the GG itself to match this site's UI rules (work in the GG repo).
    - Surface GG output inside the portfolio via the live backend (see item 4).
 
-4. **Live Greeting Backend.** Full architecture is documented in the architecture plan. Three new repos/directories, implemented in this order:
-
-   **Repo/directory layout:**
-   - Go server source lives in the greeting generator repo as a subdirectory (`server/` or `greeting-server/`). Multi-stage Docker build (`golang:1.22` → `alpine`), mounted read-only volume.
-   - `cloudflared` is a service inside `compose/daily-greeting/` in the selfhosting repo (not its own stack). Move to its own stack if a second demo is ever added.
-   - `greeting-worker` is a new standalone repo (Cloudflare Worker, TypeScript, `wrangler deploy`).
-   - `LiveGreeting.svelte` lives in this repo at `src/components/mdx/`.
-
-   **Implementation order:**
-   1. ~~**Go server** (greeting generator repo, `server/` subdir) — `net/http`, no framework; `GET /api/greeting/latest` (metadata JSON) + `GET /files/<filename>` (static files) from the greeting output dir.~~ ✓
-   2. ~~**Tunnel** — add `cloudflared` service to `compose/daily-greeting/`; exposes Go server at `demo.oscar.stomberg.us`. Outbound-only, no open ports.~~ ✓
-   3. ~~**`greeting-worker`** (new repo) — hourly cron: pull from tunnel → KV (metadata) + R2 (audio, cover art). Fetch handler: serve `GET /api/greeting`, `/api/greeting/audio`, `/api/greeting/cover` from KV/R2 at `oscar.stomberg.us/api/greeting/*`. `TUNNEL_ORIGIN` stored as Wrangler secret.~~ ✓
-   4. ~~**`LiveGreeting.svelte`** (this repo, `src/components/mdx/`) — `client:load` island; renders greeting text + cover art + audio player + `lastSynced` timestamp. Degrades gracefully if fetch fails.~~ ✓
+4. ~~**Live Greeting Backend.** Go file server (greeting generator repo, `server/`) → Cloudflare Tunnel (`demo.oscar.stomberg.us`) → `greeting-worker` (hourly cron: KV + R2 cache) → `LiveGreeting.svelte` island (`src/components/mdx/`). Worker route `oscar.stomberg.us/api/greeting/*` sits in front of the Astro Worker. Green/yellow/red status dot; `GreetingFallback.svelte` wraps the static example and auto-hides when live data loads.~~ ✓
 
 5. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?

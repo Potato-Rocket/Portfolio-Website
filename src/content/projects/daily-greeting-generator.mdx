@@ -23,7 +23,7 @@ periods:
     label: Final polish
 ---
 
-import GreetingDemo from "../../components/mdx/GreetingDemo.astro";
+import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
 
@@ -60,7 +60,7 @@ The greeting below is generated fresh each morning on my home server and surface
 
 ## A past example
 
-<GreetingDemo
+<StaticGreeting
     date="April 19th, 2026"
     greetingFile="greeting.txt"
     coverArtFile="album.png"
