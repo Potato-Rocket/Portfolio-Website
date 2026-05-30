@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="1200mm"
+   height="899.99994mm"
+   viewBox="0 0 1200 899.99994"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.3 (0d15f75042, 2025-12-25)"
+   sodipodi:docname="Thumbnail.svg"
+   inkscape:export-filename="src/assets/thumbnail.png"
+   inkscape:export-xdpi="25.4"
+   inkscape:export-ydpi="25.4"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:export-bgcolor="#1c1a1700"
+     inkscape:zoom="0.14852459"
+     inkscape:cx="2598.8963"
+     inkscape:cy="1989.5696"
+     inkscape:window-width="1981"
+     inkscape:window-height="1211"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#f6f2ea;stroke-width:1.94976"
+       id="rect1"
+       width="1200"
+       height="899.99994"
+       x="5.5511151e-17"
+       y="0" />
+    <text
+       xml:space="preserve"
+       style="font-size:199.424px;font-family:'Source Serif 4';-inkscape-font-specification:'Source Serif 4, ';writing-mode:lr-tb;direction:ltr;fill:#1c1a17;fill-opacity:1;stroke-width:1.38183"
+       x="142.02286"
+       y="656.5766"
+       id="text2-3"
+       inkscape:transform-center-x="-6.3258862"
+       inkscape:transform-center-y="165.57132"><tspan
+         sodipodi:role="line"
+         style="fill:#1c1a17;fill-opacity:1;stroke-width:1.38183"
+         x="142.02286"
+         y="656.5766"
+         id="tspan3-5">Stomberg</tspan></text>
+    <rect
+       style="fill:#f6f2ea;stroke-width:1.056"
+       id="rect2"
+       width="91.890366"
+       height="5.497714"
+       x="87.963425"
+       y="170.42912" />
+    <text
+       xml:space="preserve"
+       style="font-size:338.856px;font-family:'Source Serif 4';-inkscape-font-specification:'Source Serif 4, ';writing-mode:lr-tb;direction:ltr;fill:#1c1a17;fill-opacity:1;stroke-width:2.34797"
+       x="133.7348"
+       y="382.45551"
+       id="text2"
+       inkscape:transform-center-x="293.31975"
+       inkscape:transform-center-y="-57.503446"><tspan
+         sodipodi:role="line"
+         style="fill:#1c1a17;fill-opacity:1;stroke-width:2.34797"
+         x="133.7348"
+         y="382.45551"
+         id="tspan3">Oscar</tspan></text>
+  </g>
+</svg>

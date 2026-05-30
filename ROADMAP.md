@@ -3,9 +3,9 @@
 ## Issues
 
 - Certain thumbnails have wonky rotation info (e.g. robot chute, digital waste) likely from heic -> jpg and such. This only matters for astro thumbnails, i.e. in the details page (though if we included thumbnails in gallery that would also be a problem). Not urgent but kind of weird--and we don't want to screw up the thumbnails either.
-- Create default thumbnail for home, projects, gallery pages.
 - Need to make header shrink when scrolling down on mobile
 - Need to center footer link wrap on mobile
+- `src/pages/projects/[slug].astro:35-38` uses `thumbImage.src` directly for the OG image -- the thumbnails helper comment warns this is a dev-only `/@fs/` path in production. Switch to `findThumbnailPath(slug)` (the `?url`-backed variant) for the absolute URL.
 
 ## Content prep
 
