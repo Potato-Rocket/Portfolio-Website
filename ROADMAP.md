@@ -3,6 +3,9 @@
 ## Issues
 
 - Certain thumbnails have wonky rotation info (e.g. robot chute, digital waste) likely from heic -> jpg and such. This only matters for astro thumbnails, i.e. in the details page (though if we included thumbnails in gallery that would also be a problem). Not urgent but kind of weird--and we don't want to screw up the thumbnails either.
+- Create default thumbnail for home, projects, gallery pages.
+- Need to make header shrink when scrolling down on mobile
+- Need to center footer link wrap on mobile
 
 ## Content prep
 
@@ -42,12 +45,10 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
    Semantic search is overkill at portfolio scale — skip unless project count grows a lot.
 
 2. **Interactive article features.**
-   - Image carousel for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
+   - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
+   - Consider whether to make an image + caption wrapper component
+   - 3D viewer for certain STLs? Could be a pain with limited payoff
+   - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in browser. Must be rate-limited
+   - Consider whether to link + make available, or proxy any self-hosted things
 
-3. **Daily greeting generator.** Two separate threads:
-   - Visual refresh of the GG itself to match this site's UI rules (work in the GG repo).
-   - Surface GG output inside the portfolio via the live backend (see item 4).
-
-4. ~~**Live Greeting Backend.** Go file server (greeting generator repo, `server/`) → Cloudflare Tunnel (`demo.oscar.stomberg.us`) → `greeting-worker` (hourly cron: KV + R2 cache) → `LiveGreeting.svelte` island (`src/components/mdx/`). Worker route `oscar.stomberg.us/api/greeting/*` sits in front of the Astro Worker. Green/yellow/red status dot; `GreetingFallback.svelte` wraps the static example and auto-hides when live data loads.~~ ✓
-
-5. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
+3. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?

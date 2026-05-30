@@ -1,98 +1,55 @@
 ---
-// Embedded demo of the daily greeting generator's viewer UI, styled to match
-// the portfolio's paper/ink design language.
-//
-// All assets live in src/assets/daily-greeting-generator/ — pass just the filename.
-// Cover art will appear in the gallery (jpg/png are picked up by loadGalleryItems()).
+import SAMPLE from "../../data/daily-greeting.json";
+import albumCoverSrc from "../../assets/daily-greeting-generator/album.png?url";
+import audioSrc from "../../assets/daily-greeting-generator/greeting.wav?url";
 
-const textFiles = import.meta.glob<string>("/src/assets/daily-greeting-generator/*.txt", {
-  query: "?raw",
-  import: "default",
-  eager: true,
-});
-
-const mediaFiles = import.meta.glob<string>(
-  "/src/assets/daily-greeting-generator/*.{jpg,jpeg,png,webp,mp3,wav,ogg,m4a}",
-  { query: "?url", import: "default", eager: true }
-);
-
-const base = "/src/assets/daily-greeting-generator/";
-const loadText = (f: string | undefined) => (f ? textFiles[base + f] : undefined);
-const mediaUrl = (f: string | undefined) => (f ? mediaFiles[base + f] : undefined);
-
-interface Props {
-  date: string;
-  greetingFile: string;
-  coverArtFile?: string;
-  albumTooltip?: string;
-  audioFile?: string;
-  pipelineLogFile?: string;
-  executionLogFile?: string;
-}
-
-const { date, greetingFile, coverArtFile, albumTooltip, audioFile, pipelineLogFile, executionLogFile } =
-  Astro.props;
-
-const greeting = loadText(greetingFile) ?? "";
-const coverArtSrc = mediaUrl(coverArtFile);
-const audioSrc = mediaUrl(audioFile);
-const pipelineLog = loadText(pipelineLogFile);
-const executionLog = loadText(executionLogFile);
+const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const d = new Date(SAMPLE.date + "T00:00:00Z");
+const displayDate = `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
+const albumLabel = `${SAMPLE.album.name} — ${SAMPLE.album.artist} (${SAMPLE.album.year})`;
+const weatherLine = `${SAMPLE.weather.temperature}°F · ${SAMPLE.weather.conditions} · Humidity: ${Math.round(SAMPLE.weather.humidity)}% · Wind: ${SAMPLE.weather.windSpeed}`;
 ---
 
 <figure class="not-prose my-8 border border-rule-strong">
   <div class="p-6 sm:p-8">
-    <h2 class="font-serif text-lg text-ink mb-4">{date}</h2>
+    <h2 class="font-serif text-lg text-ink mb-1">{displayDate}</h2>
+    <p class="font-sans text-xs text-ink-muted mb-4">{weatherLine}</p>
 
     <div class="border border-rule p-4 sm:p-6 mb-4 font-sans text-base text-ink leading-relaxed whitespace-pre-wrap">
-      {greeting}
+      {SAMPLE.greeting}
     </div>
 
-    <div class="flex items-center gap-4 mb-4 flex-wrap">
-      {
-        coverArtSrc && (
-          <img
-            src={coverArtSrc}
-            alt="Album cover art"
-            title={albumTooltip}
-            class="w-24 h-24 object-cover border border-rule-strong shrink-0"
-            loading="lazy"
-          />
-        )
-      }
-      {
-        audioSrc ? (
-          <audio controls preload="none" src={audioSrc} class="flex-1 min-w-56 max-w-lg" />
-        ) : (
-          <p class="font-sans text-sm text-ink-muted italic">No audio was generated for this date.</p>
-        )
-      }
+    <div class="flex items-start gap-4 mb-4 flex-wrap">
+      <div class="shrink-0 flex flex-col gap-1.5">
+        <img
+          src={albumCoverSrc}
+          alt="Album cover art"
+          class="w-24 h-24 object-cover border border-rule-strong"
+          loading="lazy"
+        />
+        <p class="font-sans text-xs text-ink-muted leading-snug w-24">{albumLabel}</p>
+      </div>
+      <div class="flex-1 min-w-56 max-w-lg flex items-center h-24">
+        <audio controls preload="none" src={audioSrc} class="w-full" />
+      </div>
     </div>
 
-    {
-      pipelineLog && (
-        <details class="mb-2">
-          <summary class="cursor-pointer font-sans font-semibold text-sm text-ink-muted select-none">
-            Pipeline Log
-          </summary>
-          <pre class="mt-2 border border-rule p-3 overflow-x-auto max-h-72 text-xs leading-relaxed whitespace-pre-wrap wrap-break-word font-mono text-ink">{pipelineLog}</pre>
-        </details>
-      )
-    }
+    <details class="mb-2">
+      <summary class="cursor-pointer font-sans font-semibold text-sm text-ink-muted select-none">
+        Pipeline Log
+      </summary>
+      <pre class="mt-2 border border-rule p-3 overflow-x-auto max-h-72 text-xs leading-relaxed whitespace-pre-wrap wrap-break-word font-mono text-ink">{SAMPLE.pipeline}</pre>
+    </details>
 
-    {
-      executionLog && (
-        <details class="mb-2">
-          <summary class="cursor-pointer font-sans font-semibold text-sm text-ink-muted select-none">
-            Execution Log
-          </summary>
-          <pre class="mt-2 border border-rule p-3 overflow-x-auto max-h-72 text-xs leading-relaxed whitespace-pre-wrap wrap-break-word font-mono text-ink">{executionLog}</pre>
-        </details>
-      )
-    }
+    <details class="mb-2">
+      <summary class="cursor-pointer font-sans font-semibold text-sm text-ink-muted select-none">
+        Execution Log
+      </summary>
+      <pre class="mt-2 border border-rule p-3 overflow-x-auto max-h-72 text-xs leading-relaxed whitespace-pre-wrap wrap-break-word font-mono text-ink">{SAMPLE.log}</pre>
+    </details>
   </div>
 
   <figcaption class="border-t border-rule px-6 py-2 font-sans text-xs text-ink-muted italic text-center">
-    Example output — {date}
+    Example output &mdash; {displayDate}
   </figcaption>
 </figure>

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import SAMPLE from "../../data/daily-greeting.json";
 
   // Matches StoredGreeting in the greeting-worker (UpstreamGreeting + lastSynced).
   interface GreetingData {
@@ -12,16 +13,10 @@
     lastSynced: string;
   }
 
-  const MOCK: GreetingData = {
-    date: "2026-05-26",
-    greeting:
-      "Good morning. The forecast calls for scattered clouds and a high near 64°F -- a reasonable backdrop for today's selection. This morning's excerpt comes courtesy of Project Gutenberg, and the album pairs with it better than expected. Enjoy the day ahead.",
-    log: "[08:00:01] Weather fetched\n[08:00:02] Gutenberg excerpt accepted on attempt 1\n[08:00:04] Album selected\n[08:00:05] Greeting generated\n[08:00:07] TTS complete",
-    pipeline: "weather → excerpt  Live · synced less than an hour ago→ album_select → album_art_desc → greeting → tts",
-    album: { name: "Mad Mad World", artist: "Tom Cochrane", year: 1991, genres: ["rock", "pop"] },
-    weather: { temperature: 64, humidity: 62, windSpeed: "8 mph", conditions: "Partly cloudy" },
-    lastSynced: new Date(Date.now() - 2 * 3_600_000).toISOString(),
-  };
+  let { devCoverSrc, devAudioSrc }: { devCoverSrc?: string; devAudioSrc?: string } = $props();
+
+  const _d = new Date();
+  const todayYMD = `${_d.getUTCFullYear()}-${String(_d.getUTCMonth() + 1).padStart(2, "0")}-${String(_d.getUTCDate()).padStart(2, "0")}`;
 
   let status = $state<"loading" | "success" | "offline">("loading");
   let data = $state<GreetingData | null>(null);
@@ -39,9 +34,7 @@
   }
 
   function isStale(ymd: string): boolean {
-    const d = new Date();
-    const today = `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`;
-    return ymd !== today;
+    return ymd !== todayYMD;
   }
 
   function syncedAgo(iso: string): string {
@@ -57,11 +50,8 @@
       const greetingParam = new URLSearchParams(location.search).get("greeting");
       setTimeout(() => {
         if (greetingParam === "offline") { status = "offline"; return; }
-        if (greetingParam === "stale") {
-          data = { ...MOCK, date: "2026-05-26" };
-        } else {
-          data = MOCK;
-        }
+        data = SAMPLE as GreetingData;
+        data.date = greetingParam === "stale" ? "2026-04-19" : todayYMD;
         status = "success";
         document.dispatchEvent(new CustomEvent("greeting:live"));
       }, 400);
@@ -114,20 +104,24 @@
         {data.greeting}
       </div>
 
-      <div class="flex items-center gap-4 mb-4 flex-wrap">
-        <img
-          src="/api/greeting/cover"
-          alt="Album cover art"
-          title={albumLabel(data.album)}
-          class="w-24 h-24 object-cover border border-rule-strong shrink-0"
-          loading="lazy"
-        />
-        <audio
-          controls
-          preload="none"
-          src="/api/greeting/audio"
-          class="flex-1 min-w-56 max-w-lg"
-        ></audio>
+      <div class="flex items-start gap-4 mb-4 flex-wrap">
+        <div class="shrink-0 flex flex-col gap-1.5">
+          <img
+            src={import.meta.env.DEV && devCoverSrc ? devCoverSrc : `/api/greeting/cover?d=${data.date}`}
+            alt="Album cover art"
+            class="w-24 h-24 object-cover border border-rule-strong"
+            loading="lazy"
+          />
+          <p class="font-sans text-xs text-ink-muted leading-snug w-24">{albumLabel(data.album)}</p>
+        </div>
+        <div class="flex-1 min-w-56 max-w-lg flex items-center h-24">
+          <audio
+            controls
+            preload="none"
+            src={import.meta.env.DEV && devAudioSrc ? devAudioSrc : `/api/greeting/audio?d=${data.date}`}
+            class="w-full"
+          ></audio>
+        </div>
       </div>
 
       <details class="mb-2">
