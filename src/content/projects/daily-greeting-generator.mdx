@@ -26,6 +26,8 @@ periods:
 import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
+import devCoverSrc from "../../assets/daily-greeting-generator/album.png?url";
+import devAudioSrc from "../../assets/daily-greeting-generator/greeting.wav?url";
 
 ## What is it?
 
@@ -54,21 +56,13 @@ The script is deployed in a docker container with a simple Flask API wrapper, al
 
 The greeting below is generated fresh each morning on my home server and surfaced here automatically via a caching layer at Cloudflare's edge. A green dot means today's greeting loaded successfully; yellow means today's hasn't arrived yet--the server is scheduled for 2 a.m. and the caching layer refreshes hourly; red means the live demo is currently unreachable.
 
-<LiveGreeting client:load />
+<LiveGreeting client:load devCoverSrc={devCoverSrc} devAudioSrc={devAudioSrc} />
 
 <GreetingFallback client:load>
 
 ## A past example
 
-<StaticGreeting
-    date="April 19th, 2026"
-    greetingFile="greeting.txt"
-    coverArtFile="album.png"
-    albumTooltip="Mad Mad World — Tom Cochrane (1991)"
-    audioFile="greeting.wav"
-    pipelineLogFile="pipeline.txt"
-    executionLogFile="log.txt"
-/>
+<StaticGreeting />
 
 </GreetingFallback>
 
