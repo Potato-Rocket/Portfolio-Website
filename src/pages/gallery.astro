@@ -81,6 +81,16 @@ const rows = justifiedRows<GalleryItem>(inputs);
     );
   }
 
+  /* Touch "hover" state (see <script>): on hover-less devices the first tap adds .is-active
+     to reveal the caption + scale, mirroring the desktop group-hover treatment. A second tap
+     follows the link. */
+  .gallery-item.is-active .gallery-overlay {
+    opacity: 1;
+  }
+  .gallery-item.is-active img {
+    transform: scale(1.02);
+  }
+
   /* Below --breakpoint-xs (480px, see global.css) the justified rows shrink images below
      the readability threshold. Drop the row layout and stack each tile full-width at its
      native aspect ratio instead. Token referenced via literal because the IDE language
@@ -104,3 +114,54 @@ const rows = justifiedRows<GalleryItem>(inputs);
     }
   }
 </style>
+
+<script>
+  // Touch-device tap-to-reveal for gallery tiles. On hover-less pointers the first tap on a
+  // tile reveals its caption (the desktop :hover treatment) instead of navigating; a second
+  // tap on the same tile follows the link; tapping anything else dismisses. Hover-capable
+  // pointers fall through untouched — CSS :hover shows the caption and a click navigates.
+  //
+  // State is module-scoped and the dismiss listener binds once for the SPA lifetime, while
+  // the per-row click listener re-attaches on each astro:page-load (the .gallery element is
+  // re-rendered per navigation, not transition:persist).
+  let activeTile: HTMLElement | null = null;
+  const noHover = window.matchMedia("(hover: none)");
+
+  function clearActive() {
+    activeTile?.classList.remove("is-active");
+    activeTile = null;
+  }
+
+  function onGalleryClick(e: MouseEvent) {
+    if (!noHover.matches) return; // hover-capable: let the click navigate
+    const tile = (e.target as Element).closest<HTMLElement>(".gallery-item");
+    if (!tile || tile === activeTile) return; // outside a tile, or second tap → navigate
+    e.preventDefault(); // first tap on a fresh tile: reveal, don't navigate
+    clearActive();
+    activeTile = tile;
+    tile.classList.add("is-active");
+  }
+
+  function onDocClick(e: MouseEvent) {
+    // Bubbles after onGalleryClick, so a tap on a tile has already set activeTile by now;
+    // only a tap with no tile ancestor falls through to dismiss.
+    if (activeTile && !(e.target as Element).closest(".gallery-item")) clearActive();
+  }
+
+  function bindGallery() {
+    clearActive(); // drop any stale ref from a previous page instance
+    const gallery = document.querySelector<HTMLElement>(".gallery");
+    if (!gallery || gallery.dataset.bound === "true") return;
+    gallery.dataset.bound = "true";
+    gallery.addEventListener("click", onGalleryClick);
+  }
+
+  const w = window as typeof window & { __galleryBound?: boolean };
+  if (!w.__galleryBound) {
+    w.__galleryBound = true;
+    document.addEventListener("click", onDocClick);
+  }
+
+  bindGallery();
+  document.addEventListener("astro:page-load", bindGallery);
+</script>

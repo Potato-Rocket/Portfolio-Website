@@ -8,7 +8,7 @@ import ProjectLinks from "../../components/ProjectLinks.astro";
 import RelatedCard from "../../components/RelatedCard.astro";
 import { formatDateRange, monthYear } from "../../lib/dates";
 import ProjectThumbnail from "../../components/ProjectThumbnail.astro";
-import { findThumbnailImage } from "../../lib/thumbnails";
+import { findThumbnailPath } from "../../lib/thumbnails";
 
 export async function getStaticPaths() {
   const projects = await getCollection("projects");
@@ -32,9 +32,11 @@ const isWip = status === "wip";
 const dateLabel = formatDateRange(periods, status === "ongoing");
 const showHistory = periods.length > 1;
 
-const thumbImage = findThumbnailImage(project.id);
-const ogImage = thumbImage && Astro.site
-  ? new URL(thumbImage.src, Astro.site).href
+// ?url-backed path (hashed asset that resolves in production); the plain ImageMetadata.src
+// is a dev-only /@fs/ URL and would 404 for social scrapers on the deployed Worker.
+const thumbPath = findThumbnailPath(project.id);
+const ogImage = thumbPath && Astro.site
+  ? new URL(thumbPath, Astro.site).href
   : undefined;
 ---
 

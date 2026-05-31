@@ -2,8 +2,7 @@
 
 ## Issues
 
-- Make gallery page hover-tappable on mobile--one tap=hover, second tap=open project page, tap outside=de-hover
-- `src/pages/projects/[slug].astro:35-38` uses `thumbImage.src` directly for the OG image--the thumbnails helper comment warns this is a dev-only `/@fs/` path in production. Switch to `findThumbnailPath(slug)` (the `?url`-backed variant) for the absolute URL.
+- OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
 
 ## Content prep
 
