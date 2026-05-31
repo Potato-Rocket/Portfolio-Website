@@ -161,10 +161,23 @@ const activeClass = "text-3xl font-serif font-bold";
   const COLLAPSE_DELTA = 30; // sustained downward px to collapse
   const EXPAND_DELTA = 60; // sustained upward px to expand — larger than collapse so
   // momentum/jitter during a down-scroll doesn't pop it back open
+
+  // Hysteretic gate: only collapse on a page tall enough that hiding the header buys
+  // real room. Collapsing shrinks the header (~20px), which shrinks scrollHeight; on a
+  // barely-scrollable page that clamps scrollY back up into the pin zone, force-expanding
+  // and re-growing the page — an oscillation. A single threshold would itself flip as our
+  // own collapse moves scrollHeight across it, so we use two: enable collapse only past
+  // ENABLE, disable it below DISABLE. The 80px band is far wider than the ~20px the
+  // collapse removes, so the header's own height change can never cross the whole band.
+  // DISABLE also sits above PIN_ZONE, so a collapsible page's bottom is never in the pin zone.
+  const COLLAPSE_ENABLE = 240; // px of scrollable range required to start collapsing
+  const COLLAPSE_DISABLE = 160; // drop below this scrollable range → force expanded
+
   const mql = window.matchMedia("(min-width: 640px)");
 
   let header: HTMLElement | null = null;
   let lastY = 0;
+  let collapseEnabled = false; // gate state; flips with hysteresis on scrollable range
 
   function setCollapsed(value: boolean) {
     if (!header) return;
@@ -176,6 +189,21 @@ const activeClass = "text-3xl font-serif font-bold";
   function onScroll() {
     if (!header || mql.matches) return; // desktop: always expanded, no-op
     const y = Math.max(window.scrollY, 0);
+
+    // Update the hysteretic gate against the current scrollable range, then bail
+    // (force-expanded) on pages too short to collapse without oscillating.
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (collapseEnabled) {
+      if (maxScroll < COLLAPSE_DISABLE) collapseEnabled = false;
+    } else if (maxScroll >= COLLAPSE_ENABLE) {
+      collapseEnabled = true;
+    }
+    if (!collapseEnabled) {
+      setCollapsed(false);
+      lastY = y;
+      return;
+    }
+
     if (y <= PIN_ZONE) {
       setCollapsed(false);
       lastY = y;

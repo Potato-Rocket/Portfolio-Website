@@ -2,7 +2,6 @@
 
 ## Issues
 
-- Need to center footer link wrap on mobile
 - Make gallery page hover-tappable on mobile--one tap=hover, second tap=open project page, tap outside=de-hover
 - `src/pages/projects/[slug].astro:35-38` uses `thumbImage.src` directly for the OG image--the thumbnails helper comment warns this is a dev-only `/@fs/` path in production. Switch to `findThumbnailPath(slug)` (the `?url`-backed variant) for the absolute URL.
 
