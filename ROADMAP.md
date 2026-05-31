@@ -38,13 +38,11 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 
 ## Planned features
 
-1. **Project discoverability.** Tag filter has a typeahead now. Remaining additions, in rough priority order:
-   - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
-   - Full-text search over article bodies via Pagefind (runs at build time).
-   - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
-   - Consider maybe just not doing these features--more is not always better.
+Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with the SEO work below.
 
-2. **About me and contact form** Have another tab for about me... perhaps put the contact form on the same page, below. Should have:
+1. **SEO and metadata.** *Low effort, high value--but gated on content: premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. The sitemap/robots/canonical/meta basics are a few lines each and the highest-leverage work here. Open question: per-project OG images--templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail? Do the cheap sized-thumbnail derivative first to fix the multi-MB OG bug.
+
+2. **About me and contact form.** *High effort, high value--the one big-ticket item worth its cost, and the only high-value feature buildable now (not content-gated).* Have another tab for about me... perhaps put the contact form on the same page, below. Should have:
    - Subject/header (required)
    - Name (not required)
    - Email address (verify this, don't require)
@@ -52,12 +50,16 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
    - (maybe) Project selector, with dropdown and fuzzy search--creates a section in the email body.
    - Captcha
    - Integrates with fastmail to send emails to a stomberg.us alias that forwards to a folder in my email.
- 
-3. **Interactive article features.**
-   - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
-   - Consider whether to make an image + caption wrapper component
-   - 3D viewer for certain STLs? Could be a pain with limited payoff
-   - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in a browser. Must be rate-limited
-   - Consider whether to link + make available, or proxy any self-hosted things
 
-4. **SEO and metadata.** *Deferred until all content pages are populated--premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
+3. **Interactive article features.** *Mixed -- the caption wrapper is low-effort/do-soon; the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
+   - Image + caption wrapper component (low effort; unblocks better article pages and several content-prep items).
+   - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment; content-gated on projects actually having extra images).
+   - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in a browser. Must be rate-limited. *Defer -- mini-project with real security surface.*
+   - 3D viewer for certain STLs? Could be a pain with limited payoff. *Defer.*
+   - Consider whether to link + make available, or proxy any self-hosted things. *Defer.*
+
+4. **Project discoverability.** *Low value -- skip.* Tag filter has a typeahead now; the tag filter + timeline + gallery is already a complete discovery surface at this catalog size. Remaining ideas, kept only for the record:
+   - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
+   - Full-text search over article bodies via Pagefind (runs at build time) -- only earns its keep with lots of long-form bodies.
+   - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
+   - Leaning toward not doing these -- more is not always better.

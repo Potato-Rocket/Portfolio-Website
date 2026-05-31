@@ -30,9 +30,10 @@ const activeClass = "text-3xl font-serif font-bold";
 
     - Index pages: brand + every tab as siblings; the active tab is a bold span, the rest links.
     - Detail pages: `Home <tab> /` is one non-breaking prefix group (so the brand can never
-      wrap off above the breadcrumb), then the bold title, then the remaining tabs. Below sm
-      the title and remaining tabs each take `basis-full` so they stack one-per-line under the
-      prefix; at sm+ they're `basis-auto` and the whole thing is a single centered row.
+      wrap off above the breadcrumb), then the bold title, then the remaining tabs. The title
+      and remaining tabs wrap naturally (no forced `basis-full`): they share a line when there's
+      room and break one-per-line only when there isn't — so the title can sit beside the first
+      remaining tab while a later tab drops to the next line.
     Each tab keeps a stable `nav-<id>` view-transition name across both modes, so an element
     morphs cleanly between the bold span and the breadcrumb link on navigation.
 
@@ -52,7 +53,7 @@ const activeClass = "text-3xl font-serif font-bold";
           <span class="text-3xl font-serif text-ink-muted" aria-hidden="true">/</span>
         </span>
         <span
-          class={`${activeClass} text-center basis-full sm:basis-auto`}
+          class={`${activeClass} text-center`}
           aria-current="page"
           data-nav-title
         >
@@ -62,7 +63,7 @@ const activeClass = "text-3xl font-serif font-bold";
         {otherTabs.map((t) => (
           <a
             href={t.href}
-            class={`${linkClass} text-center basis-full sm:basis-auto`}
+            class={linkClass}
             transition:name={`nav-${t.id}`}
           >
             {t.label}
@@ -122,7 +123,8 @@ const activeClass = "text-3xl font-serif font-bold";
   /* --- View-transition morph for the brand + tabs (per-tab nav-<id> names) --- */
   ::view-transition-group(nav-brand),
   ::view-transition-group(nav-projects),
-  ::view-transition-group(nav-gallery) {
+  ::view-transition-group(nav-gallery),
+  ::view-transition-group(nav-about) {
     animation-duration: 400ms;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -132,7 +134,9 @@ const activeClass = "text-3xl font-serif font-bold";
   ::view-transition-old(nav-projects),
   ::view-transition-new(nav-projects),
   ::view-transition-old(nav-gallery),
-  ::view-transition-new(nav-gallery) {
+  ::view-transition-new(nav-gallery),
+  ::view-transition-old(nav-about),
+  ::view-transition-new(nav-about) {
     animation-duration: 150ms;
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -141,12 +145,15 @@ const activeClass = "text-3xl font-serif font-bold";
     ::view-transition-group(nav-brand),
     ::view-transition-group(nav-projects),
     ::view-transition-group(nav-gallery),
+    ::view-transition-group(nav-about),
     ::view-transition-old(nav-brand),
     ::view-transition-new(nav-brand),
     ::view-transition-old(nav-projects),
     ::view-transition-new(nav-projects),
     ::view-transition-old(nav-gallery),
-    ::view-transition-new(nav-gallery) {
+    ::view-transition-new(nav-gallery),
+    ::view-transition-old(nav-about),
+    ::view-transition-new(nav-about) {
       animation: none;
     }
   }
