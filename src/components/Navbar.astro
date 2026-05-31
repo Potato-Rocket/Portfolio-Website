@@ -1,83 +1,125 @@
 ---
+import { NAV_TABS, type NavTabId } from "../data/nav";
+
 interface Props {
-  tab: "projects" | "gallery";
+  tab: NavTabId;
   projectTitle?: string;
   isWip?: boolean;
 }
 
 const { tab, projectTitle, isWip = false } = Astro.props;
-const isProjectDetail = tab === "projects" && !!projectTitle;
+const isDetail = !!projectTitle;
+
+// Detail pages split the tab list: the active one becomes the breadcrumb prefix, the rest
+// render after the title.
+const activeTab = NAV_TABS.find((t) => t.id === tab)!;
+const otherTabs = NAV_TABS.filter((t) => t.id !== tab);
 
 const linkClass = "text-3xl font-serif hover:underline underline-offset-4 decoration-1";
 const activeClass = "text-3xl font-serif font-bold";
 ---
 
-<header class="sticky top-0 z-10 border-b border-rule py-4 bg-paper">
+<header
+  id="site-header"
+  data-collapsed="false"
+  class="sticky top-0 z-10 border-b border-rule py-4 bg-paper"
+>
   {/*
-    sm+ all pages use the 3-col grid (1fr auto 1fr): icon (justify-end), Projects-or-title
-    (center), Gallery (justify-start). Gallery's column is stable across pages so it doesn't
-    swap sides when active vs inactive — only its bold/active styling changes. The center
-    column trades between "Projects" (link or active) and the project title on detail pages.
-    Below sm:
-    - Non-detail wraps as a centered flex row — at very narrow widths icon/Projects/Gallery
-      can't share a line and Gallery flows underneath, still centered.
-    - Detail stacks three rows: icon+breadcrumb left, title (centered <xs, left xs+), Gallery
-      centered on its own row below the title.
-  */}
-  <nav class:list={[
-    "max-w-6xl mx-auto px-4 sm:px-12",
-    "sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-6",
-    isProjectDetail
-      ? "flex flex-col gap-2"
-      : "flex flex-wrap justify-center items-center gap-x-6 gap-y-2",
-  ]}>
-    <div class:list={[
-      "flex items-center gap-6",
-      isProjectDetail ? "justify-start sm:justify-end" : "sm:justify-end",
-    ]}>
-      <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
-      {isProjectDetail && (
-        <>
-          <a href="/projects" class={linkClass} transition:name="nav-projects">Projects</a>
-          <span class="text-3xl font-serif text-ink-muted" aria-hidden="true">/</span>
-        </>
-      )}
-    </div>
+    One centered, config-driven (NAV_TABS) flex-wrap row at every width — brand + tabs as a
+    single cluster. No grid, no per-cell alignment: symmetry is automatic.
 
-    <div class:list={[
-      "flex items-center",
-      // <xs: center (title likely wraps; centered reads better when wrapped).
-      // xs+ stacked: left-align under the breadcrumb (title fits on one line at this width).
-      // sm+ grid: surrounding 1fr cells center the auto column, so inner align is moot.
-      isProjectDetail ? "justify-center text-center xs:justify-start xs:text-left" : "",
-    ]}>
-      {isProjectDetail ? (
-        <span class={activeClass} aria-current="page">
+    - Index pages: brand + every tab as siblings; the active tab is a bold span, the rest links.
+    - Detail pages: `Home <tab> /` is one non-breaking prefix group (so the brand can never
+      wrap off above the breadcrumb), then the bold title, then the remaining tabs. Below sm
+      the title and remaining tabs each take `basis-full` so they stack one-per-line under the
+      prefix; at sm+ they're `basis-auto` and the whole thing is a single centered row.
+    Each tab keeps a stable `nav-<id>` view-transition name across both modes, so an element
+    morphs cleanly between the bold span and the breadcrumb link on navigation.
+
+    Below sm the header also CONDENSES on scroll (see the <style> + <script>): scrolling down
+    hides everything but the active label ([aria-current]) and shrinks padding; scrolling up,
+    or tapping the bar, restores it.
+  */}
+  <nav class="max-w-6xl mx-auto px-4 sm:px-12 flex flex-wrap justify-center items-center gap-x-6 gap-y-2">
+    {isDetail ? (
+      <>
+        {/* Non-breaking breadcrumb prefix: Home and the active tab stay on one line together. */}
+        <span class="flex items-center gap-x-6">
+          <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
+          <a href={activeTab.href} class={linkClass} transition:name={`nav-${activeTab.id}`}>
+            {activeTab.label}
+          </a>
+          <span class="text-3xl font-serif text-ink-muted" aria-hidden="true">/</span>
+        </span>
+        <span
+          class={`${activeClass} text-center basis-full sm:basis-auto`}
+          aria-current="page"
+          data-nav-title
+        >
           {projectTitle}
           {isWip && <span class="font-light font-sans"> · WIP</span>}
         </span>
-      ) : tab === "projects" ? (
-        <span class={activeClass} aria-current="page" transition:name="nav-projects">Projects</span>
-      ) : (
-        <a href="/projects" class={linkClass} transition:name="nav-projects">Projects</a>
-      )}
-    </div>
-
-    <div class:list={[
-      "flex items-center",
-      // Stacked detail centers Gallery on its own row; sm+ grid pins it to col 3's left edge.
-      isProjectDetail ? "justify-center sm:justify-start" : "sm:justify-start",
-    ]}>
-      {tab === "gallery" ? (
-        <span class={activeClass} aria-current="page" transition:name="nav-gallery">Gallery</span>
-      ) : (
-        <a href="/gallery" class={linkClass} transition:name="nav-gallery">Gallery</a>
-      )}
-    </div>
+        {otherTabs.map((t) => (
+          <a
+            href={t.href}
+            class={`${linkClass} text-center basis-full sm:basis-auto`}
+            transition:name={`nav-${t.id}`}
+          >
+            {t.label}
+          </a>
+        ))}
+      </>
+    ) : (
+      <>
+        <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
+        {NAV_TABS.map((t) =>
+          t.id === tab ? (
+            <span class={activeClass} aria-current="page" transition:name={`nav-${t.id}`}>
+              {t.label}
+            </span>
+          ) : (
+            <a href={t.href} class={linkClass} transition:name={`nav-${t.id}`}>{t.label}</a>
+          )
+        )}
+      </>
+    )}
   </nav>
 </header>
 
 <style is:global>
+  /* --- Mobile-only condense-on-scroll (sm = 640px is the desktop boundary) --- */
+  @media (width < 640px) {
+    #site-header {
+      transition: padding 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    #site-header[data-collapsed="true"] {
+      padding-top: 0.375rem; /* py-1.5 */
+      padding-bottom: 0.375rem;
+      cursor: pointer; /* the whole bar is a tap-to-expand target */
+    }
+    /* Show only the active label ([aria-current]); links + the breadcrumb slash drop out. */
+    #site-header[data-collapsed="true"] nav a,
+    #site-header[data-collapsed="true"] nav span[aria-hidden] {
+      display: none;
+    }
+    /* Drop inter-item gaps so the lone surviving label sits flush on one line. */
+    #site-header[data-collapsed="true"] nav {
+      gap: 0;
+    }
+    /* Keep a long title on a single line when collapsed. */
+    #site-header[data-collapsed="true"] [data-nav-title] {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #site-header {
+      transition: none;
+    }
+  }
+
+  /* --- View-transition morph for the brand + tabs (per-tab nav-<id> names) --- */
   ::view-transition-group(nav-brand),
   ::view-transition-group(nav-projects),
   ::view-transition-group(nav-gallery) {
@@ -109,3 +151,104 @@ const activeClass = "text-3xl font-serif font-bold";
     }
   }
 </style>
+
+<script>
+  // Mobile-only condense-on-scroll for the sticky header. The header is NOT
+  // transition:persist (its content changes per page), so it re-renders on every
+  // ClientRouter navigation: window/mql listeners bind once, but `header` is re-queried
+  // and the tap handler re-attached on each astro:page-load.
+  const PIN_ZONE = 120; // stay expanded within this many px of the top
+  const COLLAPSE_DELTA = 30; // sustained downward px to collapse
+  const EXPAND_DELTA = 60; // sustained upward px to expand — larger than collapse so
+  // momentum/jitter during a down-scroll doesn't pop it back open
+
+  // Hysteretic gate: only collapse on a page tall enough that hiding the header buys
+  // real room. Collapsing shrinks the header (~20px), which shrinks scrollHeight; on a
+  // barely-scrollable page that clamps scrollY back up into the pin zone, force-expanding
+  // and re-growing the page — an oscillation. A single threshold would itself flip as our
+  // own collapse moves scrollHeight across it, so we use two: enable collapse only past
+  // ENABLE, disable it below DISABLE. The 80px band is far wider than the ~20px the
+  // collapse removes, so the header's own height change can never cross the whole band.
+  // DISABLE also sits above PIN_ZONE, so a collapsible page's bottom is never in the pin zone.
+  const COLLAPSE_ENABLE = 240; // px of scrollable range required to start collapsing
+  const COLLAPSE_DISABLE = 160; // drop below this scrollable range → force expanded
+
+  const mql = window.matchMedia("(min-width: 640px)");
+
+  let header: HTMLElement | null = null;
+  let lastY = 0;
+  let collapseEnabled = false; // gate state; flips with hysteresis on scrollable range
+
+  function setCollapsed(value: boolean) {
+    if (!header) return;
+    const collapsed = header.dataset.collapsed === "true";
+    if (collapsed === value) return; // avoid redundant writes / transition restarts
+    header.dataset.collapsed = value ? "true" : "false";
+  }
+
+  function onScroll() {
+    if (!header || mql.matches) return; // desktop: always expanded, no-op
+    const y = Math.max(window.scrollY, 0);
+
+    // Update the hysteretic gate against the current scrollable range, then bail
+    // (force-expanded) on pages too short to collapse without oscillating.
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (collapseEnabled) {
+      if (maxScroll < COLLAPSE_DISABLE) collapseEnabled = false;
+    } else if (maxScroll >= COLLAPSE_ENABLE) {
+      collapseEnabled = true;
+    }
+    if (!collapseEnabled) {
+      setCollapsed(false);
+      lastY = y;
+      return;
+    }
+
+    if (y <= PIN_ZONE) {
+      setCollapsed(false);
+      lastY = y;
+    } else if (y > lastY + COLLAPSE_DELTA) {
+      setCollapsed(true);
+      lastY = y;
+    } else if (y < lastY - EXPAND_DELTA) {
+      setCollapsed(false);
+      lastY = y;
+    }
+  }
+
+  function onMediaChange() {
+    if (mql.matches) setCollapsed(false); // desktop must render expanded
+    lastY = Math.max(window.scrollY, 0);
+    onScroll();
+  }
+
+  function onHeaderClick() {
+    if (!header || mql.matches) return;
+    if (header.dataset.collapsed === "true") {
+      setCollapsed(false);
+      lastY = Math.max(window.scrollY, 0); // don't let the next scroll event re-collapse
+    }
+  }
+
+  function rebindHeader() {
+    header = document.getElementById("site-header");
+    if (!header) return;
+    lastY = Math.max(window.scrollY, 0);
+    if (header.dataset.bound !== "true") {
+      header.dataset.bound = "true";
+      header.addEventListener("click", onHeaderClick);
+    }
+    onScroll();
+  }
+
+  // Bind window/mql listeners exactly once across the SPA's lifetime.
+  const w = window as typeof window & { __navScrollBound?: boolean };
+  if (!w.__navScrollBound) {
+    w.__navScrollBound = true;
+    window.addEventListener("scroll", onScroll, { passive: true });
+    mql.addEventListener("change", onMediaChange);
+  }
+
+  rebindHeader();
+  document.addEventListener("astro:page-load", rebindHeader);
+</script>

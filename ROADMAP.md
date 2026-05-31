@@ -2,19 +2,19 @@
 
 ## Issues
 
-- Certain thumbnails have wonky rotation info (e.g. robot chute, digital waste) likely from heic -> jpg and such. This only matters for astro thumbnails, i.e. in the details page (though if we included thumbnails in gallery that would also be a problem). Not urgent but kind of weird--and we don't want to screw up the thumbnails either.
-- Create default thumbnail for home, projects, gallery pages.
-- Need to make header shrink when scrolling down on mobile
-- Need to center footer link wrap on mobile
+- OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
 
 ## Content prep
 
-- **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates — email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
+- **Hanover CMS demo readiness.** The project page can't go public until proprietary data and client branding are scrubbed from anything embedded or screenshotted. Requires coordination with teammates--email going out tonight. Risk is low for now (no login details exposed), but the page shouldn't be linked, featured, or included in any sitemap until the scrub is signed off by the team.
 - **Star Map.** Was not REALLY left in a functional state. Needs to be rescued.
+- **Selfhosting.** Need to make real diagrams for it.
+- **Pythagoras Tree, Towers.** Need to run and gather screenshots, also put on github with JAR releases.
+- **Cubeish, Tower Crunch.** Need to install in windows, take screenshots and make gameplay videos.
 
 ### Per-project content status
 
-One entry per project page. Mark as `done`, `partial`, `pull-in` (existing material elsewhere — old write-ups, repo READMEs, photos — that I can have Claude pull in and adapt), or `write` (needs fresh writing).
+One entry per project page. Mark as `done`, `partial`, `pull-in` (existing material elsewhere--old write-ups, repo READMEs, photos--that I can have Claude pull in and adapt), or `write` (needs fresh writing).
 
 - [x] **frc-robot-chute** — done
 - [x] **imagepy** — done
@@ -41,14 +41,23 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 1. **Project discoverability.** Tag filter has a typeahead now. Remaining additions, in rough priority order:
    - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
    - Full-text search over article bodies via Pagefind (runs at build time).
+   - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
+   - Consider maybe just not doing these features--more is not always better.
 
-   Semantic search is overkill at portfolio scale — skip unless project count grows a lot.
-
-2. **Interactive article features.**
+2. **About me and contact form** Have another tab for about me... perhaps put the contact form on the same page, below. Should have:
+   - Subject/header (required)
+   - Name (not required)
+   - Email address (verify this, don't require)
+   - Body (required--allow rich text/html input?)
+   - (maybe) Project selector, with dropdown and fuzzy search--creates a section in the email body.
+   - Captcha
+   - Integrates with fastmail to send emails to a stomberg.us alias that forwards to a folder in my email.
+ 
+3. **Interactive article features.**
    - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment).
    - Consider whether to make an image + caption wrapper component
    - 3D viewer for certain STLs? Could be a pain with limited payoff
-   - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in browser. Must be rate-limited
+   - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in a browser. Must be rate-limited
    - Consider whether to link + make available, or proxy any self-hosted things
 
-3. **SEO and metadata.** *Deferred until all content pages are populated — premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
+4. **SEO and metadata.** *Deferred until all content pages are populated--premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. Open question: per-project OG images — templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail?
