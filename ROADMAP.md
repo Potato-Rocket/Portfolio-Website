@@ -3,7 +3,9 @@
 ## Issues
 
 - OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
-- Confirm that the demo.stomberg.us tunnel only is accessible by our worker, not the public
+- **Lock down the `demo.oscar.stomberg.us` tunnel with Cloudflare Access + service token.** Right now the tunnel's public hostname is reachable by anyone who finds it -- the home server isn't exposed, but the Go file server's greeting files are. Put a Cloudflare Access self-hosted application in front of the tunnel hostname and issue a service token; the greeting-proxy Worker's hourly cron sends `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers on its fetch to `TUNNEL_ORIGIN`, and Access rejects everything else. Store the token id/secret as Wrangler secrets alongside `TUNNEL_ORIGIN`. (Workers VPC -- a binding-based alternative that drops the public hostname entirely -- was considered but deferred: it's still beta and this path degrades gracefully to last-cached, so not worth a beta dependency. Revisit VPC at GA.)
+- Be consistent about sr-only headings
+- `<Figure>` callsites currently pass identical `alt` and `caption`, so a screen reader reads the same text twice. Decide per-image whether to keep both, or set `alt=""` where the visible caption already fully describes the image (treats it as decorative so the caption is the sole accessible description). Low priority.
 
 ## Content prep
 
@@ -46,8 +48,7 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
 2. **About me and contact form.**
    - (maybe) Project selector, with dropdown and fuzzy search--creates a section in the email body.
 
-3. **Interactive article features.** *Mixed -- the caption wrapper is low-effort/do-soon; the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
-   - Image + caption wrapper component (low effort; unblocks better article pages and several content-prep items).
+3. **Interactive article features.** *Mixed--the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
    - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment; content-gated on projects actually having extra images).
    - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in a browser. Must be rate-limited. *Defer -- mini-project with real security surface.*
    - 3D viewer for certain STLs? Could be a pain with limited payoff. *Defer.*
@@ -57,4 +58,4 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
    - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
    - Full-text search over article bodies via Pagefind (runs at build time) -- only earns its keep with lots of long-form bodies.
    - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
-   - Leaning toward not doing these -- more is not always better.
+   - Leaning toward not doing these--more is not always better.
