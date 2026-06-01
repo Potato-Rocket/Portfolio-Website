@@ -8,13 +8,21 @@ interface Props {
 
 const { size = "sm", class: className = "" } = Astro.props;
 
-// Single source of truth so hero and footer copies stay aligned.
+// Email split into local-part + domain so the literal address never appears in
+// the served HTML (no `mailto:`, no `user@domain` for scrapers to regex out).
+// The <script> below reassembles the real mailto href on the client. CF's free
+// Email Obfuscation doesn't apply to Worker-rendered HTML, so we do it manually.
+const EMAIL_USER = "contact";
+const EMAIL_DOMAIN = "stomberg.us";
+
+// Single source of truth so hero and footer copies stay aligned. The email entry
+// carries no href — it's assembled client-side (see above).
 const links = [
   { href: "https://github.com/Potato-Rocket", icon: "lucide:github", label: "GitHub" },
   { href: "https://www.linkedin.com/in/oscar-w-stomberg/", icon: "lucide:linkedin", label: "LinkedIn" },
-  { href: "mailto:owstomberg@wpi.edu", icon: "lucide:mail", label: "Email" },
+  { email: true, icon: "lucide:mail", label: "Email" },
   { href: "/files/Oscar-Stomberg-Resume.pdf", icon: "lucide:file-text", label: "Resume" },
-];
+] as const;
 
 const isLarge = size === "lg";
 const linkClass = "inline-flex items-center gap-1.5 hover:underline underline-offset-2";
@@ -31,14 +39,37 @@ function isExternal(href: string) {
 
 <nav aria-label="Personal links" class:list={["flex flex-wrap items-center justify-center", rowClass, textClass, className]}>
   {links.map((link) => (
-    <a
-      href={link.href}
-      class={linkClass}
-      target={isExternal(link.href) || link.href.endsWith(".pdf") ? "_blank" : undefined}
-      rel={isExternal(link.href) || link.href.endsWith(".pdf") ? "noopener noreferrer" : undefined}
-    >
-      <Icon name={link.icon} class={iconClass} />
-      {link.label}
-    </a>
+    "email" in link ? (
+      <a class={linkClass} href="#" data-email-user={EMAIL_USER} data-email-domain={EMAIL_DOMAIN}>
+        <Icon name={link.icon} class={iconClass} />
+        {link.label}
+      </a>
+    ) : (
+      <a
+        href={link.href}
+        class={linkClass}
+        target={isExternal(link.href) || link.href.endsWith(".pdf") ? "_blank" : undefined}
+        rel={isExternal(link.href) || link.href.endsWith(".pdf") ? "noopener noreferrer" : undefined}
+      >
+        <Icon name={link.icon} class={iconClass} />
+        {link.label}
+      </a>
+    )
   ))}
 </nav>
+
+<script>
+  // Reassemble the obfuscated mailto href on the client, and re-run on every
+  // view-transition nav (the served HTML never contains the address). Mirrors the
+  // astro:page-load rebind pattern GoToTop uses.
+  function bindObfuscatedEmail() {
+    document
+      .querySelectorAll<HTMLAnchorElement>("a[data-email-user][data-email-domain]")
+      .forEach((a) => {
+        const user = a.dataset.emailUser;
+        const domain = a.dataset.emailDomain;
+        if (user && domain) a.href = `mailto:${user}@${domain}`;
+      });
+  }
+  document.addEventListener("astro:page-load", bindObfuscatedEmail);
+</script>

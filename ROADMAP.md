@@ -6,7 +6,6 @@
 - Confirm that the demo.stomberg.us tunnel only is accessible by our worker, not the public
 - Replace Home in navbar with Icon.svg once more
 - Add contact form link to footer
-- Spinner on contact form submit
 
 ## Content prep
 
