@@ -1,5 +1,6 @@
 ---
 import { NAV_TABS, type NavTabId } from "../data/nav";
+import Icon from "../assets/Icon.svg";
 
 interface Props {
   tab: NavTabId;
@@ -17,6 +18,9 @@ const otherTabs = NAV_TABS.filter((t) => t.id !== tab);
 
 const linkClass = "text-3xl font-serif hover:underline underline-offset-4 decoration-1";
 const activeClass = "text-3xl font-serif font-bold";
+// The brand is the "OS" monogram (an icon, not text) — underline-on-hover doesn't
+// read on a glyph, so it gets an opacity-dip affordance instead of `linkClass`.
+const brandClass = "flex items-center hover:opacity-70 transition-opacity";
 ---
 
 <header
@@ -46,7 +50,9 @@ const activeClass = "text-3xl font-serif font-bold";
       <>
         {/* Non-breaking breadcrumb prefix: Home and the active tab stay on one line together. */}
         <span class="flex items-center gap-x-6">
-          <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
+          <a href="/" class={brandClass} aria-label="Home" transition:name="nav-brand">
+            <Icon class="w-9 h-9" />
+          </a>
           <a href={activeTab.href} class={linkClass} transition:name={`nav-${activeTab.id}`}>
             {activeTab.label}
           </a>
@@ -72,7 +78,9 @@ const activeClass = "text-3xl font-serif font-bold";
       </>
     ) : (
       <>
-        <a href="/" class={linkClass} transition:name="nav-brand">Home</a>
+        <a href="/" class={brandClass} aria-label="Home" transition:name="nav-brand">
+          <Icon class="w-9 h-9" />
+        </a>
         {NAV_TABS.map((t) =>
           t.id === tab ? (
             <span class={activeClass} aria-current="page" transition:name={`nav-${t.id}`}>

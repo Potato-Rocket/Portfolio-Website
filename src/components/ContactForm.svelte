@@ -4,8 +4,14 @@
 
   // Public Turnstile site key (safe to ship — the secret half lives server-side).
   const TURNSTILE_SITE_KEY = "0x4AAAAAADbr4aEuUD2rthdN";
-  // Reply-to-sender address surfaced as a fallback when the form itself fails.
-  const FALLBACK_EMAIL = "contact@stomberg.us";
+
+  // Reply-to-sender address shown as a fallback when the form itself fails.
+  // Assembled at runtime via Array.join (which esbuild does NOT constant-fold,
+  // unlike string concat or String.fromCharCode), so the literal parts stay split
+  // and the full "user@domain" string never appears in the JS bundle for scrapers
+  // to regex out. Mirrors the PersonalLinks.astro mailto obfuscation. (Only ever
+  // rendered into the DOM on error, so it's never in the SSR'd HTML either.)
+  const FALLBACK_EMAIL = ["contact", "stomberg.us"].join("@");
 
   type Status = "idle" | "sending" | "success" | "error";
   let status = $state<Status>("idle");
@@ -198,14 +204,14 @@
     "aria-[invalid=true]:border-error";
 </script>
 
-<section class="mt-12 pt-8 border-t border-rule">
+<section id="contact" class="mt-12 pt-8 border-t border-rule scroll-mt-24">
   <h2 class="font-serif text-2xl mb-1">Get in touch</h2>
   <p class="text-ink-muted text-sm mb-6">
     Drop me a message and it'll land straight in my inbox.
   </p>
 
   {#if status === "success"}
-    <div class="border border-rule-strong px-4 py-6 text-center" role="status" aria-live="polite">
+    <div class="border border-rule-strong px-4 py-6 text-center max-w-xl" role="status" aria-live="polite">
       <p
         bind:this={successHeadingEl}
         tabindex="-1"
@@ -223,7 +229,7 @@
       </button>
     </div>
   {:else}
-    <form onsubmit={handleSubmit} novalidate class="flex flex-col gap-4 max-w-xl">
+    <form onsubmit={handleSubmit} novalidate class="flex flex-col gap-4 max-w-xl border border-rule-strong p-6">
       <div>
         <label for="cf-name" class="block font-serif text-sm mb-1">
           Name <span class="text-error" aria-hidden="true">*</span>
@@ -294,14 +300,17 @@
           placeholder="Your message…"
           aria-invalid={!!fieldErrors.message}
           aria-describedby={fieldErrors.message ? "cf-message-error" : undefined}
-          class={`${fieldClass} resize-y`}
+          class={`${fieldClass} resize-y min-h-32`}
         ></textarea>
         {#if fieldErrors.message}
           <p id="cf-message-error" class="text-error text-xs mt-1">{fieldMessage("message", fieldErrors.message)}</p>
         {/if}
       </div>
 
-      <div bind:this={turnstileEl} class="cf-turnstile"></div>
+      <!-- Turnstile renders a fixed ~300px iframe; on a narrow screen that's wider
+           than the padded form box, so let just this element scroll rather than
+           bust the border. -->
+      <div bind:this={turnstileEl} class="cf-turnstile max-w-full overflow-x-auto"></div>
 
       {#if status === "error"}
         <p class="text-error text-sm" role="alert">

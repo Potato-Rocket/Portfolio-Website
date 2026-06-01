@@ -4,8 +4,6 @@
 
 - OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
 - Confirm that the demo.stomberg.us tunnel only is accessible by our worker, not the public
-- Replace Home in navbar with Icon.svg once more
-- Add contact form link to footer
 
 ## Content prep
 
@@ -45,14 +43,8 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
 
 1. **SEO and metadata.** *Low effort, high value--but gated on content: premature to optimize discoverability while the catalog is still half-empty.* OG/meta tags, sitemap (`@astrojs/sitemap`), robots.txt, canonical URLs. The sitemap/robots/canonical/meta basics are a few lines each and the highest-leverage work here. Open question: per-project OG images--templated card (thumbnail + title + tags, pre-rendered at build via Satori or similar), or just reuse the existing thumbnail? Do the cheap sized-thumbnail derivative first to fix the multi-MB OG bug.
 
-2. **About me and contact form.** *High effort, high value--the one big-ticket item worth its cost, and the only high-value feature buildable now (not content-gated).* Have another tab for about me... perhaps put the contact form on the same page, below. Should have:
-   - Subject/header (required)
-   - Name (not required)
-   - Email address (verify this, don't require)
-   - Body (required--allow rich text/html input?)
+2. **About me and contact form.**
    - (maybe) Project selector, with dropdown and fuzzy search--creates a section in the email body.
-   - Captcha
-   - Integrates with fastmail to send emails to a stomberg.us alias that forwards to a folder in my email.
 
 3. **Interactive article features.** *Mixed -- the caption wrapper is low-effort/do-soon; the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
    - Image + caption wrapper component (low effort; unblocks better article pages and several content-prep items).
