@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import ContactForm from "../components/ContactForm.svelte";
+---
+
+<Layout title="About" description="About Oscar Stomberg — Robotics Engineering student at WPI.">
+  <Navbar tab="about" />
+  <main class="max-w-3xl mx-auto px-6 py-12">
+    {/* Navbar announces the page; visible heading kept for the content page. */}
+    <h1 class="sr-only">About</h1>
+
+    {/* TODO: replace this placeholder copy with the real bio. */}
+    <div class="prose prose-paper max-w-none">
+      <h2>Who am I?</h2>
+      <p>
+        An enigma shrouded in mystery.
+      </p>
+    </div>
+
+    <ContactForm client:load />
+  </main>
+</Layout>

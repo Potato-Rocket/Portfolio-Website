@@ -88,7 +88,7 @@
     <figcaption
       class="border-t border-rule px-6 py-2 font-sans text-xs text-ink-muted italic text-center flex items-center justify-center gap-1.5"
     >
-      <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse shrink-0"></span>
+      <span class="w-1.5 h-1.5 bg-error rounded-full animate-pulse shrink-0"></span>
       Live demo &middot; currently offline
     </figcaption>
   {:else}
@@ -150,7 +150,7 @@
     <figcaption
       class="border-t border-rule px-6 py-2 font-sans text-xs text-ink-muted italic text-center flex items-center justify-center gap-1.5"
     >
-      <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 {isStale(data.date) ? 'bg-yellow-500' : 'bg-green-500'}"></span>
+      <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 {isStale(data.date) ? 'bg-warning' : 'bg-success'}"></span>
       {#if isStale(data.date)}
         Live &middot; showing {formatDate(data.date, true)} greeting &middot; today's generation may be delayed
       {:else}

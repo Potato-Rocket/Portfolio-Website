@@ -5,6 +5,7 @@
 export const NAV_TABS = [
   { id: "projects", label: "Projects", href: "/projects" },
   { id: "gallery", label: "Gallery", href: "/gallery" },
+  { id: "about", label: "About", href: "/about" },
 ] as const;
 
 export type NavTabId = (typeof NAV_TABS)[number]["id"];

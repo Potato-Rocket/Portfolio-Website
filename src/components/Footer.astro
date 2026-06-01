@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import PersonalLinks from "./PersonalLinks.astro";
 
 // Home hero already shows the same links at size="lg" — repeating them here
@@ -10,6 +11,14 @@ const year = new Date().getUTCFullYear();
 <footer class="border-t border-rule mt-16">
   <div class="max-w-6xl mx-auto px-12 py-8 flex flex-col items-center gap-3 text-ink-muted">
     {!isHome && <PersonalLinks />}
+    {/* On-site contact form (distinct from the mailto in PersonalLinks). */}
+    <a
+      href="/about#contact"
+      class="inline-flex items-center gap-1.5 text-sm hover:underline underline-offset-2"
+    >
+      <Icon name="lucide:message-square-text" class="w-4 h-4" />
+      Contact form
+    </a>
     <p class="text-xs">© {year} Oscar Stomberg</p>
   </div>
 </footer>

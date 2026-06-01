@@ -1,0 +1,13 @@
+# Copy to `.dev.vars` (gitignored) for local `npm run preview` testing.
+# In production these are set as Worker secrets: `wrangler secret put <KEY>`.
+
+# Fastmail API token, scoped to Mail (read/write). Used to drop contact-form
+# submissions into the "Contact" folder via JMAP. Create at:
+# Fastmail → Settings → Privacy & Security → API tokens.
+FASTMAIL_API_TOKEN=""
+
+# Cloudflare Turnstile secret key (server-side verification). Create a widget for
+# oscar.stomberg.us in the Cloudflare dashboard; the SITE key is public (front-end).
+# If this is unset, the endpoint skips captcha verification so JMAP can be tested first.
+# Site key: 0x4AAAAAADbr4aEuUD2rthdN
+TURNSTILE_SECRET_KEY=""
