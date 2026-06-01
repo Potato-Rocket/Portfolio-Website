@@ -48,8 +48,7 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
 2. **About me and contact form.**
    - (maybe) Project selector, with dropdown and fuzzy search--creates a section in the email body.
 
-3. **Interactive article features.** *Mixed -- the caption wrapper is low-effort/do-soon; the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
-   - ~~Image + caption wrapper component (low effort; unblocks better article pages and several content-prep items).~~ **Done** — `src/components/mdx/Figure.astro` (`<Figure src="diagram.png" alt="…" caption="…" />`; filename auto-resolved against `src/assets/**` by `findArticleImage()`, no import). Rolled out to every existing article image (frc-robot-chute, waste-scale, imagepy, synthetic-word-generator, plant-datalogger were converted `.md` → `.mdx`).
+3. **Interactive article features.** *Mixed--the 3D viewer and script backends are very-high-effort/low-payoff and deferred.* In priority order:
    - Image carousel or mini-gallery for projects with extra in-article images (decide whether it should diverge from the gallery treatment; content-gated on projects actually having extra images).
    - For script projects consider wrapper backends that allow requests to be made (and logs streamed back perhaps). Compare to running python in a browser. Must be rate-limited. *Defer -- mini-project with real security surface.*
    - 3D viewer for certain STLs? Could be a pain with limited payoff. *Defer.*
@@ -59,4 +58,4 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
    - Fuzzy search over project metadata (title, summary, tags). Client-side index, no infra.
    - Full-text search over article bodies via Pagefind (runs at build time) -- only earns its keep with lots of long-form bodies.
    - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
-   - Leaning toward not doing these -- more is not always better.
+   - Leaning toward not doing these--more is not always better.
