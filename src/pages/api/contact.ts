@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { env } from "cloudflare:workers";
+import { ContactSchema, fieldErrorsFrom } from "../../lib/contactSchema";
 
 // On-demand route: this is the only SSR endpoint on an otherwise prerendered site.
 // Under `astro dev` the Cloudflare adapter is skipped, so this won't run there —
@@ -22,20 +23,17 @@ const MAIL_CAPABILITY = "urn:ietf:params:jmap:mail";
 // we drop it into. Architecture B: we never actually send (no EmailSubmission) —
 // we create the message directly in this folder via Email/set.
 const CONTACT_ADDRESS = "contact@stomberg.us";
-const CONTACT_FOLDER_NAME = "Contact";
+const CONTACT_FOLDER_NAME = "Portfolio";
 
-// Minimum seconds between page render and submit. Bots post instantly; humans don't.
-const MIN_FILL_SECONDS = 2.5;
-const MAX_NAME = 100;
-const MAX_MESSAGE = 5000;
+// Field-shape validation (name/email/subject/message + bounds) lives in
+// src/lib/contactSchema.ts, shared with the client form. Turnstile lives outside
+// it — it's bot-detection control flow, not "invalid input".
 
 // --- Per-isolate caches ----------------------------------------------------
 // A Worker isolate is reused across requests, so resolve the session + folder id
 // once and reuse them. Cold request pays two extra JMAP round trips; warm ones don't.
 let cachedSession: { apiUrl: string; accountId: string } | null = null;
 let cachedMailboxId: string | null = null;
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function json(body: unknown, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -98,7 +96,7 @@ async function verifyTurnstile(secret: string, token: string, ip: string | null)
   const res = await fetch(TURNSTILE_VERIFY_URL, { method: "POST", body: form });
   if (!res.ok) return false;
   const data = (await res.json()) as { success: boolean };
-  return data.success === true;
+  return data.success;
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -106,9 +104,8 @@ export const POST: APIRoute = async ({ request }) => {
   let payload: {
     name?: string;
     email?: string;
+    subject?: string;
     message?: string;
-    website?: string; // honeypot
-    ts?: number; // client render timestamp (ms epoch)
     turnstileToken?: string;
   };
   try {
@@ -117,25 +114,12 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ ok: false, error: "bad_request" }, 400);
   }
 
-  // --- Honeypot: a filled hidden field means a bot. Pretend success. -------
-  if (payload.website && payload.website.trim() !== "") {
-    return json({ ok: true });
-  }
-
-  // --- Timing trap ---------------------------------------------------------
-  const elapsed = typeof payload.ts === "number" ? (Date.now() - payload.ts) / 1000 : -1;
-  if (elapsed < MIN_FILL_SECONDS) {
-    return json({ ok: false, error: "too_fast" }, 400);
-  }
-
   // --- Validate ------------------------------------------------------------
-  const name = (payload.name ?? "").trim();
-  const email = (payload.email ?? "").trim();
-  const message = (payload.message ?? "").trim();
-  if (!name || name.length > MAX_NAME) return json({ ok: false, error: "invalid_name" }, 400);
-  if (!email || !EMAIL_RE.test(email)) return json({ ok: false, error: "invalid_email" }, 400);
-  if (!message || message.length > MAX_MESSAGE)
-    return json({ ok: false, error: "invalid_message" }, 400);
+  const parsed = ContactSchema.safeParse(payload);
+  if (!parsed.success) {
+    return json({ ok: false, error: "invalid_input", fields: fieldErrorsFrom(parsed.error) }, 400);
+  }
+  const { name, email, subject, message } = parsed.data;
 
   // --- Turnstile (skipped if not configured yet, so JMAP can be tested first)
   if (secrets.TURNSTILE_SECRET_KEY) {
@@ -173,7 +157,7 @@ export const POST: APIRoute = async ({ request }) => {
               from: [{ name, email }],
               to: [{ email: CONTACT_ADDRESS }],
               replyTo: [{ name, email }],
-              subject: `Portfolio contact from ${name}`,
+              subject: subject || `Portfolio contact from ${name}`,
               receivedAt,
               bodyValues: {
                 body: {

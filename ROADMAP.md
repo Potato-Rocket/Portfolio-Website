@@ -3,6 +3,10 @@
 ## Issues
 
 - OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
+- Confirm that the demo.stomberg.us tunnel only is accessible by our worker, not the public
+- Replace Home in navbar with Icon.svg once more
+- Add contact form link to footer
+- Spinner on contact form submit
 
 ## Content prep
 

@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
+import ContactForm from "../components/ContactForm.svelte";
 ---
 
 <Layout title="About" description="About Oscar Stomberg — Robotics Engineering student at WPI.">
@@ -11,6 +12,7 @@ import Navbar from "../components/Navbar.astro";
 
     {/* TODO: replace this placeholder copy with the real bio. */}
     <div class="prose prose-paper max-w-none">
+      <h2>Who am I?</h2>
       <p>
         Placeholder intro — a couple of sentences on who I am and what I build.
         Robotics Engineering at WPI, with a foot in software, hardware, and the
@@ -26,6 +28,6 @@ import Navbar from "../components/Navbar.astro";
       </p>
     </div>
 
-    {/* TODO (step 4–5): <ContactForm client:load /> goes here. */}
+    <ContactForm client:load />
   </main>
 </Layout>
