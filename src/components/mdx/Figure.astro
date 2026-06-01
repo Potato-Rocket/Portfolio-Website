@@ -1,0 +1,52 @@
+---
+import { Image } from "astro:assets";
+import { findArticleImage } from "../../lib/articleImages";
+
+// Article-body image + caption wrapper for MDX. Pass `src` as a bare filename
+// ("diagram.png") -- it's resolved against src/assets/**, no import needed --
+// or a "<slug>/file.png" path to disambiguate when a filename isn't unique.
+// The resolved image goes through Astro's <Image> so Sharp emits a responsive
+// srcset at build time. `not-prose` keeps Typography off the figure chrome.
+interface Props {
+  src: string;
+  alt: string;
+  caption?: string;
+  widths?: number[];
+  sizes?: string;
+  loading?: "lazy" | "eager";
+  class?: string;
+}
+
+const {
+  src,
+  alt,
+  caption,
+  widths = [640, 960, 1280],
+  sizes = "(max-width: 720px) 100vw, 720px",
+  loading = "lazy",
+  class: className = "",
+} = Astro.props;
+
+const image = findArticleImage(src);
+if (!image) {
+  throw new Error(
+    `<Figure src="${src}"> matched no file under src/assets/. Check the ` +
+      `filename, or drop the image at src/assets/<slug>/${src}.`
+  );
+}
+---
+
+<figure class:list={["not-prose my-8", className]}>
+  <Image
+    src={image}
+    alt={alt}
+    widths={widths}
+    sizes={sizes}
+    loading={loading}
+    fetchpriority={loading === "eager" ? "high" : "auto"}
+    class="w-full h-auto border border-rule-strong"
+  />
+  {caption && (
+    <figcaption class="mt-2 text-sm text-ink-muted text-center italic">{caption}</figcaption>
+  )}
+</figure>

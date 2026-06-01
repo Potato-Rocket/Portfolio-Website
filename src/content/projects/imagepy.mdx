@@ -15,6 +15,8 @@ periods:
     label: Finished and documented
 ---
 
+import Figure from "../../components/mdx/Figure.astro";
+
 ## What & Why
 
 I wanted to change my Linux system's color scheme automatically when I changed my desktop wallpaper--terminal emulator, title bar, and other config files all derived from the same palette--without doing anything manually. ImagePy takes a source image, extracts a palette that accurately reflects the colors in it, and writes the results to whatever config files you point it at.
@@ -35,15 +37,15 @@ The hard part turned out not to be the grouping algorithm itself, but making it 
 
 Source image (_Howl's Moving Castle_):
 
-![Howl's Moving Castle wallpaper](../../assets/imagepy/moving-castle.jpg)
+<Figure src="moving-castle.jpg" alt="Howl's Moving Castle wallpaper" caption="Howl's Moving Castle wallpaper" />
 
 Binned intermediate image (scaled up to make pixels visible):
 
-![Binned image after chunk averaging](../../assets/imagepy/binned.png)
+<Figure src="binned.png" alt="Binned image after chunk averaging" caption="Binned image after chunk averaging" />
 
 Generated palette:
 
-![Extracted color palette](../../assets/imagepy/palette.png)
+<Figure src="palette.png" alt="Extracted color palette" caption="Extracted color palette" />
 
 ```
 #D7E7BC  #AFCB8C  #1D2E30  #537D43

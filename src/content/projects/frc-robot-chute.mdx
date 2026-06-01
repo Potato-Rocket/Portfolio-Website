@@ -14,6 +14,8 @@ periods:
     label: Competition
 ---
 
+import Figure from "../../components/mdx/Figure.astro";
+
 ## Purpose
 
 The goal for the 2022 FRC game was to create a robot that could gather large foam balls from the ground and launch them into a central hoop for varying amounts of points, competing against many other teams.
@@ -32,37 +34,37 @@ Our robot's overall design consisted of four main assemblies: the **chassis**, *
 
 Modeled in Autodesk Fusion 360.
 
-![Orthographic projections of the chute assembly](../../assets/frc-robot-chute/multi-view-1.png)
+<Figure src="multi-view-1.png" alt="Orthographic projections of the chute assembly" caption="Orthographic projections of the chute assembly" />
 
 ## Machining
 
 All structural panels are cut from 1/8" Masonite--a cheap, relatively strong, and easily machinable material. Our Epilog Zing 24 laser cutter needed extensive cleaning and setup to become fully operational, and getting consistent cuts required extensive trial and error to find settings that avoided burnt edges or incomplete cuts.
 
-![Test cut grid — laser frequency (horizontal) vs. speed (vertical)](../../assets/frc-robot-chute/test-cuts.jpg)
+<Figure src="test-cuts.jpg" alt="Test cut grid -- laser frequency (horizontal) vs. speed (vertical)" caption="Test cut grid -- laser frequency (horizontal) vs. speed (vertical)" />
 
 ## Parts
 
-![Exploded view of the chute assembly](../../assets/frc-robot-chute/exploded-view-1.png)
+<Figure src="exploded-view-1.png" alt="Exploded view of the chute assembly" caption="Exploded view of the chute assembly" />
 
-![Laser cut and 3D printed parts laid out before assembly](../../assets/frc-robot-chute/parts.jpg)
+<Figure src="parts.jpg" alt="Laser cut and 3D printed parts laid out before assembly" caption="Laser cut and 3D printed parts laid out before assembly" />
 
 ## Assembly
 
 Tight fitting box joints secured with wood glue provided durable and lightweight connections. Perpendicular braces were designed to prevent deflection in the main ramp and rails. The sides of the ramp were reinforced with 3D-printed brackets bolted into the ramp, its sides, and the braces.
 
-![Ramp, sides, and braces glued together; fastened by 3D printed brackets](../../assets/frc-robot-chute/gluing.jpg)
+<Figure src="gluing.jpg" alt="Ramp, sides, and braces glued together; fastened by 3D printed brackets" caption="Ramp, sides, and braces glued together; fastened by 3D printed brackets" />
 
 ## Integration
 
 The chute was attached to the frame with zip-ties to avoid protruding bolt ends. The assembly engages with the frame's aluminum hex spars and aligns with the edges of the frame and intake. The ball rolls down the ramp and is guided between the two rails, which curve up into the shooter.
 
-![Full assembly after installation in the robot](../../assets/frc-robot-chute/integration.jpg)
+<Figure src="integration.jpg" alt="Full assembly after installation in the robot" caption="Full assembly after installation in the robot" />
 
 ## Failure
 
 During hard impacts the ball was able to knock ribs off the ramp and pry apart the rails. Horizontal spars also prevented the ball from rolling perfectly on the rails.
 
-![Robot at competition with various last-minute alterations](../../assets/frc-robot-chute/alterations.jpg)
+<Figure src="alterations.jpg" alt="Robot at competition with various last-minute alterations" caption="Robot at competition with various last-minute alterations" />
 
 These design flaws were remedied by placing a flexible sheet of felt between the rails to provide elastic resistance against the ball's impact.
 

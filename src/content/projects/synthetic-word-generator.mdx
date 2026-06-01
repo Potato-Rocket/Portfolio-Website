@@ -18,6 +18,8 @@ periods:
     label: V4 rewrite
 ---
 
+import Figure from "../../components/mdx/Figure.astro";
+
 ## Inspiration
 
 The summer after quarantine started, I was on my own with not much to do, so I invented a project for myself. Two years earlier I had started learning Python in order to make games, and I wanted to expand on those skills. Looking over old scripts, I found a first iteration of a synthetic word generator that inspired this project.
@@ -122,9 +124,9 @@ Bolessedgerl
 
 I wanted to improve the slow runtime of the programs I had written. I learned to launch multiple threads simultaneously using Python's multiprocessing library, vastly improving performance. I tested the optimal thread count and graphed the results using Matplotlib.
 
-![Runtime vs. thread count for word scoring](../../assets/synthetic-word-generator/ws-graph-1.png)
+<Figure src="ws-graph-1.png" alt="Runtime vs. thread count for word scoring" caption="Runtime vs. thread count for word scoring" />
 
-![Runtime vs. thread count for word generation](../../assets/synthetic-word-generator/wg-graph-1.png)
+<Figure src="wg-graph-1.png" alt="Runtime vs. thread count for word generation" caption="Runtime vs. thread count for word generation" />
 
 ## V4 Rewrite
 

@@ -19,6 +19,8 @@ related:
   - waste-scale
 ---
 
+import Figure from "../../components/mdx/Figure.astro";
+
 ## Overview
 
 A datalogger for my house plants running on the Raspberry Pi Pico W, written in C with the Pico SDK. It records temperature, humidity, and soil moisture every minute and indicates watering need and system health through an LED.
@@ -46,7 +48,7 @@ Recalibration during runtime is triggered by a 3-to-10-second button hold--usefu
 
 ## Schematic
 
-![Plant Datalogger schematic](../../assets/plant-datalogger/schematic.png)
+<Figure src="schematic.png" alt="Plant Datalogger schematic" caption="Plant Datalogger schematic" />
 
 ## LED indicator
 
