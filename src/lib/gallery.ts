@@ -1,9 +1,5 @@
 import { getCollection, type CollectionEntry } from "astro:content";
-
-const imageModules = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/*/*.{jpg,png}",
-  { eager: true }
-);
+import { projectAssetImages } from "./projectAssets";
 
 export type GalleryItem = {
   key: string;
@@ -16,7 +12,9 @@ export async function loadGalleryItems(): Promise<GalleryItem[]> {
   const bySlug = new Map(projects.map((p) => [p.id, p]));
 
   const items: GalleryItem[] = [];
-  for (const [path, mod] of Object.entries(imageModules)) {
+  for (const [path, mod] of Object.entries(projectAssetImages)) {
+    // Gallery only wants top-level <slug>/<file> images; the shared glob is
+    // `**` so deeper paths (and non-project folders) are filtered out here.
     const match = path.match(/^\/src\/assets\/([^/]+)\/([^/]+)$/);
     if (!match) continue;
     const [, slug, filename] = match;
