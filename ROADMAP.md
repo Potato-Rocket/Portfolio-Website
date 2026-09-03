@@ -2,8 +2,8 @@
 
 ## Issues
 
+- On mobile when scrolling down (the navbar should shrink), sometimes it flickers like crazy
 - OG images are the raw thumbnails served via the `?url` glob (no Sharp pass), so some are multi-MB (e.g. `imagepy` ~4.5 MB). Some scrapers cap OG images around 5-8 MB and it's heavy for a social card. Generate an optimized OG derivative -- either run the thumbnail through a sized/compressed Sharp output, or a templated 1200x630 card (see SEO feature note on per-project OG images).
-- **Lock down the `demo.oscar.stomberg.us` tunnel with Cloudflare Access + service token.** Right now the tunnel's public hostname is reachable by anyone who finds it -- the home server isn't exposed, but the Go file server's greeting files are. Put a Cloudflare Access self-hosted application in front of the tunnel hostname and issue a service token; the greeting-proxy Worker's hourly cron sends `CF-Access-Client-Id` / `CF-Access-Client-Secret` headers on its fetch to `TUNNEL_ORIGIN`, and Access rejects everything else. Store the token id/secret as Wrangler secrets alongside `TUNNEL_ORIGIN`. (Workers VPC -- a binding-based alternative that drops the public hostname entirely -- was considered but deferred: it's still beta and this path degrades gracefully to last-cached, so not worth a beta dependency. Revisit VPC at GA.)
 - Be consistent about sr-only headings
 - `<Figure>` callsites currently pass identical `alt` and `caption`, so a screen reader reads the same text twice. Decide per-image whether to keep both, or set `alt=""` where the visible caption already fully describes the image (treats it as decorative so the caption is the sole accessible description). Low priority.
 

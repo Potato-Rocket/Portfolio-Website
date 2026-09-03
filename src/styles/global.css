@@ -18,9 +18,9 @@
   /* Status / indicator colors. Muted to sit on the paper palette rather than
      neon Tailwind defaults. Used for form validation/error text and the
      live-greeting status dots (success = live, warning = stale, error = offline). */
-  --color-success: #4f8a5b;
-  --color-warning: #b8841f;
-  --color-error: #b5483f;
+  --color-success: var(--color-green-600);
+  --color-warning: var(--color-yellow-600);
+  --color-error: var(--color-red-600);
 
   --font-sans: "Source Sans 3 Variable";
   --font-serif: "Source Serif 4 Variable";
@@ -33,11 +33,6 @@
   --color-ink-muted: #a39c8f;
   --color-rule: #3a3530;
   --color-rule-strong: #f6f2ea;
-
-  /* Brighter on the dark paper so they stay legible against #1c1a17. */
-  --color-success: #6fae7b;
-  --color-warning: #d9a84a;
-  --color-error: #e0796d;
 }
 
 @layer base {

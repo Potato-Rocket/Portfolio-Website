@@ -15,9 +15,6 @@
 
   let { devCoverSrc, devAudioSrc }: { devCoverSrc?: string; devAudioSrc?: string } = $props();
 
-  const _d = new Date();
-  const todayYMD = `${_d.getUTCFullYear()}-${String(_d.getUTCMonth() + 1).padStart(2, "0")}-${String(_d.getUTCDate()).padStart(2, "0")}`;
-
   let status = $state<"loading" | "success" | "offline">("loading");
   let data = $state<GreetingData | null>(null);
 
@@ -33,8 +30,8 @@
     return `${a.name} — ${a.artist} (${a.year})`;
   }
 
-  function isStale(ymd: string): boolean {
-    return ymd !== todayYMD;
+  function isStale(iso: string): boolean {
+    return Date.now() - new Date(iso).getTime() > 24 * 3_600_000;
   }
 
   function syncedAgo(iso: string): string {
@@ -42,7 +39,9 @@
     if (h < 1) return "synced less than an hour ago";
     if (h === 1) return "synced 1 hour ago";
     if (h < 24) return `synced ${h} hours ago`;
-    return "synced yesterday";
+    const d = Math.floor(h / 24);
+    if (d === 1) return "synced 1 day ago";
+    return `synced ${d} days ago`;
   }
 
   onMount(() => {
@@ -51,7 +50,9 @@
       setTimeout(() => {
         if (greetingParam === "offline") { status = "offline"; return; }
         data = SAMPLE as GreetingData;
-        data.date = greetingParam === "stale" ? "2026-04-19" : todayYMD;
+        data.lastSynced = greetingParam === "stale"
+          ? new Date(Date.now() - 48 * 3_600_000).toISOString()
+          : new Date().toISOString();
         status = "success";
         document.dispatchEvent(new CustomEvent("greeting:live"));
       }, 400);
@@ -150,12 +151,8 @@
     <figcaption
       class="border-t border-rule px-6 py-2 font-sans text-xs text-ink-muted italic text-center flex items-center justify-center gap-1.5"
     >
-      <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 {isStale(data.date) ? 'bg-warning' : 'bg-success'}"></span>
-      {#if isStale(data.date)}
-        Live &middot; showing {formatDate(data.date, true)} greeting &middot; today's generation may be delayed
-      {:else}
-        Live &middot; {syncedAgo(data.lastSynced)}
-      {/if}
+      <span class="w-1.5 h-1.5 rounded-full animate-pulse shrink-0 {isStale(data.lastSynced) ? 'bg-warning' : 'bg-success'}"></span>
+      Live &middot; {syncedAgo(data.lastSynced)}
     </figcaption>
   {/if}
 </figure>
