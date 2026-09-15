@@ -1,0 +1,10 @@
+---
+// Wraps whichever embed is "the demo" in a project's MDX body so the
+// thumbnail corner badge (see ProjectThumbnail) can deep-link to it as
+// /projects/<slug>#demo -- mirrors the #contact anchor used by the
+// contact form (ContactForm.svelte / Footer.astro).
+---
+
+<div id="demo" class="scroll-mt-24">
+  <slot />
+</div>

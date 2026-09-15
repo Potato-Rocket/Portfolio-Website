@@ -10,7 +10,7 @@ tags:
   - typescript
 links:
   github: https://github.com/CS3733-TeamB-2026/teamB-protoype
-  live: https://hanoveribank.com/
+  live: https://cs3733.stomberg.us/
 periods:
   - date: 2026-03-31
     label: Initial prototype
@@ -24,6 +24,8 @@ periods:
     label: Sprint 4
   - date: 2026-05-04
     label: Final sprint
+  - date: 2026-08-26
+    label: Forked and deployed persistent demo
 ---
 
 ## Overview

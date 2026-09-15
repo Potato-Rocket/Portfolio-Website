@@ -59,3 +59,5 @@ Ordered by value-to-effort. The OG image item under [Issues](#issues) pairs with
    - Full-text search over article bodies via Pagefind (runs at build time) -- only earns its keep with lots of long-form bodies.
    - Semantic search is overkill at a portfolio scale--skip unless the project count grows a lot.
    - Leaning toward not doing these--more is not always better.
+
+5. **Demos aggregator page.** *Deferred -- only 2 projects (`slab-flattening-jig`, `daily-greeting-generator`) have a demo today.* A corner badge on thumbnails already deep-links to `/projects/<slug>#demo` (frontmatter `demo: true` + `<DemoAnchor>` wrapper in the MDX body). Revisit a dedicated `/demos` index once there are enough demo projects to justify a whole page/nav tab.

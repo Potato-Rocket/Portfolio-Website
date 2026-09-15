@@ -13,6 +13,7 @@
     dateLabel: string;
     year: number;
     thumbPath: string | null;
+    demoHref: string | null;
   };
 
   interface Props {
@@ -96,7 +97,7 @@
           <!-- Entry cell -->
           <div class={row.isFirstOfYear && row.filteredIndex > 0 ? "xs:pt-4" : ""}>
             <article class="group flex flex-col gap-4 sm:flex-row sm:flex-wrap">
-              <ProjectThumbnail id={row.id} href={`/projects/${row.id}`} thumbPath={row.thumbPath} />
+              <ProjectThumbnail id={row.id} href={`/projects/${row.id}`} thumbPath={row.thumbPath} demoHref={row.demoHref} />
 
               <div class="max-w-104 sm:flex-1 sm:min-w-[18rem]">
                 <h2 class="text-xl">

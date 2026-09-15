@@ -20,6 +20,7 @@ const projectData = sorted.map((p) => ({
   dateLabel: formatDateRange(p.data.periods, p.data.status === "ongoing"),
   year: effectiveDate(p.data.periods).getUTCFullYear(),
   thumbPath: findThumbnailPath(p.id),
+  demoHref: p.data.demo ? `/projects/${p.id}#demo` : null,
 }));
 ---
 

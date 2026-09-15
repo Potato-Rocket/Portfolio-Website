@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
 import { findThumbnailImage } from "../lib/thumbnails";
 
 interface Props {
@@ -7,15 +8,25 @@ interface Props {
   title: string;
   loading?: "lazy" | "eager";
   class?: string;
+  demoHref?: string;
 }
 
-const { slug, title, loading = "lazy", class: className = "" } = Astro.props;
+const { slug, title, loading = "lazy", class: className = "", demoHref } = Astro.props;
 
 const thumbImage = findThumbnailImage(slug);
 const hatchId = `hatch-${slug}`;
 ---
 
-<div class:list={["aspect-video border border-rule-strong overflow-hidden", className]}>
+<div class:list={["relative aspect-video border border-rule-strong overflow-hidden", className]}>
+  {demoHref && (
+    <a
+      href={demoHref}
+      aria-label="Watch demo"
+      class="absolute top-2 right-2 z-10 flex items-center justify-center w-7 h-7 border border-rule bg-paper hover:border-rule-strong focus:outline-none focus-visible:border-rule-strong transition-colors"
+    >
+      <Icon name="lucide:circle-play" class="w-4 h-4 text-ink" />
+    </a>
+  )}
   {thumbImage ? (
     <Image
       src={thumbImage}

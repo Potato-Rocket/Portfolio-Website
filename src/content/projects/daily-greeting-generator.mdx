@@ -3,6 +3,7 @@ title: Daily Greeting Generator
 summary: Local LLM-generated morning greeting delivered via TTS, personalized with live weather, music selection, and a random literature excerpt.
 status: complete
 featured: true
+demo: true
 tags:
   - python
   - llm
@@ -26,7 +27,8 @@ periods:
 import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
-import devCoverSrc from "../../assets/daily-greeting-generator/album.png?url";
+import DemoAnchor from "../../components/mdx/DemoAnchor.astro";
+import { albumCoverUrl as devCoverSrc } from "../../lib/dailyGreetingAssets";
 import devAudioSrc from "../../assets/daily-greeting-generator/greeting.wav?url";
 
 ## What is it?
@@ -56,6 +58,8 @@ The script is deployed in a docker container with a simple Flask API wrapper, al
 
 The greeting below is generated fresh each morning on my home server and surfaced here automatically via a caching layer at Cloudflare's edge. A green dot means today's greeting loaded successfully; yellow means today's hasn't arrived yet--the server is scheduled for 2 a.m. and the caching layer refreshes hourly; red means the live demo is currently unreachable.
 
+<DemoAnchor>
+
 <LiveGreeting client:load devCoverSrc={devCoverSrc} devAudioSrc={devAudioSrc} />
 
 <GreetingFallback client:load>
@@ -65,6 +69,8 @@ The greeting below is generated fresh each morning on my home server and surface
 <StaticGreeting />
 
 </GreetingFallback>
+
+</DemoAnchor>
 
 ## Trial and error
 
