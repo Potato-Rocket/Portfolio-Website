@@ -9,17 +9,20 @@ interface Props {
 }
 
 const { project, class: className = "" } = Astro.props;
-const { title, status, periods } = project.data;
+const { title, status, periods, demo } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(periods, status === "ongoing");
+const demoHref = demo ? `/projects/${project.id}#demo` : undefined;
 ---
 
-<a href={`/projects/${project.id}`} class:list={["block group", className]}>
+<div class:list={["group relative", className]}>
   <div class:list={["border border-rule group-hover:border-rule-strong transition-colors p-3", { "border-dashed": isWip }]}>
-    <ProjectThumbnail slug={project.id} title={title} />
+    <ProjectThumbnail slug={project.id} title={title} demoHref={demoHref} />
     <p class="mt-2 text-sm font-semibold leading-snug">
-      {title}{isWip ? <span class="font-light font-sans"> · WIP</span> : null}
+      <a href={`/projects/${project.id}`} class="after:absolute after:inset-0 after:content-['']">
+        {title}
+      </a>{isWip ? <span class="font-light font-sans"> · WIP</span> : null}
     </p>
     <p class="text-ink-muted text-xs mt-1">{dateLabel}</p>
   </div>
-</a>
+</div>

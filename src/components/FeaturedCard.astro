@@ -10,21 +10,24 @@ interface Props {
 }
 
 const { project, class: className = "" } = Astro.props;
-const { title, summary, status, periods } = project.data;
+const { title, summary, status, periods, demo } = project.data;
 const isWip = status === "wip";
 const dateLabel = formatDateRange(periods, status === "ongoing");
+const demoHref = demo ? `/projects/${project.id}#demo` : undefined;
 ---
 
-<a href={`/projects/${project.id}`} class:list={["block group", className]}>
+<div class:list={["group relative", className]}>
   <div class="flex items-baseline justify-between pl-1 pb-3">
     <h2 class="text-xl">
-      {title}
+      <a href={`/projects/${project.id}`} class="after:absolute after:inset-0 after:content-['']">
+        {title}
+      </a>
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
     </h2>
   </div>
   <div class:list={["border border-rule group-hover:border-rule-strong transition-colors p-4", { "border-dashed": isWip }]}>
-    <ProjectThumbnail slug={project.id} title={title} loading="eager" />
+    <ProjectThumbnail slug={project.id} title={title} loading="eager" demoHref={demoHref} />
     <p class="mt-3 text-lg italic text-ink-muted">{summary}</p>
     <p class="text-ink-muted text-sm mt-3">{dateLabel}</p>
   </div>
-</a>
+</div>
