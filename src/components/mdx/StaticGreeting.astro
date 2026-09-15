@@ -1,7 +1,7 @@
 ---
 import SAMPLE from "../../data/daily-greeting.json";
-import albumCoverSrc from "../../assets/daily-greeting-generator/album.png?url";
 import audioSrc from "../../assets/daily-greeting-generator/greeting.wav?url";
+import { albumCoverUrl as albumCoverSrc } from "../../lib/dailyGreetingAssets";
 
 const MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const d = new Date(SAMPLE.date + "T00:00:00Z");
