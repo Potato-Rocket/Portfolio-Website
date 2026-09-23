@@ -28,4 +28,4 @@ periods:
 
 ## Overview
 
-
+The backbone of many personal projects, as well as a hub for many critical services I use daily. The home server lab consists of six assorted computers (for the most part used and repurposed), three of which serve as primary Docker hosts, the others serving more specialized or low-level services. The entire cluster is provisioned via Ansible, including the deployment and management of Docker Compose stacks. At the time of this writing there are 29 services actively being managed, totaling about 56 running containers. This includes supplementary services, 
