@@ -12,7 +12,7 @@ tags:
 links:
   github: https://github.com/Potato-Rocket/Daily-Greeting-Generator
 related:
-  - selfhosting
+  - home-server-lab
 periods:
   - date: 2025-10-01
     label: Initial build
@@ -21,9 +21,12 @@ periods:
   - date: 2026-03-19
     label: Docker + Piper TTS rewrite, web UI
   - date: 2026-05-14
-    label: Final polish
+    label: Final polish, demo setup
+  - date: 2026-09-03
+    label: Demo reconfiguration
 ---
 
+import Figure from "../../components/mdx/Figure.astro";
 import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
@@ -37,40 +40,58 @@ Have you ever felt that the typical alarm clock is a bit boring? Fair enough. Pe
 
 The Daily Greeting Generator is a Python script that uses live weather data, literary excerpts from Project Gutenberg, and and an album from my digital music collection to inspire a daily greeting message, composed by a local LLM model (most recently `qwen3.5:8b`) and converted to audio by PiperTTS. This system is integrated with my instances of Home Assistant and Music Assistant, such that it can play on my room's stereo system automatically.
 
+## Today's greeting
+
+The greeting below is generated anew each morning on my home server and surfaced here automatically via a caching layer at Cloudflare's edge. A green dot means today's greeting loaded successfully; yellow means today's hasn't arrived yet--the server is scheduled for 2 a.m. and the new greeting could take some minutes to propagate; red means the live demo is currently unreachable.
+
+<DemoAnchor>
+
+    <LiveGreeting client:load devCoverSrc={devCoverSrc} devAudioSrc={devAudioSrc} />
+
+    <GreetingFallback client:load>
+
+        ## A past example
+
+        <StaticGreeting />
+
+    </GreetingFallback>
+
+</DemoAnchor>
+
 ## How it works
 
 The multi-stage prompt pipeline is run asynchronously in the early hours of the morning and takes roughly two minutes running on an RTX 3050. The process executes as follows:
 
 1. Fetch the weather prediction for the day and morning from the weather.gov API.
-2. Use the Gutendex API to fetch a random book from Project Gutenberg, weighted toward more popular books.
+2. Use the Gutendex API (self hosted for more reliable responses) to fetch a random book from Project Gutenberg, weighted toward more popular books.
 3. Select a random excerpt from the book and have the LLM evaluate whether it is a good source for literary analysis (yes or no).
 4. Repeate 2 + 3 until a literary excerpt is accepted.
 5. Fetch the metadata for five random albums. Have the LLM evaluate which might pair best with the chosen excerpt.
 6. Have a multimodal LLM provide a description of the album art for the chosen album.
 7. Synthesize the weather, excerpt, and album info into a final daily greeting, with a reasoning phase and randomly determined target length.
 
-Each stage of this pipeline is designed to degrade gracefully in the event of failure such as API unavailability. Following playback of the greeting each morning, the selected album is queued in Music Assistant and begins to play.
+Each stage of this pipeline is designed to degrade gracefully in the event of failure such as API unavailability.
 
-The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, my Navidrome music server, and my Ollama instance. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
+The script is deployed in a docker container with a simple Flask API wrapper, allowing it to be easily interfaced with other services such as Home Assistant, Navidrome (Subsonic music server), and Ollama. A basic web interface was eventually added to provide an easy way to view the most recent and historical greeting generations.
 
+<Figure src="web-ui.png" alt="Internal web UI" caption="Internal web UI showing a generated greeting" />
 
-## Today's greeting
+## Current Deployment
 
-The greeting below is generated fresh each morning on my home server and surfaced here automatically via a caching layer at Cloudflare's edge. A green dot means today's greeting loaded successfully; yellow means today's hasn't arrived yet--the server is scheduled for 2 a.m. and the caching layer refreshes hourly; red means the live demo is currently unreachable.
+The method for deploying and utilizing the daily greeting generator has evolved along with the script as well as my self-hosting and home automation infrastructure. Currently, the greeting generation is triggered in the early morning after the GPU server has been powered on via WOL. The generated greeting is then pushed to the demo backend in the cloud.
 
-<DemoAnchor>
+Separately, every morning when it is time for me to wake up, Home Assistant runs an automation that:
 
-<LiveGreeting client:load devCoverSrc={devCoverSrc} devAudioSrc={devAudioSrc} />
+- Plays a short chime
+- Fetches the greeting data to get info about the chosen album
+- Searches Music Assistant to find the chosen album
+- Abort and play a random album if either query fails
+- Otherwise, queue the greeting audio to stream via http, and queue the chosen album
 
-<GreetingFallback client:load>
+Music Assistant streams audio to my room's stereo system using Snapserver/Snapclient, via a Fit-PC3 mini-computer running headlessly with a USB DAC. Additionally connected to the playback server is a [duckyPad](https://dekunukem.github.io/duckyPad/) macro board (with a 3D-printed case for better wall mounting), with a key trigger daemon binding keys to a script to send media control requests to Music Assistant. This system allows for integrated control of audio playback without the use of my phone, which was a key goal in the project's conception.
 
-## A past example
-
-<StaticGreeting />
-
-</GreetingFallback>
-
-</DemoAnchor>
+<Figure src="duckypad.jpg" alt="DuckyPad deployed" caption="DuckyPad macro board deployed on bedroom wall" />
+<Figure src="duckypad_case.jpg" alt="DuckyPad with case" caption="DuckyPad macro board with 3D-printed case for easier mounting" />
 
 ## Trial and error
 
@@ -84,8 +105,24 @@ While I was already operating my music server and experimenting with Ollama when
 - The Astropy library was used to calculate sunrise and schedule playback on the music server relative to dawn
 - A 5 minute recurring cron job read the playback time written by the receiver server and triggered the wake-up when the scheduled time had passed
 
-Predicably, this digital Rube-Goldberg machine was somewhat prone to failure, particularly in the event a greeting was not recieved from the server on a given day. Some of these kinks were ironed out, but the whole system was replaced when Home Assistant came along. The music player was reduced to a Snapcast receiver to interface with Music Assistant.
+Predicably, this digital Rube-Goldberg machine was somewhat prone to failure, particularly in the event a greeting was not recieved from the server on a given day. Some of these kinks were ironed out, but the whole system was replaced when Home Assistant came along. The music player was reduced to a Snapcast receiver to interface with Music Assistant. 
 
 ### Coqui TTS
 
-In the first iteration, I spent a good deal of time trying to get the best quality TTS I could (locally generated, at least).
+In the first iteration, I spent a good deal of of finding the best quality TTS I could run (locally, at least). While Piper TTS provided a good starting point, I was interested in seeing what Coqui TTS was capable of, particularly provided GPU acceleration. However, some problems (technical and otherwise) presented themselves:
+
+- GPU caching with limited VRAM meant that large TTS and LLM models that might work fine on their own caused serious performance problems when running the whole script
+- Unlike Ollama inference, GPU accelerated TTS necessitated running the whole script on the WOL machine; creating another microservice for Coqui TTS did not seem practical at the time
+- Most critically, the quality gains compared to Piper were not significant--and voice cloning was not a feature I was interested in, for various reasons
+
+Eventually, I reverted the system to Piper TTS, which significantly simplified that portion of the program. While a generic Piper voice is bundled with the docker container, my daily greetings are done with the [Hal 9000](https://huggingface.co/diyengineering/HAL-9000-Piper-TTS) voice.
+
+### Live demo Architecture
+
+When devising how to get the local daily greeting from a local, the system architecture went through a somewhat overcomplicated initial iteration before settling as it is now. In both iterations, a backend Cloudflare Worker stood as a proxy to manage caching and serving using Cloudflare's KV and S3 storage. However, in the first version, I had a third process, a small read-only webserver written in Go and exposed via a dedicated cloudflare tunnel. Every hour, the proxy server in the cloud would fetch the most recent greeting data from the local webserver and then push it to Cloudflare's object storage. The downsides to this approach were twofold: There could be as much as an hour-long delay between a greeting being generated and the greeting being propagated to the demo. Furthermore, though more or less secure, having an exposed web service created an attack surface that simply wasn't necessary to have.
+
+After some weeks, it occured to me that the entire third service was more-or-less redundant. The simper solution was as follows: The script (run by a cron timer on one of my servers) that triggers the greeting generation would, upon completion, simply push the greeting data to an endpoint on the Cloudflare proxy server (authenticated via shared secret). This allowed me to wholly retire the Cloudfalre tunnel and Go server, greatly simplifying the whole process and actually improving reliability, as I was able to tie the script into my existing monitoring stack.
+
+## What I learned
+
+Though I have come a long way in terms of my web development skills since starting this project, this script was my first true experience dealing with web APIs, either as a client or as a host. The deployment architecture evolved as my broader home automation and self-hosting systems evolved teaching valuable lessons throughout. On a more detailed level, I also encountered many of the problems one tends to encounter when trying to integrate unpredictable LLMs into rigid structures, as well as some of the prompt-engineering and validation techniques that are used to account for that.
