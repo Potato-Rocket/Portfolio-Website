@@ -27,6 +27,7 @@ periods:
 ---
 
 import Figure from "../../components/mdx/Figure.astro";
+import FigureRow from "../../components/mdx/FigureRow.astro";
 import StaticGreeting from "../../components/mdx/StaticGreeting.astro";
 import LiveGreeting from "../../components/mdx/LiveGreeting.svelte";
 import GreetingFallback from "../../components/mdx/GreetingFallback.svelte";
@@ -90,8 +91,10 @@ Separately, every morning when it is time for me to wake up, Home Assistant runs
 
 Music Assistant streams audio to my room's stereo system using Snapserver/Snapclient, via a Fit-PC3 mini-computer running headlessly with a USB DAC. Additionally connected to the playback server is a [duckyPad](https://dekunukem.github.io/duckyPad/) macro board (with a 3D-printed case for better wall mounting), with a key trigger daemon binding keys to a script to send media control requests to Music Assistant. This system allows for integrated control of audio playback without the use of my phone, which was a key goal in the project's conception.
 
-<Figure src="duckypad.jpg" alt="DuckyPad deployed" caption="DuckyPad macro board deployed on bedroom wall" />
-<Figure src="duckypad_case.jpg" alt="DuckyPad with case" caption="DuckyPad macro board with 3D-printed case for easier mounting" />
+<FigureRow>
+  <Figure src="duckypad.jpg" alt="DuckyPad deployed" caption="DuckyPad macro board deployed on bedroom wall" />
+  <Figure src="duckypad_case.jpg" alt="DuckyPad with case" caption="DuckyPad macro board with 3D-printed case for easier mounting" />
+</FigureRow>
 
 ## Trial and error
 

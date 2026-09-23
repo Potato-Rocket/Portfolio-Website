@@ -25,8 +25,8 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 - [x] **waste-scale** — done
 - [x] **plant-datalogger** — done
 - [x] **solar-system-simulator** — done
-- [x] **synthetic-word-generator** — partial, come up with thumbnail
-- [x] **wpi-schedule-importer** — partial, (text only; take pictures of calendar and example xlsx when available)
+- [ ] **synthetic-word-generator** — partial, come up with thumbnail
+- [ ] **wpi-schedule-importer** — partial, (text only; take pictures of calendar and example xlsx when available)
 - [ ] **daily-greeting-generator** — partial
 - [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
 - [ ] **hanover-cms** — write; blocked on demo scrub (see above); pull-in from team progress reports
