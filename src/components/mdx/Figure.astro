@@ -7,10 +7,17 @@ import { findArticleImage } from "../../lib/projectAssets";
 // or a "<slug>/file.png" path to disambiguate when a filename isn't unique.
 // The resolved image goes through Astro's <Image> so Sharp emits a responsive
 // srcset at build time. `not-prose` keeps Typography off the figure chrome.
+//
+// `maxHeight` caps the rendered height at sm+ (mobile always goes full width).
+// It's enforced as a max-width of maxHeight * aspectRatio on the <figure>, so
+// the caption narrows with the image and it stays centered. Landscape images in
+// the article column rarely hit the default; tall portraits do. Pass `false` to
+// disable. Inside <FigureRow> the cap is overridden -- the row sizes its items.
 interface Props {
   src: string;
   alt: string;
   caption?: string;
+  maxHeight?: string | false;
   widths?: number[];
   sizes?: string;
   loading?: "lazy" | "eager";
@@ -21,6 +28,7 @@ const {
   src,
   alt,
   caption,
+  maxHeight = "36rem",
   widths = [640, 960, 1280],
   sizes = "(max-width: 720px) 100vw, 720px",
   loading = "lazy",
@@ -34,9 +42,20 @@ if (!image) {
       `filename, or drop the image at src/assets/<slug>/${src}.`
   );
 }
+
+// --fig-ar is also read by <FigureRow> to give each item flex-grow = aspect
+// ratio, which is what makes a row of mixed images share one height.
+const aspectRatio = image.width / image.height;
+const style = {
+  "--fig-ar": aspectRatio,
+  ...(maxHeight && { "--fig-max-w": `calc(${maxHeight} * ${aspectRatio})` }),
+};
 ---
 
-<figure class:list={["not-prose my-8", className]}>
+<figure
+  class:list={["not-prose my-8 mx-auto", maxHeight && "sm:max-w-(--fig-max-w)", className]}
+  style={style}
+>
   <Image
     src={image}
     alt={alt}

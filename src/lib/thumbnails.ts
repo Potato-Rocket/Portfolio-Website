@@ -1,7 +1,11 @@
 import type { ImageMetadata } from "astro";
 
+// Thumbnails live alongside a project's other assets at
+// src/assets/<slug>/thumbnail.<ext>. projectAssets.ts excludes this same
+// pattern so thumbnails don't leak into the gallery or <Figure> resolution --
+// keep the two globs in sync.
 const thumbnailModules = import.meta.glob<{ default: ImageMetadata }>(
-  "/src/assets/thumbnails/*.{png,jpg}",
+  "/src/assets/*/thumbnail.{jpg,jpeg,png,webp,avif}",
   { eager: true }
 );
 
@@ -9,23 +13,21 @@ const thumbnailModules = import.meta.glob<{ default: ImageMetadata }>(
 // URLs — the plain ImageMetadata .src is a dev-only /@fs/ path that breaks
 // in production Workers deployments.
 const thumbnailUrls = import.meta.glob<{ default: string }>(
-  "/src/assets/thumbnails/*.{png,jpg}",
+  "/src/assets/*/thumbnail.{jpg,jpeg,png,webp,avif}",
   { query: "?url", eager: true }
 );
 
+function findBySlug<T>(modules: Record<string, { default: T }>, slug: string): T | null {
+  const prefix = `/src/assets/${slug}/thumbnail.`;
+  const key = Object.keys(modules).find((k) => k.startsWith(prefix));
+  return key ? modules[key].default : null;
+}
+
 export function findThumbnailImage(slug: string): ImageMetadata | null {
-  for (const ext of ["png", "jpg"]) {
-    const key = `/src/assets/thumbnails/${slug}.${ext}`;
-    if (key in thumbnailModules) return thumbnailModules[key].default;
-  }
-  return null;
+  return findBySlug(thumbnailModules, slug);
 }
 
 // URL string for Svelte components and JSON-serialized props
 export function findThumbnailPath(slug: string): string | null {
-  for (const ext of ["png", "jpg"]) {
-    const key = `/src/assets/thumbnails/${slug}.${ext}`;
-    if (key in thumbnailUrls) return thumbnailUrls[key].default;
-  }
-  return null;
+  return findBySlug(thumbnailUrls, slug);
 }

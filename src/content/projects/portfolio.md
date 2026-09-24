@@ -15,7 +15,7 @@ periods:
 
 ## Why
 
-I have been making personal projects for years, and have often wished I had a good way to share or display what I had done. While GitHub repos have their place, not everything is code--and it's not very personal either. Following my [software engineering](/projects/hanover-cms) course at WPI, I felt confident in my newfound web development skills. This had been a blocker before, since I really wanted to write the portfolio website myself instead of resorting to a website builder, I just didn't know where to start.
+I have been making personal projects for years, and have often wished I had a good way to share or display what I had done. While GitHub repos have their place, not everything is code--and it's not very personal either. Following my [software engineering](/projects/content-management-system) course at WPI, I felt confident in my newfound web development skills. This had been a blocker before, since I really wanted to write the portfolio website myself instead of resorting to a website builder, I just didn't know where to start.
 
 ## Astro + Svelte
 

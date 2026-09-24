@@ -51,11 +51,11 @@ src/
 │   └── tag-colors.json         # Tag → hue map; synced from project frontmatter
 ├── assets/
 │   ├── Icon.svg                # "OS" monogram (navbar brand)
-│   └── <slug>/*.{jpg,png,...}  # Gallery images keyed by project slug
+│   └── <slug>/                 # Per-project assets
+│       ├── thumbnail.{png,jpg,...}  # Project thumbnail
+│       └── *.{jpg,png,...}     # Gallery / article images
 └── styles/
     └── global.css              # Tailwind import, theme tokens, tag colors, prose-paper utility
-public/
-└── thumbnails/                 # Project thumbnail images (.png or .jpg)
 scripts/
 └── sync-tags.ts                # Reconcile tag-colors.json with frontmatter tags
 ```

@@ -1,6 +1,6 @@
 ---
-title: Hanover Insurance CMS
-summary: Full-stack content management system built for a real client in a software engineering course at WPI.
+title: Content Management System
+summary: Full-stack content management system prototype built for a real client in a software engineering course at WPI.
 status: complete
 featured: true
 tags:
@@ -8,8 +8,10 @@ tags:
   - fullstack
   - react
   - typescript
+related:
+  - home-server-lab
 links:
-  github: https://github.com/CS3733-TeamB-2026/teamB-protoype
+  github: https://github.com/schultzh06/insurance-cms-cs3733
   live: https://cs3733.stomberg.us/
 periods:
   - date: 2026-03-31

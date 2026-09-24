@@ -1,0 +1,24 @@
+---
+// Lays out child <Figure>s side-by-side at a shared height. Each Figure
+// publishes its aspect ratio as --fig-ar; `flex: <ar>` (grow = ar, basis 0)
+// makes every item's width proportional to its aspect ratio, so heights match
+// -- the same trick /gallery's justified rows use. The children's own
+// maxHeight cap is dropped here; the row's height falls out of its width.
+// Below xs the figures stack full-width, like the gallery's mobile fallback.
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+
+<div
+  class:list={[
+    "not-prose my-8 flex flex-col gap-y-8 xs:flex-row xs:items-start xs:gap-x-4",
+    "[&>figure]:my-0 [&>figure]:mx-0 [&>figure]:min-w-0 [&>figure]:max-w-none",
+    "xs:[&>figure]:flex-(--fig-ar)",
+    className,
+  ]}
+>
+  <slot />
+</div>

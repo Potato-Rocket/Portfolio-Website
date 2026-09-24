@@ -1,12 +1,13 @@
 import type { ImageMetadata } from "astro";
 
 // Single source of truth for "what counts as a project asset image": every
-// image under src/assets/<slug>/ (the thumbnails dir is excluded -- those are
-// managed separately by thumbnails.ts). Both the gallery (loadGalleryItems)
-// and the in-article <Figure> resolver read from this one map so their notion
-// of the asset set can't drift -- keep the extension list here authoritative.
+// image under src/assets/<slug>/ (each project's thumbnail.<ext> is excluded --
+// those are managed separately by thumbnails.ts). Both the gallery
+// (loadGalleryItems) and the in-article <Figure> resolver read from this one
+// map so their notion of the asset set can't drift -- keep the extension list
+// here authoritative.
 export const projectAssetImages = import.meta.glob<{ default: ImageMetadata }>(
-  ["/src/assets/**/*.{jpg,jpeg,png,webp,avif}", "!/src/assets/thumbnails/**"],
+  ["/src/assets/**/*.{jpg,jpeg,png,webp,avif}", "!/src/assets/*/thumbnail.*"],
   { eager: true }
 );
 

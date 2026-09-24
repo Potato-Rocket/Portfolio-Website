@@ -19,7 +19,7 @@ const demoHref = demo ? `/projects/${project.id}#demo` : undefined;
 <div class:list={["group relative", className]}>
   <div class="flex items-baseline justify-between pl-1 pb-3">
     <h2 class="text-xl">
-      <a href={`/projects/${project.id}`} class="after:absolute after:inset-0 after:content-['']">
+      <a href={`/projects/${project.id}`} class="after:absolute after:inset-0 after:z-1 after:content-['']">
         {title}
       </a>
       {isWip ? <span class="font-light font-sans">· WIP</span> : null}
