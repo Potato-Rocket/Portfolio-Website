@@ -27,7 +27,7 @@ One entry per project page. Mark as `done`, `partial`, `pull-in` (existing mater
 - [x] **solar-system-simulator** — done
 - [x] **synthetic-word-generator** — done
 - [x] **daily-greeting-generator** — done
-- [ ] **wpi-schedule-importer** — partial, (text only; take pictures of calendar and example xlsx when available)
+- [x] **wpi-schedule-importer** — done
 - [ ] **slab-flattening-jig** — write; pull-in from report materials (YouTube embed already in place, body empty)
 - [ ] **content-management-system** — write; blocked on demo scrub (see above); pull-in from team progress reports
 - [ ] **pythagoras-tree** — write; need to run and capture screenshots

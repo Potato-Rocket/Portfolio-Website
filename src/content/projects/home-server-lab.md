@@ -28,4 +28,11 @@ periods:
 
 ## Overview
 
-The backbone of many personal projects, as well as a hub for many critical services I use daily. The home server lab consists of six assorted computers (for the most part used and repurposed), three of which serve as primary Docker hosts, the others serving more specialized or low-level services. The entire cluster is provisioned via Ansible, including the deployment and management of Docker Compose stacks. At the time of this writing there are 29 services actively being managed, totaling about 56 running containers. This includes supplementary services, 
+The backbone of many personal projects, as well as a hub for many critical services I use daily. The home server lab consists of six assorted computers (for the most part used and repurposed), three of which serve as primary Docker hosts, the others serving more specialized or low-level services. The entire cluster is provisioned via Ansible, including the deployment and management of Docker Compose stacks. At the time of this writing there are 29 services actively being managed, totaling about 56 running containers. This includes supplementary services, databases, reverse proxy + DNS, and a full observability stack.
+
+Among the projects of my own that I'm hosting are:
+
+- [Daily Greeting Generator](/projects/daily-greeting-generator), which depends on Navidrome, Ollama, and a self-hosted fork of [Gutendex](https://github.com/Potato-Rocket/Gutendex)
+- A live demo of the [Content Management System](/projects/content-management-system) (CS 3733 course project), including separate containers for the frontend, backend, and machine learning microservice. Tunneled via Cloudflare
+- In progress, a server to connect to the APIs for the various health/fitness services I use (Strava, Garmin, Withings, Concept 2, Hevy, etc.) to fetch, store, and track the integrity of my private data. This will provide the foundation to extract it to be visualized in, for example, Victoria Metrics and Grafana
+
