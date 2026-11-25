@@ -8,8 +8,11 @@
     greeting: string;
     log: string;
     pipeline: string;
-    album: { name: string; artist: string; year: number; genres: string[] };
-    weather: { temperature: number; humidity: number; windSpeed: string; conditions: string };
+    // album and weather are null when that source failed; the greeting still renders without them
+    album: { name: string; artist: string; year: number; genres: string[] } | null;
+    weather: { temperature: number; humidity: number; windSpeed: string; conditions: string } | null;
+    // false when no cover was uploaded; absent on older uploads, which always had one
+    hasCover?: boolean;
     lastSynced: string;
   }
 
@@ -26,7 +29,7 @@
       : `${MONTHS[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`;
   }
 
-  function albumLabel(a: GreetingData["album"]): string {
+  function albumLabel(a: NonNullable<GreetingData["album"]>): string {
     return `${a.name} — ${a.artist} (${a.year})`;
   }
 
@@ -95,9 +98,11 @@
   {:else}
     <div class="p-6 sm:p-8">
       <h2 class="font-serif text-lg text-ink mb-1">{formatDate(data.date)}</h2>
-      <p class="font-sans text-xs text-ink-muted mb-4">
-        {data.weather.temperature}&deg;F &middot; {data.weather.conditions} &middot; Humidity: {Math.round(data.weather.humidity)}% &middot; Wind: {data.weather.windSpeed}
-      </p>
+      {#if data.weather}
+        <p class="font-sans text-xs text-ink-muted mb-4">
+          {data.weather.temperature}&deg;F &middot; {data.weather.conditions} &middot; Humidity: {Math.round(data.weather.humidity)}% &middot; Wind: {data.weather.windSpeed}
+        </p>
+      {/if}
 
       <div
         class="border border-rule p-4 sm:p-6 mb-4 font-sans text-base text-ink leading-relaxed whitespace-pre-wrap"
@@ -106,15 +111,19 @@
       </div>
 
       <div class="flex items-start gap-4 mb-4 flex-wrap">
-        <div class="shrink-0 flex flex-col gap-1.5">
-          <img
-            src={import.meta.env.DEV && devCoverSrc ? devCoverSrc : `/api/greeting/cover?d=${data.date}`}
-            alt="Album cover art"
-            class="w-24 h-24 object-cover border border-rule-strong"
-            loading="lazy"
-          />
-          <p class="font-sans text-xs text-ink-muted leading-snug w-24">{albumLabel(data.album)}</p>
-        </div>
+        {#if data.album}
+          <div class="shrink-0 flex flex-col gap-1.5">
+            {#if data.hasCover !== false}
+              <img
+                src={import.meta.env.DEV && devCoverSrc ? devCoverSrc : `/api/greeting/cover?d=${data.date}`}
+                alt="Album cover art"
+                class="w-24 h-24 object-cover border border-rule-strong"
+                loading="lazy"
+              />
+            {/if}
+            <p class="font-sans text-xs text-ink-muted leading-snug w-24">{albumLabel(data.album)}</p>
+          </div>
+        {/if}
         <div class="flex-1 min-w-56 max-w-lg flex items-center h-24">
           <audio
             controls
