@@ -4,6 +4,9 @@ Personal engineering portfolio for Oscar Stomberg, Robotics Engineering student 
 
 ## Workflow
 
+### Git workflow
+Branch + PR into `main`. Pushing to `main` deploys (Cloudflare's GitHub integration), so all work happens on a feature branch.
+
 ### After editing code
 Run the TypeScript checker before considering a chunk of work done:
 ```sh
@@ -21,7 +24,7 @@ Always fetch current docs before working with any library API — Astro, Svelte,
 | --- | --- | --- |
 | Astro | `astro-docs` MCP (`https://mcp.docs.astro.build/mcp`) | content collections schema, view-transition / `ClientRouter` directives, `@astrojs/mdx`, `astro-icon`, Astro `<Image>` / image service |
 | Svelte | `svelte` MCP (`https://mcp.svelte.dev/mcp`) | Svelte 5 runes (`$state`, `$derived`, `$effect`, `$props`), `svelte/reactivity` (`SvelteSet`, `SvelteMap`), `@iconify/svelte`, `@astrojs/svelte` integration |
-| Cloudflare | Cloudflare Docs MCP (`https://docs.mcp.cloudflare.com/sse`) | Workers + Static Assets model, `@astrojs/cloudflare` adapter, Wrangler config (`compatibility_flags`, `observability`, bindings) |
+| Cloudflare | `cloudflare-docs` MCP (`https://docs.mcp.cloudflare.com/mcp`) | Workers + Static Assets model, `@astrojs/cloudflare` adapter, Wrangler config (`compatibility_flags`, `observability`, bindings) |
 | Tailwind | context7 | Tailwind v4 `@utility` / `@theme` / `@custom-variant` syntax, plugin authoring, Typography plugin overrides |
 
 ### Adding a new project
